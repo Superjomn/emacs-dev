@@ -56,3 +56,7 @@
 
 (require 'rtags) ;; optional, must have rtags installed
 (cmake-ide-setup)
+
+(require 'helm)
+(map! :leader
+      :desc "Open like spacemacs" "SPC" #'helm-M-x)

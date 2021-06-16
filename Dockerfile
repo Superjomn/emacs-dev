@@ -30,6 +30,11 @@ ENV PATH "${PATH}:/opt/src/rtags/bin/"
 
 # the DOOM emacs depends the latest git.
 RUN add-apt-repository ppa:git-core/ppa && apt install -y git
-RUN git clone --depth 1 https://github.com/hlissner/doom-emacs ~/.emacs.d
+RUN git clone https://github.com/hlissner/doom-emacs ~/.emacs.d
 RUN printf 'y\ny' | ~/.emacs.d/bin/doom -y install
-RUN ~/.emacs.d/bin/doom sync
+
+# update doom config
+RUN git clone https://github.com/Superjomn/emacs-dev.git && cp emacs-dev/.doom.d/* ~/.doom.d/ && ~/.emacs.d/bin/doom sync
+# fix irony missing file error
+RUN mkdir -p /root/.emacs.d/.local/etc/irony
+RUN touch /root/.emacs.d/.local/etc/irony/cdb-json-projects
