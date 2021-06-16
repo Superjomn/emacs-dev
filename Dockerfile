@@ -30,8 +30,6 @@ ENV PATH "${PATH}:/opt/src/rtags/bin/"
 
 # the DOOM emacs depends the latest git.
 RUN add-apt-repository ppa:git-core/ppa && apt install -y git
-RUN git clone --depth 1 https://github.com/hlissner/doom-emacs ~/.emacs.d && ~/.emacs.d/bin/doom install
-COPY ./.doom.d/init.el ~/.doom.d/
-COPY ./.doom.d/packages.el ~/.doom.d/
-COPY ./.doom.d/config.el ~/.doom.d/
+RUN git clone --depth 1 https://github.com/hlissner/doom-emacs ~/.emacs.d
+RUN printf 'y\ny' | ~/.emacs.d/bin/doom -y install
 RUN ~/.emacs.d/bin/doom sync
