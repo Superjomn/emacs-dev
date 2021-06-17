@@ -48,3 +48,6 @@ RUN wget https://ftpmirror.gnu.org/emacs/emacs-27.1.tar.gz && \
 	./configure --with-x-toolkit=lucid &&\
 	make -j2 &&\
 	make install
+
+# enable vterm
+RUN apt install libtool-bin
