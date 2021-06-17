@@ -51,3 +51,8 @@ RUN wget https://ftpmirror.gnu.org/emacs/emacs-27.1.tar.gz && \
 
 # enable vterm
 RUN apt install libtool-bin
+
+# clean
+RUN apt autoremove
+
+RUN git config --global credential.helper store
