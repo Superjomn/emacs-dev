@@ -39,3 +39,12 @@ RUN git clone https://github.com/Superjomn/emacs-dev.git && echo 0 && cp emacs-d
 # fix irony missing file error
 RUN mkdir -p /root/.emacs.d/.local/etc/irony
 RUN touch /root/.emacs.d/.local/etc/irony/cdb-json-projects
+
+# build emacs by source to avoid X system segment fault
+RUN apt-get install -y libxaw7-dev build-essential texinfo libx11-dev libjpeg-dev libpng-dev libgif-dev libtiff-dev libncurses-dev gnutls-dev
+RUN wget https://ftpmirror.gnu.org/emacs/emacs-27.1.tar.gz && \
+	tar xvf emacs-27.1.tar.gz && \
+	cd emacs-27.1 &&\
+	./configure --with-x-toolkit=lucid &&\
+	make -j2 &&\
+	make install
