@@ -56,6 +56,8 @@
 
 (require 'rtags) ;; optional, must have rtags installed
 (cmake-ide-setup)
+(add-hook 'c-mode-hook 'rtags-start-process-unless-running)
+(add-hook 'c++-mode-hook 'rtags-start-process-unless-running)
 
 (require 'helm)
 (map! :leader

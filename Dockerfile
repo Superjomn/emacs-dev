@@ -25,16 +25,17 @@ RUN add-apt-repository ppa:kelleyk/emacs && apt-get update \
 
 # RTAGS
 RUN mkdir -p /opt/src && cd /opt/src/ && git clone --recursive https://github.com/Andersbakken/rtags.git && \
-    cd rtags && cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=1 . && make -j2
-ENV PATH "${PATH}:/opt/src/rtags/bin/"
+    cd rtags && cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=1 . && make install -j2 && cd .. && rm -rf rtags
+#ENV PATH "${PATH}:/opt/src/rtags/bin/"
 
 # the DOOM emacs depends the latest git.
 RUN add-apt-repository ppa:git-core/ppa && apt install -y git
-RUN git clone https://github.com/hlissner/doom-emacs ~/.emacs.d
+# use a specific commit to avoid doom-emacs broken update
+RUN git clone https://github.com/hlissner/doom-emacs ~/.emacs.d && cd ~/.emacs.d && git checkout 2731685
 RUN printf 'y\ny' | ~/.emacs.d/bin/doom -y install
 
 # update doom config
-RUN git clone https://github.com/Superjomn/emacs-dev.git && cp emacs-dev/.doom.d/* ~/.doom.d/ && ~/.emacs.d/bin/doom sync
+RUN git clone https://github.com/Superjomn/emacs-dev.git && echo 0 && cp emacs-dev/.doom.d/* ~/.doom.d/ && ~/.emacs.d/bin/doom sync
 # fix irony missing file error
 RUN mkdir -p /root/.emacs.d/.local/etc/irony
 RUN touch /root/.emacs.d/.local/etc/irony/cdb-json-projects
