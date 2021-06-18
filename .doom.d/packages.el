@@ -49,3 +49,6 @@
 ;; ...Or *all* packages (NOT RECOMMENDED; will likely break things)
 ;(unpin! t)
 (package! cmake-ide)
+(package! hydra)
+(package! yasnippet)
+(package! company-irony-c-headers)

@@ -55,10 +55,82 @@
 
 
 (require 'rtags) ;; optional, must have rtags installed
+(rtags-start-process-unless-running)
 (cmake-ide-setup)
-(add-hook 'c-mode-hook 'rtags-start-process-unless-running)
-(add-hook 'c++-mode-hook 'rtags-start-process-unless-running)
 
 (require 'helm)
 (map! :leader
       :desc "Open like spacemacs" "SPC" #'helm-M-x)
+
+
+;; window control
+(define-key evil-normal-state-map "vs" '(lambda ()
+                                          (interactive)
+                                          (split-window-right-and-focus)
+                                          ))
+(define-key evil-normal-state-map "vh" 'evil-window-left)
+(define-key evil-normal-state-map "vl" 'evil-window-right)
+
+(map! :leader
+      :desc "Open config" "fed" #'doom/find-file-in-private-config)
+
+(map! :leader
+      :desc "Open magit status" "gs" #'magit-status)
+
+(map! :leader
+      :desc "Open vterm popup" "'" #'+vterm/toggle)
+
+
+(require 'dash)
+
+(setq chun/--projectile-known-projects
+      '("/home/chunwei/project/pscore"
+        "/home/chunwei/centra/info_center"
+        ))
+
+(-map (lambda (path)
+        (projectile-add-known-project path))
+      chun/--projectile-known-projects)
+
+(require 'company-irony-c-headers)
+;; Load with `irony-mode` as a grouped backend
+(eval-after-load 'company
+  '(add-to-list
+    'company-backends '(company-irony-c-headers company-irony)))
+
+
+(setq yas-snippet-dirs '(
+                         "/home/chunwei/project/yas-snippets"
+                         ))
+(yas-global-mode 1)
+
+(global-set-key (kbd "M-/") 'yas-expand)
+
+(require 'helm)
+(setq helm-mode-fuzzy-match t)
+(setq helm-completion-in-region-fuzzy-match t)
+(setq helm-recentf-fuzzy-match t)
+(setq helm-buffers-fuzzy-matching t)
+(setq helm-semantic-fuzzy-match t)
+
+;;; ===================== details =====================
+(setq chun/--projectile-globally-ignored-directories
+      '("*build"
+        "*cmake-build-debug"
+        ".idea"
+        ))
+(require 'projectile)
+;; This is broken, not works
+(-map (lambda (s)
+        (setq projectile-globally-ignored-directories
+              (add-to-list 'projectile-globally-ignored-directories s))
+        )
+      chun/--projectile-globally-ignored-directories)
+(setq irony-cdb-search-directory-list
+      "/home/chunwei/project/pscore/cmake-build-debug/"
+      )
+
+
+;; (setq irony-libclang-additional-flags
+;;       (append '("-I" "/home/chunwei/project/pscore/cmake-build-debug/third_party/install/absl/include") irony-libclang-additional-flags))
+;;
