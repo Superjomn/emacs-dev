@@ -9,11 +9,17 @@ RUN wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - && \
         apt-get update && \
         apt-get install -y clang-6.0
 
-RUN add-apt-repository ppa:kelleyk/emacs && apt-get update \
+RUN echo deb http://ppa.launchpad.net/kelleyk/emacs/ubuntu bionic main >> /etc/apt/sources.list
+RUN echo deb-src http://ppa.launchpad.net/kelleyk/emacs/ubuntu bionic main >> /etc/apt/sources.list
+RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 3FF0E01EEAAFC9CD
+
+#RUN add-apt-repository ppa:kelleyk/emacs 
+
+RUN apt-get update \
     && apt-get install -y curl \
                        file \
                        git \
-                       emacs26 \
+                       emacs27 \
                        gcc \
                        g++ \
                        libclang-6.0-dev \
@@ -29,7 +35,12 @@ RUN mkdir -p /opt/src && cd /opt/src/ && git clone --recursive https://github.co
 #ENV PATH "${PATH}:/opt/src/rtags/bin/"
 
 # the DOOM emacs depends the latest git.
-RUN add-apt-repository ppa:git-core/ppa && apt install -y git
+RUN echo deb http://ppa.launchpad.net/git-core/ppa/ubuntu bionic main >> /etc/apt/sources.list && \
+    echo deb-src http://ppa.launchpad.net/git-core/ppa/ubuntu bionic main >> /etc/apt/sources.list
+RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys A1715D88E1DF1F24 && \
+    apt update
+#RUN add-apt-repository ppa:git-core/ppa && 
+RUN apt install -y git
 # use a specific commit to avoid doom-emacs broken update
 RUN git clone https://github.com/hlissner/doom-emacs ~/.emacs.d && cd ~/.emacs.d && git checkout 2731685
 RUN printf 'y\ny' | ~/.emacs.d/bin/doom -y install
