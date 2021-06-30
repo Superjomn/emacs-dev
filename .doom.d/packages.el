@@ -51,4 +51,9 @@
 (package! cmake-ide)
 (package! hydra)
 (package! yasnippet)
+(package! google-c-style)
 (package! company-irony-c-headers)
+(package! info-colors)
+(package! spacemacs-theme)
+;; for operations on directories or paths
+(package! f)

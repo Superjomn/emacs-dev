@@ -6,8 +6,8 @@
 
 ;; Some functionality uses this to identify you, e.g. GPG configuration, email
 ;; clients, file templates and snippets.
-(setq user-full-name "John Doe"
-      user-mail-address "john@doe.com")
+(setq user-full-name "Chunwei Yan"
+      user-mail-address "yanchunwei@outlook.com")
 
 ;; Doom exposes five (optional) variables for controlling fonts in Doom. Here
 ;; are the three important ones:
@@ -53,6 +53,27 @@
 ;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
 ;; they are implemented.
 
+;; ==============================================================================
+(display-time-mode 1)                   ; Enable time in the mode-line
+
+(if (eq initial-window-system 'x)       ; Startup by full frame
+    (toggle-frame-maximized)
+  (toggle-frame-fullscreen))
+
+(setq frame-title-format
+      '(""
+        (:eval
+         (if (s-contains-p org-roam-directory (or buffer-file-name ""))
+             (replace-regexp-in-string ".*/[0-9]*-?" "<" buffer-file-name)
+           "%b"))
+        (:eval
+         (let ((project-name (projectile-project-name)))
+           (unless (string= "-" project-name)
+             (format (if (buffer-modified-p)  " ◉ %s" "  ●  %s") project-name))))))
+
+
+;; ==============================================================================
+
 
 (require 'rtags) ;; optional, must have rtags installed
 (rtags-start-process-unless-running)
@@ -67,6 +88,7 @@
 (define-key evil-normal-state-map "vs" '(lambda ()
                                           (interactive)
                                           (split-window-right-and-focus)
+                                          (balance-windows)
                                           ))
 (define-key evil-normal-state-map "vh" 'evil-window-left)
 (define-key evil-normal-state-map "vl" 'evil-window-right)
@@ -86,6 +108,7 @@
 (setq chun/--projectile-known-projects
       '("/home/chunwei/project/pscore"
         "/home/chunwei/centra/info_center"
+        "/home/chunwei/project/emacs-dev"
         ))
 
 (-map (lambda (path)
@@ -127,10 +150,38 @@
         )
       chun/--projectile-globally-ignored-directories)
 (setq irony-cdb-search-directory-list
-      "/home/chunwei/project/pscore/cmake-build-debug/"
+      "/home/chunwei/project/pscore/"
       )
 
+;;; make the code style as google-c-style
+(add-hook 'c-mode-common-hook 'google-set-c-style)
 
-;; (setq irony-libclang-additional-flags
-;;       (append '("-I" "/home/chunwei/project/pscore/cmake-build-debug/third_party/install/absl/include") irony-libclang-additional-flags))
-;;
+
+(defun chun/update-compile-commands ()
+  "Run update-compile-commands.sh in a project
+NOTE it use the variable defined in .dir-locals.el in the specific project.
+"
+  (interactive)
+  (message "working on dirctor: %s" cmake-ide-project-dir)
+  (let*
+      ((bash-file (concat cmake-ide-project-dir "/" "update_compile_commands.sh"))
+       (default-directory cmake-ide-project-dir)
+       (-output (shell-command-to-string bash-file)))
+    (message "Output: %s" -output)
+    ))
+
+;; Info colors
+(use-package! info-colors
+  :commands (info-colors-fontify-node))
+(add-hook 'Info-selection-hook 'info-colors-fontify-node)
+(add-hook 'Info-mode-hook #'mixed-pitch-mode)
+
+
+;; Ctrl-K remove the whole line
+(setq kill-whole-line t)
+
+;; set spacemacs theme
+(setq doom-theme 'spacemacs-light)
+
+;; Load my config
+(load "~/.doom.d/chun.el")
