@@ -57,3 +57,4 @@
 (package! spacemacs-theme)
 ;; for operations on directories or paths
 (package! f)
+(package! elisp-format)
