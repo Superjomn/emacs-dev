@@ -6,8 +6,8 @@
 
 ;; Some functionality uses this to identify you, e.g. GPG configuration, email
 ;; clients, file templates and snippets.
-(setq user-full-name "Chunwei Yan"
-      user-mail-address "yanchunwei@outlook.com")
+(setq user-full-name "Superjomn"
+      user-mail-address "Superjomn@")
 
 ;; Doom exposes five (optional) variables for controlling fonts in Doom. Here
 ;; are the three important ones:
@@ -71,20 +71,9 @@
            (unless (string= "-" project-name)
              (format (if (buffer-modified-p)  " ◉ %s" "  ●  %s") project-name))))))
 
-
 ;; ==============================================================================
-;;
-(defun chun/os/is-linux ()
-  "Tell whether this system is Linux."
-  (string-equal system-type "gnu/linux"))
-(defun chun/os/is-macos ()
-  "Tell whether this system is Mac."
-  (string-equal system-type "darwin"))
-(defun chun/os/is-windows ()
-  "Tell whether this system is Windows."
-  (string-equal system-type "windows-nt"))
-
-
+;; Load some utility functions.
+(load! "./base.el")
 
 (require 'rtags) ;; optional, must have rtags installed
 (rtags-start-process-unless-running)
@@ -114,9 +103,8 @@
 
 
 ;; Bug on Mac
-(if (chun/os/is-linux)
-        (map! :leader
-        :desc "Open config" "fed" #'doom/find-file-in-private-config))
+(map! :leader
+      :desc "Open config" "fc" #'doom/find-file-in-private-config)
 
 (map! :leader
       :desc "Open magit status" "gs" #'magit-status)
@@ -136,6 +124,7 @@
 '("~/project/pscore"
         "~/centra/info_center"
         "~/project/emacs-dev"
+        "~/project/algo-trading"
         ))
 
 (-map (lambda (path)
@@ -150,6 +139,7 @@ chun/--projectile-known-projects)
     'company-backends '(company-irony-c-headers company-irony)))
 
 
+;; YAS related.
 (setq yas-snippet-dirs '(
                          "/home/chunwei/project/yas-snippets"
                          ))
@@ -157,6 +147,8 @@ chun/--projectile-known-projects)
 
 (global-set-key (kbd "M-/") 'yas-expand)
 
+
+;; Helm related.
 (require 'helm)
 (setq helm-mode-fuzzy-match t)
 (setq helm-completion-in-region-fuzzy-match t)
@@ -211,55 +203,8 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
 ;; set spacemacs theme
 (setq doom-theme 'spacemacs-light)
 
-;; https://www.rousette.org.uk/archives/doom-emacs-tweaks-org-journal-and-org-super-agenda/
-(use-package org-super-agenda
-  :after org-agenda
-  :init
-  (setq org-agenda-skip-scheduled-if-done t
-      org-agenda-skip-deadline-if-done t
-      org-agenda-include-deadlines t
-      org-agenda-block-separator nil
-      org-agenda-compact-blocks t
-      org-agenda-start-day nil ;; i.e. today
-      org-agenda-span 1
-      org-agenda-start-on-weekday nil)
-  (setq org-agenda-custom-commands
-        '(("c" "Super view"
-           ((agenda "" ((org-agenda-overriding-header "")
-                        (org-super-agenda-groups
-                         '((:name "Today"
-                                  :time-grid t
-                                  :date today
-                                  :order 1)))))
-            (alltodo "" ((org-agenda-overriding-header "")
-                         (org-super-agenda-groups
-                          '((:log t)
-                            (:name "To refile"
-                                   :file-path "refile\\.org")
-                            (:name "Next to do"
-                                   :todo "NEXT"
-                                   :order 1)
-                            (:name "Important"
-                                   :priority "A"
-                                   :order 6)
-                            (:name "Today's tasks"
-                                   :file-path "journal/")
-                            (:name "Due Today"
-                                   :deadline today
-                                   :order 2)
-                            (:name "Scheduled Soon"
-                                   :scheduled future
-                                   :order 8)
-                            (:name "Overdue"
-                                   :deadline past
-                                   :order 7)
-                            (:name "Meetings"
-                                   :and (:todo "MEET" :scheduled future)
-                                   :order 10)
-                            (:discard (:not (:todo "TODO")))))))))))
-  :config
-  (org-super-agenda-mode))
 
+(load! "./chun-agenda.el")
 
 ;; set encoding
 (prefer-coding-system 'utf-8)
