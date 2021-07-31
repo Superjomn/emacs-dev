@@ -59,3 +59,4 @@
 (package! f)
 (package! elisp-format)
 (package! org-super-agenda)
+(package! elpy)

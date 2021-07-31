@@ -1,5 +1,4 @@
 ;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
-
 ;; Place your private configuration here! Remember, you do not need to run 'doom
 ;; sync' after modifying this file!
 
@@ -121,7 +120,7 @@
 (require 'dash)
 
 (setq chun/--projectile-known-projects
-'("~/project/pscore"
+      '("~/project/pscore"
         "~/centra/info_center"
         "~/project/emacs-dev"
         "~/project/algo-trading"
@@ -129,7 +128,7 @@
 
 (-map (lambda (path)
         (projectile-add-known-project path))
-chun/--projectile-known-projects)
+      chun/--projectile-known-projects)
 
 
 (require 'company-irony-c-headers)
@@ -207,14 +206,30 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
 (load! "./chun-agenda.el")
 
 ;; set encoding
+;; This seems not working
 (prefer-coding-system 'utf-8)
 (set-default-coding-systems 'utf-8)
 (set-terminal-coding-system 'utf-8)
 (set-keyboard-coding-system 'utf-8)
 
-
-
 ;; Load my config
-(load "~/.doom.d/chun.el")
+(load! "./chun.el")
 
-(setq org-agenda-files "~/centra/info_center/agenda/")
+
+;; Python config
+(use-package! elpy
+  :commands (elpy-enable))
+
+(setq elpy-rpc-virtualenv-path "~/project/algo-trading/venv")
+;; format python code before save file
+(add-hook 'elpy-mode-hook (lambda ()
+                            (add-hook 'before-save-hook
+                                      'elpy-format-code nil t)))
+
+;; avy jump config
+(map! :leader
+      :desc "Jump to a word" "jj" #'avy-goto-word-or-subword-1)
+(map! :leader
+      :desc "Jump to a word" "jw" #'avy-goto-word-0)
+(map! :leader
+      :desc "Jump to a line" "jl" #'avy-goto-line)
