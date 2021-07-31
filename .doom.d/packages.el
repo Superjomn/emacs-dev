@@ -58,3 +58,4 @@
 ;; for operations on directories or paths
 (package! f)
 (package! elisp-format)
+(package! org-super-agenda)

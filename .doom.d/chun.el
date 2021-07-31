@@ -78,19 +78,19 @@
   (delete-trailing-whitespace))
 
 
-;; tests ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(eval-when-compile (assert (string= (chun/--join-paths "a" "b") "a/b")))
+;; ;; tests ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; (eval-when-compile (assert (string= (chun/--join-paths "a" "b") "a/b")))
 
-(eval-when-compile (assert (string= (chun/--join-paths "/a/b/" "../b") "/a/b")))
+;; (eval-when-compile (assert (string= (chun/--join-paths "/a/b/" "../b") "/a/b")))
 
-(eval-when-compile (message "current directory: %S" (chun/--current-directory)))
+;; (eval-when-compile (message "current directory: %S" (chun/--current-directory)))
 
-;; (eval-when-compile
-;;   (message "abs path: %s" (chun/--abs-path "../a")))
+;; ;; (eval-when-compile
+;; ;;   (message "abs path: %s" (chun/--abs-path "../a")))
 
-(eval-when-compile (assert (string=  (chun/--dir-name "a/b/c.txt") "a/b/")))
+;; (eval-when-compile (assert (string=  (chun/--dir-name "a/b/c.txt") "a/b/")))
 
-(eval-when-compile (message "dirs: %S" (chun/cpp/--generate-upper-directories "/a/b/c/d.txt")))
-;; (eval-when-compile
-;;   (chun/cpp/new-class-files))
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; (eval-when-compile (message "dirs: %S" (chun/cpp/--generate-upper-directories "/a/b/c/d.txt")))
+;; ;; (eval-when-compile
+;; ;;   (chun/cpp/new-class-files))
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -29,7 +29,7 @@
 
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
-(setq org-directory "~/org/")
+(setq org-directory "/Users/yanchunwei/centra/info_center/agenda")
 
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
@@ -73,6 +73,17 @@
 
 
 ;; ==============================================================================
+;;
+(defun chun/os/is-linux ()
+  "Tell whether this system is Linux."
+  (string-equal system-type "gnu/linux"))
+(defun chun/os/is-macos ()
+  "Tell whether this system is Mac."
+  (string-equal system-type "darwin"))
+(defun chun/os/is-windows ()
+  "Tell whether this system is Windows."
+  (string-equal system-type "windows-nt"))
+
 
 
 (require 'rtags) ;; optional, must have rtags installed
@@ -85,16 +96,27 @@
 
 
 ;; window control
-(define-key evil-normal-state-map "vs" '(lambda ()
-                                          (interactive)
-                                          (split-window-right-and-focus)
-                                          (balance-windows)
-                                          ))
+(if (chun/os/is-linux)
+        (define-key evil-normal-state-map "vs" '(lambda ()
+                                                (interactive)
+                                                (split-window-right-and-focus)
+                                                (balance-windows))))
+;; on mac, no (split-window-right-and-focus)
+(if (chun/os/is-macos)
+    (define-key evil-normal-state-map "vs" '(lambda ()
+                                                (interactive)
+                                                (split-window-right)
+                                                (balance-windows)
+                                                (other-window 1))))
+
 (define-key evil-normal-state-map "vh" 'evil-window-left)
 (define-key evil-normal-state-map "vl" 'evil-window-right)
 
-(map! :leader
-      :desc "Open config" "fed" #'doom/find-file-in-private-config)
+
+;; Bug on Mac
+(if (chun/os/is-linux)
+        (map! :leader
+        :desc "Open config" "fed" #'doom/find-file-in-private-config))
 
 (map! :leader
       :desc "Open magit status" "gs" #'magit-status)
@@ -102,18 +124,24 @@
 (map! :leader
       :desc "Open vterm popup" "'" #'+vterm/toggle)
 
+(map! :leader
+      :desc "Go to scratch buffer" "bs" '(lambda ()
+                                           (interactive)
+                                           (switch-to-buffer "*scratch*")))
+
 
 (require 'dash)
 
 (setq chun/--projectile-known-projects
-      '("/home/chunwei/project/pscore"
-        "/home/chunwei/centra/info_center"
-        "/home/chunwei/project/emacs-dev"
+'("~/project/pscore"
+        "~/centra/info_center"
+        "~/project/emacs-dev"
         ))
 
 (-map (lambda (path)
         (projectile-add-known-project path))
-      chun/--projectile-known-projects)
+chun/--projectile-known-projects)
+
 
 (require 'company-irony-c-headers)
 ;; Load with `irony-mode` as a grouped backend
@@ -183,5 +211,65 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
 ;; set spacemacs theme
 (setq doom-theme 'spacemacs-light)
 
+;; https://www.rousette.org.uk/archives/doom-emacs-tweaks-org-journal-and-org-super-agenda/
+(use-package org-super-agenda
+  :after org-agenda
+  :init
+  (setq org-agenda-skip-scheduled-if-done t
+      org-agenda-skip-deadline-if-done t
+      org-agenda-include-deadlines t
+      org-agenda-block-separator nil
+      org-agenda-compact-blocks t
+      org-agenda-start-day nil ;; i.e. today
+      org-agenda-span 1
+      org-agenda-start-on-weekday nil)
+  (setq org-agenda-custom-commands
+        '(("c" "Super view"
+           ((agenda "" ((org-agenda-overriding-header "")
+                        (org-super-agenda-groups
+                         '((:name "Today"
+                                  :time-grid t
+                                  :date today
+                                  :order 1)))))
+            (alltodo "" ((org-agenda-overriding-header "")
+                         (org-super-agenda-groups
+                          '((:log t)
+                            (:name "To refile"
+                                   :file-path "refile\\.org")
+                            (:name "Next to do"
+                                   :todo "NEXT"
+                                   :order 1)
+                            (:name "Important"
+                                   :priority "A"
+                                   :order 6)
+                            (:name "Today's tasks"
+                                   :file-path "journal/")
+                            (:name "Due Today"
+                                   :deadline today
+                                   :order 2)
+                            (:name "Scheduled Soon"
+                                   :scheduled future
+                                   :order 8)
+                            (:name "Overdue"
+                                   :deadline past
+                                   :order 7)
+                            (:name "Meetings"
+                                   :and (:todo "MEET" :scheduled future)
+                                   :order 10)
+                            (:discard (:not (:todo "TODO")))))))))))
+  :config
+  (org-super-agenda-mode))
+
+
+;; set encoding
+(prefer-coding-system 'utf-8)
+(set-default-coding-systems 'utf-8)
+(set-terminal-coding-system 'utf-8)
+(set-keyboard-coding-system 'utf-8)
+
+
+
 ;; Load my config
 (load "~/.doom.d/chun.el")
+
+(setq org-agenda-files "~/centra/info_center/agenda/")
