@@ -60,3 +60,16 @@
 (package! elisp-format)
 (package! org-super-agenda)
 (package! elpy)
+;; for personal wiki
+;; (package! org-journal)
+(package! org-roam)
+(package! deft)
+;; (package! org-roam-server)
+;; (package! websocket)
+;; (package! simple-httpd)
+;; (package! org-roam-ui :recipe (:host github :repo "org-roam/org-roam-ui" :files ("*.el" "out")))
+;;
+;; (straight-use-package
+;;  '(org-roam :type git :host github :repo "org-roam/org-roam-v1"))
+
+(package! org-download)

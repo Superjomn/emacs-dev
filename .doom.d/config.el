@@ -55,9 +55,9 @@
 ;; ==============================================================================
 (display-time-mode 1)                   ; Enable time in the mode-line
 
-(if (eq initial-window-system 'x)       ; Startup by full frame
-    (toggle-frame-maximized)
-  (toggle-frame-fullscreen))
+;; (if (eq initial-window-system 'x)       ; Startup by full frame
+;;     (toggle-frame-maximized)
+;;   (toggle-frame-fullscreen))
 
 (setq frame-title-format
       '(""
@@ -123,8 +123,7 @@
       '("~/project/pscore"
         "~/centra/info_center"
         "~/project/emacs-dev"
-        "~/project/algo-trading"
-        ))
+        "~/project/algo-trading"))
 
 (-map (lambda (path)
         (projectile-add-known-project path))
@@ -140,8 +139,7 @@
 
 ;; YAS related.
 (setq yas-snippet-dirs '(
-                         "/home/chunwei/project/yas-snippets"
-                         ))
+                         "/home/chunwei/project/yas-snippets"))
 (yas-global-mode 1)
 
 (global-set-key (kbd "M-/") 'yas-expand)
@@ -159,18 +157,15 @@
 (setq chun/--projectile-globally-ignored-directories
       '("*build"
         "*cmake-build-debug"
-        ".idea"
-        ))
+        ".idea"))
 (require 'projectile)
 ;; This is broken, not works
 (-map (lambda (s)
         (setq projectile-globally-ignored-directories
-              (add-to-list 'projectile-globally-ignored-directories s))
-        )
+              (add-to-list 'projectile-globally-ignored-directories s)))
       chun/--projectile-globally-ignored-directories)
 (setq irony-cdb-search-directory-list
-      "/home/chunwei/project/pscore/"
-      )
+      "/home/chunwei/project/pscore/")
 
 ;;; make the code style as google-c-style
 (add-hook 'c-mode-common-hook 'google-set-c-style)
@@ -186,8 +181,7 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
       ((bash-file (concat cmake-ide-project-dir "/" "update_compile_commands.sh"))
        (default-directory cmake-ide-project-dir)
        (-output (shell-command-to-string bash-file)))
-    (message "Output: %s" -output)
-    ))
+    (message "Output: %s" -output)))
 
 ;; Info colors
 (use-package! info-colors
@@ -233,3 +227,55 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
       :desc "Jump to a word" "jw" #'avy-goto-word-0)
 (map! :leader
       :desc "Jump to a line" "jl" #'avy-goto-line)
+
+(setq org-roam-directory "~/centra/info_center/org-roam")
+
+(setq org-roam-v2-ack t)
+(use-package org-roam
+      :ensure t
+      :custom
+      (org-roam-directory (file-truename "~/centra/info_center/org-roam"))
+      (org-roam-v2-ack t)
+      (org-roam-graph-viewer "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome")
+      (org-roam-complete-everywhere t)
+      :bind (("C-c n l" . org-roam-buffer-toggle)
+             ("C-c n f" . org-roam-node-find)
+             ("C-c n g" . org-roam-graph)
+             ("C-c n i" . org-roam-node-insert)
+             ("C-c n c" . org-roam-capture)
+             ;; Dailies
+             ("C-c n j" . org-roam-dailies-capture-today))
+      :config
+      (org-roam-setup)
+      ;; If using org-roam-protocol
+      (require 'org-roam-protocol))
+
+
+(use-package! deft
+  :after org
+  :bind ("C-c n d" . deft)
+  :custom (deft-recursive t)
+  (deft-use-filter-string-for-filename t)
+  (deft-default-extension "org")
+  (deft-directory org-roam-directory)
+  (deft-file-naming-rules '((noslash . "-")
+                            (nospace . "-")
+                            (case-fn . downcase))))
+
+
+(use-package org-journal
+  :bind
+  ("C-c n j" . org-journal-new-entry)
+  :custom
+  (org-journal-dir org-roam-directory)
+  (org-journal-date-prefix "#+TITLE: ")
+  (org-journal-file-format "%Y-%m-%d.org")
+  (org-journal-date-format "%A > %d %B %Y"))
+(setq org-journal-enable-agenda-integration t)
+
+(use-package org-download
+  :after org
+  :bind
+  (:map org-mode-map
+        (("s-Y" . org-download-screenshot)
+         ("s-y" . org-download-yank))))
