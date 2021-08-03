@@ -12,3 +12,10 @@
 (defun chun/os/is-windows ()
   "Tell whether this system is Windows."
   (string-equal system-type "windows-nt"))
+
+;; show file name
+(defun chun/get-file-path ()
+  "Get the path to the file."
+  (interactive)
+  (message (buffer-file-name))
+  (kill-new (file-truename buffer-file-name)))
