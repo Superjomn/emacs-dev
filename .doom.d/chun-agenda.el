@@ -49,4 +49,7 @@
   :config
   (org-super-agenda-mode))
 
-(setq org-agenda-files "~/centra/info_center/agenda/")
+(setq org-agenda-files
+      (list
+       "~/OneDrive/org-roam/20210803112648-21_q3_inference_enhancement_agenda.org"
+       "~/OneDrive/org-roam/20210802174120-paddle_inference_pass_ci_status.org"))
