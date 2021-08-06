@@ -265,7 +265,7 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
                             (case-fn . downcase))))
 
 
-(use-package org-journal
+(use-package! org-journal
   :bind
   ("C-c n j" . org-journal-new-entry)
   :custom
@@ -275,7 +275,7 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
   (org-journal-date-format "%A > %d %B %Y"))
 (setq org-journal-enable-agenda-integration t)
 
-(use-package org-download
+(use-package! org-download
   :after org
   :bind
   (:map org-mode-map
@@ -308,3 +308,5 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
                                                         (python . t)
                                                         (latex . t)
                                                         ))
+
+(setq org-startup-with-inline-images t)

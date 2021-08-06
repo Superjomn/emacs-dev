@@ -46,10 +46,35 @@
                                    :and (:todo "MEET" :scheduled future)
                                    :order 10)
                             (:discard (:not (:todo "TODO")))))))))))
+  ;; Set default column view headings: Task Total-Time Time-Stamp
+  (setq org-columns-default-format "%50ITEM(Task) %10CLOCKSUM %16TIMESTAMP_IA")
   :config
   (org-super-agenda-mode))
 
+
+(setq org-agenda-prefix-format
+      '(
+        (agenda . "%-8:i %-8:c * ")
+        (timeline . " % s")))
+
 (setq org-agenda-files
       (list
-       "~/OneDrive/org-roam/20210803112648-21_q3_inference_enhancement_agenda.org"
-       "~/OneDrive/org-roam/20210802174120-paddle_inference_pass_ci_status.org"))
+       "~/OneDrive/org-roam/20210803124941-inference_2021_q3_enhancement_agenda.org"
+       "~/OneDrive/org-roam/20210803112751-paddle_inference_agenda.org"))
+
+(let ((org-agenda-span 'day)
+      (org-super-agenda-groups
+       '((:name "TODAY"
+          :time-grid t
+          :todo "TODAY"
+          :face (:background "white" :underline t)
+          :transformer (--> it
+                            (upcase it)))
+         (:name "Important"
+          :priority>= "B")
+
+         (:name "Others"
+          :face (:background "white" :underline t)
+          :not (:priority>= "B")
+          :order 100))))
+  (org-agenda nil "a"))
