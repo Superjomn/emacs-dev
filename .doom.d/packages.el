@@ -73,3 +73,4 @@
 ;;  '(org-roam :type git :host github :repo "org-roam/org-roam-v1"))
 
 (package! org-download)
+(package! org-superstar)

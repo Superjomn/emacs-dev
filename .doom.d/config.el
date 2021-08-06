@@ -119,6 +119,9 @@
 
 (require 'dash)
 
+(use-package! projectile
+  :init
+)
 (setq chun/--projectile-known-projects
       '("~/project/pscore"
         "~/centra/info_center"
@@ -196,6 +199,25 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
 ;; set spacemacs theme
 (setq doom-theme 'spacemacs-light)
 
+(use-package! org
+  :init (setq-default org-export-with-todo-keywords t)
+  (setq-default org-enforce-todo-dependencies t)
+  :custom (org-todo-keywords '((sequence "TODO(t)" "STRT(s)" "NEXT(n)" "|" "DONE(d)")
+                               (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)")))
+  (org-todo-keyword-faces '(("TODO" :foreground "red"
+                             :weight bold)
+                            ("NEXT" :foreground "blue"
+                             :weight bold)
+                            ("DONE" :foreground "forest green"
+                             :weight bold)
+                            ("WAITING" :foreground "orange"
+                             :weight bold)
+                            ("HOLD" :foreground "magenta"
+                             :weight bold)
+                            ("CANCELLED" :foreground "forest green"
+                             :weight bold))))
+
+
 
 (load! "./chun-agenda.el")
 
@@ -233,13 +255,13 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
 (setq org-roam-directory "~/centra/info_center/org-roam")
 
 (setq org-roam-v2-ack t)
-(use-package org-roam
+(use-package! org-roam
       :ensure t
       :custom
       (org-roam-directory (file-truename "~/centra/info_center/org-roam"))
-      (org-roam-v2-ack t)
       (org-roam-graph-viewer "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome")
       (org-roam-complete-everywhere t)
+      (org-roam-v2-ack t)
       :bind (("C-c n l" . org-roam-buffer-toggle)
              ("C-c n f" . org-roam-node-find)
              ("C-c n g" . org-roam-graph)
@@ -266,6 +288,7 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
 
 
 (use-package! org-journal
+  :after org
   :bind
   ("C-c n j" . org-journal-new-entry)
   :custom
@@ -287,26 +310,25 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
 ;; org babel ;;
 ;; auto insert code
 (defun org-insert-src-block (src-code-type)
-"Insert a `SRC-CODE-TYPE' type source code block in org-mode."
-(interactive (let ((src-code-types '("emacs-lisp" "python" "C" "sh" "java" "js" "clojure" "C++"
-                                        "css" "calc" "asymptote" "dot" "gnuplot" "ledger"
-                                        "lilypond" "mscgen" "octave" "oz" "plantuml" "R" "sass"
-                                        "screen" "sql" "awk" "ditaa" "haskell" "latex" "lisp"
-                                        "matlab" "ocaml" "org" "perl" "ruby" "scheme" "sqlite")))
-                (list (ido-completing-read "Source code type: " src-code-types))))
-(progn (newline-and-indent)
-        (insert (format "#+BEGIN_SRC %s\n" src-code-type))
-        (newline-and-indent)
-        (insert "#+END_SRC\n")
-        (previous-line 2)
-        (org-edit-src-code)))
+  "Insert a `SRC-CODE-TYPE' type source code block in org-mode."
+  (interactive (let ((src-code-types '("emacs-lisp" "python" "C" "sh" "java" "js" "clojure" "C++"
+                                       "css" "calc" "asymptote" "dot" "gnuplot" "ledger" "lilypond"
+                                       "mscgen" "octave" "oz" "plantuml" "R" "sass" "screen" "sql"
+                                       "awk" "ditaa" "haskell" "latex" "lisp" "matlab" "ocaml" "org"
+                                       "perl" "ruby" "scheme" "sqlite")))
+                 (list (ido-completing-read "Source code type: " src-code-types))))
+  (progn (newline-and-indent)
+         (insert (format "#+BEGIN_SRC %s\n" src-code-type))
+         (newline-and-indent)
+         (insert "#+END_SRC\n")
+         (previous-line 2)
+         (org-edit-src-code)))
 (add-hook 'org-mode-hook '(lambda ()
-                        ;; keybiding for insert source code
-                        (local-set-key (kbd "C-c s") 'org-insert-src-block)))
+                            ;; keybiding for insert source code
+                            (local-set-key (kbd "C-c s") 'org-insert-src-block)))
 ;; add support for exectuate c++ in org-mode
 (org-babel-do-load-languages 'org-babel-load-languages '((C . t)
-                                                        (python . t)
-                                                        (latex . t)
-                                                        ))
+                                                         (python . t)
+                                                         (latex . t)))
 
 (setq org-startup-with-inline-images t)

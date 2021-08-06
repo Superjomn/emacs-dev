@@ -1,7 +1,46 @@
 ;;; ../project/emacs-dev/.doom.d/chun-agenda.el -*- lexical-binding: t; -*-
+;;;
+;;;
+
+;; (use-package! org-superstar
+;;   :init
+;;   ;; Every non-TODO headline now have no bullet
+;;   (setq org-superstar-headline-bullets-list '("\u200b"))
+;;   (setq org-superstar-leading-bullet "\u200b")
+;;   (setq org-superstar-item-bullet-alist
+;;         '((?* . ?•)
+;;           (?+ . ?➤)
+;;           (?- . ?•)))
+;;   ;; Enable custom bullets for TODO items
+;;   (setq org-superstar-headline-bullets-list '(?\s))
+;;   (setq org-superstar-special-todo-items t)
+;;   (setq org-superstar-remove-leading-stars nil)
+;;   (setq org-superstar-todo-bullet-alist
+;;         '(("TODO" . ?☐)
+;;           ("NEXT" . ?✒)
+;;           ("HOLD" . ?✰)
+;;           ("WAITING" . ?☕)
+;;           ("CANCELLED" . ?✘)
+;;           ("DONE" . ?✔)))
+;;   (org-superstar-restart))
+
+(use-package! org-superstar
+  :custom (add-hook 'org-mode-hook (lambda ()
+                                     (org-superstar-mode 1)))
+  (setq org-superstar-headline-bullets-list '(?\s))
+  (setq org-superstar-special-todo-items t)
+  (setq org-superstar-remove-leading-stars nil)
+  (setq org-superstar-todo-bullet-alist '(("TODO" . ?☐)
+                                          ("NEXT" . ?✒)
+                                          ("HOLD" . ?✰)
+                                          ("WAITING" . ?☕)
+                                          ("CANCELLED" . ?✘)
+                                          ("DONE" . ?✔)))
+  (org-superstar-restart))
+
 
 ;; https://www.rousette.org.uk/archives/doom-emacs-tweaks-org-journal-and-org-super-agenda/
-(use-package org-super-agenda
+(use-package! org-super-agenda
   :after org-agenda
   :init
   (setq org-agenda-skip-scheduled-if-done t
@@ -14,7 +53,8 @@
       org-agenda-start-on-weekday nil)
   (setq org-agenda-custom-commands
         '(("c" "Super view"
-           ((agenda "" ((org-agenda-overriding-header "")
+           ((agenda "" ((org-agenda-span 'day)
+                        (org-agenda-overriding-header "")
                         (org-super-agenda-groups
                          '((:name "Today"
                                   :time-grid t
@@ -23,16 +63,12 @@
             (alltodo "" ((org-agenda-overriding-header "")
                          (org-super-agenda-groups
                           '((:log t)
-                            (:name "To refile"
-                                   :file-path "refile\\.org")
                             (:name "Next to do"
                                    :todo "NEXT"
                                    :order 1)
                             (:name "Important"
                                    :priority "A"
                                    :order 6)
-                            (:name "Today's tasks"
-                                   :file-path "journal/")
                             (:name "Due Today"
                                    :deadline today
                                    :order 2)
@@ -42,11 +78,9 @@
                             (:name "Overdue"
                                    :deadline past
                                    :order 7)
-                            (:name "Meetings"
-                                   :and (:todo "MEET" :scheduled future)
-                                   :order 10)
                             (:discard (:not (:todo "TODO")))))))))))
   ;; Set default column view headings: Task Total-Time Time-Stamp
+  (setq org-agenda-prefix-format "%i %-15:c %-14t% s%-6e %/b ")
   (setq org-columns-default-format "%50ITEM(Task) %10CLOCKSUM %16TIMESTAMP_IA")
   :config
   (org-super-agenda-mode))
@@ -62,19 +96,19 @@
        "~/OneDrive/org-roam/20210803124941-inference_2021_q3_enhancement_agenda.org"
        "~/OneDrive/org-roam/20210803112751-paddle_inference_agenda.org"))
 
-(let ((org-agenda-span 'day)
-      (org-super-agenda-groups
-       '((:name "TODAY"
-          :time-grid t
-          :todo "TODAY"
-          :face (:background "white" :underline t)
-          :transformer (--> it
-                            (upcase it)))
-         (:name "Important"
-          :priority>= "B")
+;; (let ((org-agenda-span 'day)
+;;       (org-super-agenda-groups
+;;        '((:name "TODAY"
+;;           :time-grid t
+;;           :todo "TODAY"
+;;           :face (:background "white" :underline t)
+;;           :transformer (--> it
+;;                             (upcase it)))
+;;          (:name "Important"
+;;           :priority>= "B")
 
-         (:name "Others"
-          :face (:background "white" :underline t)
-          :not (:priority>= "B")
-          :order 100))))
-  (org-agenda nil "a"))
+;;          (:name "Others"
+;;           :face (:background "white" :underline t)
+;;           :not (:priority>= "B")
+;;           :order 100))))
+;;   (org-agenda nil "a"))
