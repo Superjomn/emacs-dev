@@ -199,12 +199,14 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
 ;; set spacemacs theme
 (setq doom-theme 'spacemacs-light)
 
+
+(load! "./chun-agenda.el")
+
 (use-package! org
   :init (setq-default org-export-with-todo-keywords t)
   (setq-default org-enforce-todo-dependencies t)
-  :custom (org-todo-keywords '((sequence "TODO(t)" "STRT(s)" "NEXT(n)" "|" "DONE(d)")
-                               (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)")))
-  (org-todo-keyword-faces '(("TODO" :foreground "red"
+  )
+(setq org-todo-keyword-faces '(("TODO" :foreground "red"
                              :weight bold)
                             ("NEXT" :foreground "blue"
                              :weight bold)
@@ -215,11 +217,10 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
                             ("HOLD" :foreground "magenta"
                              :weight bold)
                             ("CANCELLED" :foreground "forest green"
-                             :weight bold))))
+                             :weight bold)))
+(setq org-todo-keywords '((sequence "TODO(t)" "STRT(s)" "NEXT(n)" "|" "DONE(d)")
+                               (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)")))
 
-
-
-(load! "./chun-agenda.el")
 
 ;; set encoding
 ;; This seems not working

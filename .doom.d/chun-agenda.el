@@ -54,27 +54,27 @@
   (setq org-agenda-custom-commands
         '(("c" "Super view"
            ((agenda "" ((org-agenda-span 'day)
-                        (org-agenda-overriding-header "")
+                        ;; (org-agenda-overriding-header "")
                         (org-super-agenda-groups
                          '((:name "Today"
                                   :time-grid t
                                   :date today
-                                  :order 1)))))
+                                  :order 0)))))
             (alltodo "" ((org-agenda-overriding-header "")
                          (org-super-agenda-groups
                           '((:log t)
                             (:name "Next to do"
                                    :todo "NEXT"
-                                   :order 1)
+                                   :order 3)
                             (:name "Important"
                                    :priority "A"
-                                   :order 6)
-                            (:name "Due Today"
-                                   :deadline today
-                                   :order 2)
+                                   :order 1)
+                            ;; (:name "Due Today"
+                            ;;        :deadline today
+                            ;;        :order 2)
                             (:name "Scheduled Soon"
                                    :scheduled future
-                                   :order 8)
+                                   :order 4)
                             (:name "Overdue"
                                    :deadline past
                                    :order 7)
@@ -86,29 +86,18 @@
   (org-super-agenda-mode))
 
 
-(setq org-agenda-prefix-format
-      '(
-        (agenda . "%-8:i %-8:c * ")
-        (timeline . " % s")))
+;; (setq org-agenda-prefix-format
+;;       '(
+;;         (agenda . "%-8:i %-8:c * ")
+;;         (timeline . " % s")))
 
 (setq org-agenda-files
       (list
        "~/OneDrive/org-roam/20210803124941-inference_2021_q3_enhancement_agenda.org"
-       "~/OneDrive/org-roam/20210803112751-paddle_inference_agenda.org"))
+       "~/OneDrive/org-roam/20210803112751-paddle_inference_agenda.org"
+       "~/OneDrive/org-roam/20210806130344-cinn_compiler_agenda.org"
+       ))
 
-;; (let ((org-agenda-span 'day)
-;;       (org-super-agenda-groups
-;;        '((:name "TODAY"
-;;           :time-grid t
-;;           :todo "TODAY"
-;;           :face (:background "white" :underline t)
-;;           :transformer (--> it
-;;                             (upcase it)))
-;;          (:name "Important"
-;;           :priority>= "B")
-
-;;          (:name "Others"
-;;           :face (:background "white" :underline t)
-;;           :not (:priority>= "B")
-;;           :order 100))))
-;;   (org-agenda nil "a"))
+(use-package! org-agenda
+  :bind
+  ("C-c o a" . org-agenda))
