@@ -73,10 +73,12 @@
 ;; ==============================================================================
 ;; Load some utility functions.
 (load! "./base.el")
+;; chun-mode contains all of the personal settings.
+(load! "./chun-mode.el")
 
-(require 'rtags) ;; optional, must have rtags installed
-(rtags-start-process-unless-running)
-(cmake-ide-setup)
+;; (require 'rtags) ;; optional, must have rtags installed
+;; (rtags-start-process-unless-running)
+;; (cmake-ide-setup)
 
 (require 'helm)
 (map! :leader
@@ -114,9 +116,6 @@
 
 (require 'dash)
 
-(use-package! projectile
-  :init
-)
 (setq chun/--projectile-known-projects
       '("~/project/pscore"
         "~/centra/info_center"
@@ -136,8 +135,7 @@
 
 
 ;; YAS related.
-(setq yas-snippet-dirs '(
-                         "/home/chunwei/project/yas-snippets"))
+(setq yas-snippet-dirs chun-mode/yas-snippets-dirs)
 (yas-global-mode 1)
 
 (global-set-key (kbd "M-/") 'yas-expand)
@@ -254,7 +252,7 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
 (use-package! org-roam
       :ensure t
       :custom
-      (org-roam-directory (file-truename "~/centra/info_center/org-roam"))
+      (org-roam-directory (file-truename chun-mode/org-roam-dir))
       (org-roam-graph-viewer "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome")
       (org-roam-complete-everywhere t)
       (org-roam-v2-ack t)

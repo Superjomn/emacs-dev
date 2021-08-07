@@ -93,10 +93,9 @@
 
 (setq org-agenda-files
       (list
-       "~/OneDrive/org-roam/20210803124941-inference_2021_q3_enhancement_agenda.org"
-       "~/OneDrive/org-roam/20210803112751-paddle_inference_agenda.org"
-       "~/OneDrive/org-roam/20210806130344-cinn_compiler_agenda.org"
-       ))
+       (concat chun-mode/org-roam-dir "/20210803124941-inference_2021_q3_enhancement_agenda.org")
+       (concat chun-mode/org-roam-dir "/20210803112751-paddle_inference_agenda.org")
+       (concat chun-mode/org-roam-dir "/20210806130344-cinn_compiler_agenda.org")))
 
 (use-package! org-agenda
   :bind

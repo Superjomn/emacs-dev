@@ -64,6 +64,7 @@
 ;; (package! org-journal)
 (package! org-roam)
 (package! deft)
+(package! highlight-numbers)
 ;; (package! org-roam-server)
 ;; (package! websocket)
 ;; (package! simple-httpd)
@@ -73,4 +74,5 @@
 ;;  '(org-roam :type git :host github :repo "org-roam/org-roam-v1"))
 
 (package! org-download)
+(package! mixed-pitch)
 (package! org-superstar)
