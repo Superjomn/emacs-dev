@@ -82,20 +82,15 @@
 (map! :leader
       :desc "Open like spacemacs" "SPC" #'helm-M-x)
 
+(define-key evil-normal-state-map "vs" '(lambda ()
+                                                (interactive)
+                                                ;; In some version, the split-window-right-and-focus method is undefined.
+                                                (if (boundp 'split-window-right-and-focus)
+                                                    (split-window-right-and-focus)
+                                                  (progn
+                                                    (split-window-right) (other-window 1)))
+                                                (balance-windows)))
 
-;; window control
-(if (chun/os/is-linux)
-        (define-key evil-normal-state-map "vs" '(lambda ()
-                                                (interactive)
-                                                (split-window-right-and-focus)
-                                                (balance-windows))))
-;; on mac, no (split-window-right-and-focus)
-(if (chun/os/is-macos)
-    (define-key evil-normal-state-map "vs" '(lambda ()
-                                                (interactive)
-                                                (split-window-right)
-                                                (balance-windows)
-                                                (other-window 1))))
 
 (define-key evil-normal-state-map "vh" 'evil-window-left)
 (define-key evil-normal-state-map "vl" 'evil-window-right)
