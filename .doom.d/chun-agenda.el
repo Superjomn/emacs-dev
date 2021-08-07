@@ -90,13 +90,23 @@
 ;;       '(
 ;;         (agenda . "%-8:i %-8:c * ")
 ;;         (timeline . " % s")))
+;;
+(setq chun-agenda-inbox-path (concat chun-mode/org-roam-dir "/20210807163552-agenda_inbox.org"))
 
 (setq org-agenda-files
       (list
        (concat chun-mode/org-roam-dir "/20210803124941-inference_2021_q3_enhancement_agenda.org")
        (concat chun-mode/org-roam-dir "/20210803112751-paddle_inference_agenda.org")
-       (concat chun-mode/org-roam-dir "/20210806130344-cinn_compiler_agenda.org")))
+       (concat chun-mode/org-roam-dir "/20210806130344-cinn_compiler_agenda.org")
+       chun-agenda-inbox-path))
 
 (use-package! org-agenda
   :bind
-  ("C-c o a" . org-agenda))
+  ("C-c o a" . org-agenda)
+  ("C-c x x" . org-capture)
+  :init
+  (setq org-capture-templates `(("i" "inbox" entry
+                                 (file chun-agenda-inbox-path) "* TODO %?")
+                                ("l" "link" entry (file chun-agenda-inbox-path)
+                                 "* TODO %(org-cliplink-capture)" :immediate-finish t)
+                                )))

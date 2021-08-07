@@ -121,7 +121,7 @@
   (setq chun/--projectile-known-projects chun-mode/projectile-dirs)
   (-map (lambda (path)
           (projectile-add-known-project path)) chun/--projectile-known-projects)
-  (setq projectile-globally-ignored-directories '(".git"))
+  (setq projectile-globally-ignored-directories '("*.git" "env"))
   (setq projectile-indexing-method 'native)
   (setq projectile-generic-command
         (mapconcat #'shell-quote-argument
@@ -265,7 +265,8 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
       :config
       (org-roam-setup)
       ;; If using org-roam-protocol
-      (require 'org-roam-protocol))
+      (require 'org-roam-protocol)
+      (org-id-update-id-locations))
 
 
 (use-package! deft
@@ -324,11 +325,30 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
                                                          (python . t)
                                                          (latex . t)))
 
-
-;; (setq doom-font (font-spec :family "Input Mono Narrow" :size 14 :weight 'semi-light)
-;;       doom-variable-pitch-font (font-spec :family "Fira Sans") ; inherits `doom-font''s :size
-;;       doom-unicode-font (font-spec :family "Input Mono Narrow" :size 14)
-;;       doom-big-font (font-spec :family "Fira Mono" :size 19))
-
 (setq doom-font (font-spec :family "JetBrains Mono" :size 14 :weight 'normal)
       doom-variable-pitch-font (font-spec :family "JetBrains Mono" :size 14))
+
+;; mypy flycheck mode
+(load! "./mypy-flycheck.el")
+
+;; quickly switch fro different layouts
+(use-package! eyebrowse
+:config
+  (progn
+    (define-key eyebrowse-mode-map (kbd "M-1") 'eyebrowse-switch-to-window-config-1)
+    (define-key eyebrowse-mode-map (kbd "M-2") 'eyebrowse-switch-to-window-config-2)
+    (define-key eyebrowse-mode-map (kbd "M-3") 'eyebrowse-switch-to-window-config-3)
+    (define-key eyebrowse-mode-map (kbd "M-4") 'eyebrowse-switch-to-window-config-4)
+    (define-key eyebrowse-mode-map (kbd "M-5") 'eyebrowse-switch-to-window-config-5)
+    (eyebrowse-mode t)
+    (setq eyebrowse-new-workspace t)))
+
+(use-package! elpy
+  :ensure t
+  :init
+  (elpy-enable))
+
+(after! elpy
+  (add-hook! 'elpy-mode-hook (lambda ()
+                               (add-hook! 'before-save-hook
+                                          'elpy-format-code nil t))))

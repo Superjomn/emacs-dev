@@ -76,3 +76,4 @@
 (package! org-download)
 (package! mixed-pitch)
 (package! org-superstar)
+(package! eyebrowse)
