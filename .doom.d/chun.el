@@ -70,6 +70,8 @@
     (chun/--create-empty-file--safely header-path)
     (chun/--create-empty-file--safely source-path)))
 
+(use-package! elisp-format)
+
 (after! elisp-format
     (require 'elisp-format)
     (defun chun/format-elisp-buffer ()

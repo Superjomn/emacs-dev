@@ -15,6 +15,16 @@
                           (lambda (xs) (and (vectorp xs) (seq-every-p #'stringp xs))))
   :group 'chun)
 
+(defcustom chun-mode/projectile-dirs '("~/project/pscore"
+                                         "~/centra/info_center"
+                                         "~/project/emacs-dev"
+                                         "~/project/algo-trading")
+  "The yas-snippets directory."
+  :type '(restricted-sexp :tag "Vector"
+                          :match-alternatives
+                          (lambda (xs) (and (vectorp xs) (seq-every-p #'stringp xs))))
+  :group 'chun)
+
 (define-minor-mode chun-mode
   "Toggles chun mode"
   nil

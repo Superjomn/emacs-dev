@@ -116,15 +116,19 @@
 
 (require 'dash)
 
-(setq chun/--projectile-known-projects
-      '("~/project/pscore"
-        "~/centra/info_center"
-        "~/project/emacs-dev"
-        "~/project/algo-trading"))
-
-(-map (lambda (path)
-        (projectile-add-known-project path))
-      chun/--projectile-known-projects)
+;; projectile
+(after! projectile
+  (setq chun/--projectile-known-projects chun-mode/projectile-dirs)
+  (-map (lambda (path)
+          (projectile-add-known-project path)) chun/--projectile-known-projects)
+  (setq projectile-globally-ignored-directories '(".git"))
+  (setq projectile-indexing-method 'native)
+  (setq projectile-generic-command
+        (mapconcat #'shell-quote-argument
+                   (append (list "rg" "-0" "--files" "--follow" "--color=never" "--hidden")
+                           (cl-loop for dir in projectile-globally-ignored-directories collect
+                                    "--glob" collect (concat "!" dir))) " ") projectile-git-command
+                                    projectile-generic-command))
 
 
 (require 'company-irony-c-headers)
@@ -198,7 +202,9 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
 (use-package! org
   :init (setq-default org-export-with-todo-keywords t)
   (setq-default org-enforce-todo-dependencies t)
-  )
+  :custom
+  (org-startup-with-inline-images t))
+
 (setq org-todo-keyword-faces '(("TODO" :foreground "red"
                              :weight bold)
                             ("NEXT" :foreground "blue"
@@ -229,24 +235,17 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
 ;; Python config
 (use-package! elpy
   :commands (elpy-enable))
-
-(setq elpy-rpc-virtualenv-path "~/project/algo-trading/venv")
-;; format python code before save file
-(add-hook 'elpy-mode-hook (lambda ()
-                            (add-hook 'before-save-hook
-                                      'elpy-format-code nil t)))
+(after! elpy
+  (setq elpy-rpc-virtualenv-path "~/project/algo-trading/venv")
+  ;; format python code before save file
+  (add-hook 'elpy-mode-hook (lambda ()
+                              (add-hook 'before-save-hook 'elpy-format-code nil t))))
 
 ;; avy jump config
-(map! :leader
-      :desc "Jump to a word" "jj" #'avy-goto-word-or-subword-1)
-(map! :leader
-      :desc "Jump to a word" "jw" #'avy-goto-word-0)
-(map! :leader
-      :desc "Jump to a line" "jl" #'avy-goto-line)
-
-
-;; org-roam
-(setq org-roam-directory "~/centra/info_center/org-roam")
+(after! avy
+  (map! :leader :desc "Jump to a word" "jj" #'avy-goto-word-or-subword-1)
+  (map! :leader :desc "Jump to a word" "jw" #'avy-goto-word-0)
+  (map! :leader :desc "Jump to a line" "jl" #'avy-goto-line))
 
 (setq org-roam-v2-ack t)
 (use-package! org-roam
@@ -325,4 +324,11 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
                                                          (python . t)
                                                          (latex . t)))
 
-(setq org-startup-with-inline-images t)
+
+;; (setq doom-font (font-spec :family "Input Mono Narrow" :size 14 :weight 'semi-light)
+;;       doom-variable-pitch-font (font-spec :family "Fira Sans") ; inherits `doom-font''s :size
+;;       doom-unicode-font (font-spec :family "Input Mono Narrow" :size 14)
+;;       doom-big-font (font-spec :family "Fira Mono" :size 19))
+
+(setq doom-font (font-spec :family "JetBrains Mono" :size 14 :weight 'normal)
+      doom-variable-pitch-font (font-spec :family "JetBrains Mono" :size 14))
