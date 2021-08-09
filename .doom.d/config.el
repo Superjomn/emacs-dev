@@ -204,8 +204,6 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
   (setq-default org-enforce-todo-dependencies t)
   :bind (:map org-mode-map
          ("C-c RET" . org-insert-heading)))
-  :custom
-  (org-startup-with-inline-images t))
 
 (setq org-todo-keyword-faces '(("TODO" :foreground "red"
                              :weight bold)
@@ -335,7 +333,8 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
 
 ;; quickly switch fro different layouts
 (use-package! eyebrowse
-:config
+  :ensure t
+  :config
   (progn
     (define-key eyebrowse-mode-map (kbd "M-1") 'eyebrowse-switch-to-window-config-1)
     (define-key eyebrowse-mode-map (kbd "M-2") 'eyebrowse-switch-to-window-config-2)
