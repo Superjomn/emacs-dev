@@ -205,7 +205,8 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
 (use-package! org
   :init (setq-default org-export-with-todo-keywords t)
   (setq-default org-enforce-todo-dependencies t)
-  )
+  :bind (:map org-mode-map
+         ("C-c RET" . org-insert-heading)))
 (setq org-todo-keyword-faces '(("TODO" :foreground "red"
                              :weight bold)
                             ("NEXT" :foreground "blue"

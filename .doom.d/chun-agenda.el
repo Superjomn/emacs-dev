@@ -80,16 +80,11 @@
                                    :order 7)
                             (:discard (:not (:todo "TODO")))))))))))
   ;; Set default column view headings: Task Total-Time Time-Stamp
-  (setq org-agenda-prefix-format "%i %-15:c %-14t% s%-6e %/b ")
+  (setq org-agenda-prefix-format "%i %-2:c %-14t% s%-6e %/b ")
   (setq org-columns-default-format "%50ITEM(Task) %10CLOCKSUM %16TIMESTAMP_IA")
   :config
   (org-super-agenda-mode))
 
-
-;; (setq org-agenda-prefix-format
-;;       '(
-;;         (agenda . "%-8:i %-8:c * ")
-;;         (timeline . " % s")))
 
 (setq org-agenda-files
       (list
