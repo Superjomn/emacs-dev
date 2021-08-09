@@ -73,29 +73,26 @@
 ;; ==============================================================================
 ;; Load some utility functions.
 (load! "./base.el")
+;; chun-mode contains all of the personal settings.
+(load! "./chun-mode.el")
 
-(require 'rtags) ;; optional, must have rtags installed
-(rtags-start-process-unless-running)
-(cmake-ide-setup)
+;; (require 'rtags) ;; optional, must have rtags installed
+;; (rtags-start-process-unless-running)
+;; (cmake-ide-setup)
 
 (require 'helm)
 (map! :leader
       :desc "Open like spacemacs" "SPC" #'helm-M-x)
 
+(define-key evil-normal-state-map "vs" '(lambda ()
+                                                (interactive)
+                                                ;; In some version, the split-window-right-and-focus method is undefined.
+                                                (if (boundp 'split-window-right-and-focus)
+                                                    (split-window-right-and-focus)
+                                                  (progn
+                                                    (split-window-right) (other-window 1)))
+                                                (balance-windows)))
 
-;; window control
-(if (chun/os/is-linux)
-        (define-key evil-normal-state-map "vs" '(lambda ()
-                                                (interactive)
-                                                (split-window-right-and-focus)
-                                                (balance-windows))))
-;; on mac, no (split-window-right-and-focus)
-(if (chun/os/is-macos)
-    (define-key evil-normal-state-map "vs" '(lambda ()
-                                                (interactive)
-                                                (split-window-right)
-                                                (balance-windows)
-                                                (other-window 1))))
 
 (define-key evil-normal-state-map "vh" 'evil-window-left)
 (define-key evil-normal-state-map "vl" 'evil-window-right)
@@ -119,18 +116,19 @@
 
 (require 'dash)
 
-(use-package! projectile
-  :init
-)
-(setq chun/--projectile-known-projects
-      '("~/project/pscore"
-        "~/centra/info_center"
-        "~/project/emacs-dev"
-        "~/project/algo-trading"))
-
-(-map (lambda (path)
-        (projectile-add-known-project path))
-      chun/--projectile-known-projects)
+;; projectile
+(after! projectile
+  (setq chun/--projectile-known-projects chun-mode/projectile-dirs)
+  (-map (lambda (path)
+          (projectile-add-known-project path)) chun/--projectile-known-projects)
+  (setq projectile-globally-ignored-directories '("*.git" "env"))
+  (setq projectile-indexing-method 'native)
+  (setq projectile-generic-command
+        (mapconcat #'shell-quote-argument
+                   (append (list "rg" "-0" "--files" "--follow" "--color=never" "--hidden")
+                           (cl-loop for dir in projectile-globally-ignored-directories collect
+                                    "--glob" collect (concat "!" dir))) " ") projectile-git-command
+                                    projectile-generic-command))
 
 
 (require 'company-irony-c-headers)
@@ -141,8 +139,7 @@
 
 
 ;; YAS related.
-(setq yas-snippet-dirs '(
-                         "/home/chunwei/project/yas-snippets"))
+(setq yas-snippet-dirs chun-mode/yas-snippets-dirs)
 (yas-global-mode 1)
 
 (global-set-key (kbd "M-/") 'yas-expand)
@@ -207,6 +204,9 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
   (setq-default org-enforce-todo-dependencies t)
   :bind (:map org-mode-map
          ("C-c RET" . org-insert-heading)))
+  :custom
+  (org-startup-with-inline-images t))
+
 (setq org-todo-keyword-faces '(("TODO" :foreground "red"
                              :weight bold)
                             ("NEXT" :foreground "blue"
@@ -237,30 +237,23 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
 ;; Python config
 (use-package! elpy
   :commands (elpy-enable))
-
-(setq elpy-rpc-virtualenv-path "~/project/algo-trading/venv")
-;; format python code before save file
-(add-hook 'elpy-mode-hook (lambda ()
-                            (add-hook 'before-save-hook
-                                      'elpy-format-code nil t)))
+(after! elpy
+  (setq elpy-rpc-virtualenv-path "~/project/algo-trading/venv")
+  ;; format python code before save file
+  (add-hook 'elpy-mode-hook (lambda ()
+                              (add-hook 'before-save-hook 'elpy-format-code nil t))))
 
 ;; avy jump config
-(map! :leader
-      :desc "Jump to a word" "jj" #'avy-goto-word-or-subword-1)
-(map! :leader
-      :desc "Jump to a word" "jw" #'avy-goto-word-0)
-(map! :leader
-      :desc "Jump to a line" "jl" #'avy-goto-line)
-
-
-;; org-roam
-(setq org-roam-directory "~/centra/info_center/org-roam")
+(after! avy
+  (map! :leader :desc "Jump to a word" "jj" #'avy-goto-word-or-subword-1)
+  (map! :leader :desc "Jump to a word" "jw" #'avy-goto-word-0)
+  (map! :leader :desc "Jump to a line" "jl" #'avy-goto-line))
 
 (setq org-roam-v2-ack t)
 (use-package! org-roam
       :ensure t
       :custom
-      (org-roam-directory (file-truename "~/centra/info_center/org-roam"))
+      (org-roam-directory (file-truename chun-mode/org-roam-dir))
       (org-roam-graph-viewer "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome")
       (org-roam-complete-everywhere t)
       (org-roam-v2-ack t)
@@ -274,7 +267,8 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
       :config
       (org-roam-setup)
       ;; If using org-roam-protocol
-      (require 'org-roam-protocol))
+      (require 'org-roam-protocol)
+      (org-id-update-id-locations))
 
 
 (use-package! deft
@@ -333,4 +327,30 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
                                                          (python . t)
                                                          (latex . t)))
 
-(setq org-startup-with-inline-images t)
+(setq doom-font (font-spec :family "JetBrains Mono" :size 14 :weight 'normal)
+      doom-variable-pitch-font (font-spec :family "JetBrains Mono" :size 14))
+
+;; mypy flycheck mode
+(load! "./mypy-flycheck.el")
+
+;; quickly switch fro different layouts
+(use-package! eyebrowse
+:config
+  (progn
+    (define-key eyebrowse-mode-map (kbd "M-1") 'eyebrowse-switch-to-window-config-1)
+    (define-key eyebrowse-mode-map (kbd "M-2") 'eyebrowse-switch-to-window-config-2)
+    (define-key eyebrowse-mode-map (kbd "M-3") 'eyebrowse-switch-to-window-config-3)
+    (define-key eyebrowse-mode-map (kbd "M-4") 'eyebrowse-switch-to-window-config-4)
+    (define-key eyebrowse-mode-map (kbd "M-5") 'eyebrowse-switch-to-window-config-5)
+    (eyebrowse-mode t)
+    (setq eyebrowse-new-workspace t)))
+
+(use-package! elpy
+  :ensure t
+  :init
+  (elpy-enable))
+
+(after! elpy
+  (add-hook! 'elpy-mode-hook (lambda ()
+                               (add-hook! 'before-save-hook
+                                          'elpy-format-code nil t))))
