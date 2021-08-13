@@ -85,6 +85,9 @@
   :config
   (org-super-agenda-mode))
 
+;; (after! org-agenda
+;;   (add-hook! 'org-agenda-finalize-hook #'hl-line-mode))
+
 
 ;; (setq org-agenda-prefix-format
 ;;       '(

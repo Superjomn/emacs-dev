@@ -204,11 +204,14 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
   (setq-default org-enforce-todo-dependencies t)
   (defun org-insert-quote ()
     (interactive)
-    (insert "#+begin_quote\n\n#+end_quote"))
+    (insert "#+begin_quote\n\n#+end_quote")
+    (forward-line -1))
   :bind (:map org-mode-map
          ("C-c RET" . org-insert-heading)
          ("C-c q t" . org-insert-quote)
          ))
+
+(setq org-journal-dir chun-mode/org-roam-dir)
 
 (setq org-todo-keyword-faces '(("TODO" :foreground "red"
                              :weight bold)
@@ -225,6 +228,8 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
 (setq org-todo-keywords '((sequence "TODO(t)" "STRT(s)" "NEXT(n)" "|" "DONE(d)")
                                (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)")))
 
+(load! "./chun-org.el")
+
 
 ;; set encoding
 ;; This seems not working
@@ -232,6 +237,7 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
 (set-default-coding-systems 'utf-8)
 (set-terminal-coding-system 'utf-8)
 (set-keyboard-coding-system 'utf-8)
+(set-language-environment "UTF-8")
 
 ;; Load my config
 (load! "./chun.el")
@@ -333,8 +339,18 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
 (setq doom-font (font-spec :family "JetBrains Mono" :size 14 :weight 'normal)
       doom-variable-pitch-font (font-spec :family "JetBrains Mono" :size 14))
 
+;; -------------------------------------- python ---------------------------------
 ;; mypy flycheck mode
 (load! "./mypy-flycheck.el")
+(use-package! elpy
+  :ensure t
+  :init
+  (elpy-enable))
+
+(after! elpy
+  (add-hook! 'elpy-mode-hook (lambda ()
+                               (add-hook! 'before-save-hook
+                                          'elpy-format-code nil t))))
 
 ;; quickly switch fro different layouts
 (use-package! eyebrowse
@@ -349,12 +365,9 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
     (eyebrowse-mode t)
     (setq eyebrowse-new-workspace t)))
 
-(use-package! elpy
-  :ensure t
-  :init
-  (elpy-enable))
 
-(after! elpy
-  (add-hook! 'elpy-mode-hook (lambda ()
-                               (add-hook! 'before-save-hook
-                                          'elpy-format-code nil t))))
+(use-package! yasnippet
+  :ensure t
+  :bind
+  (:map yas-minor-mode-map
+   (("<tab>" . yas/expand))))
