@@ -204,8 +204,16 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
 (use-package! org
   :init (setq-default org-export-with-todo-keywords t)
   (setq-default org-enforce-todo-dependencies t)
-  :custom
-  (org-startup-with-inline-images t))
+  (defun org-insert-quote ()
+    (interactive)
+    (insert "#+begin_quote\n\n#+end_quote")
+    (forward-line -1))
+  :bind (:map org-mode-map
+         ("C-c RET" . org-insert-heading)
+         ("C-c q t" . org-insert-quote)
+         ))
+
+(setq org-journal-dir chun-mode/org-roam-dir)
 
 (setq org-todo-keyword-faces '(("TODO" :foreground "red"
                              :weight bold)
@@ -222,6 +230,8 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
 (setq org-todo-keywords '((sequence "TODO(t)" "STRT(s)" "NEXT(n)" "|" "DONE(d)")
                                (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)")))
 
+(load! "./chun-org.el")
+
 
 ;; set encoding
 ;; This seems not working
@@ -229,6 +239,7 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
 (set-default-coding-systems 'utf-8)
 (set-terminal-coding-system 'utf-8)
 (set-keyboard-coding-system 'utf-8)
+(set-language-environment "UTF-8")
 
 ;; Load my config
 (load! "./chun.el")
@@ -330,21 +341,9 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
 (setq doom-font (font-spec :family "JetBrains Mono" :size 14 :weight 'normal)
       doom-variable-pitch-font (font-spec :family "JetBrains Mono" :size 14))
 
+;; -------------------------------------- python ---------------------------------
 ;; mypy flycheck mode
 (load! "./mypy-flycheck.el")
-
-;; quickly switch fro different layouts
-(use-package! eyebrowse
-:config
-  (progn
-    (define-key eyebrowse-mode-map (kbd "M-1") 'eyebrowse-switch-to-window-config-1)
-    (define-key eyebrowse-mode-map (kbd "M-2") 'eyebrowse-switch-to-window-config-2)
-    (define-key eyebrowse-mode-map (kbd "M-3") 'eyebrowse-switch-to-window-config-3)
-    (define-key eyebrowse-mode-map (kbd "M-4") 'eyebrowse-switch-to-window-config-4)
-    (define-key eyebrowse-mode-map (kbd "M-5") 'eyebrowse-switch-to-window-config-5)
-    (eyebrowse-mode t)
-    (setq eyebrowse-new-workspace t)))
-
 (use-package! elpy
   :ensure t
   :init
@@ -354,3 +353,23 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
   (add-hook! 'elpy-mode-hook (lambda ()
                                (add-hook! 'before-save-hook
                                           'elpy-format-code nil t))))
+
+;; quickly switch fro different layouts
+(use-package! eyebrowse
+  :ensure t
+  :config
+  (progn
+    (define-key eyebrowse-mode-map (kbd "M-1") 'eyebrowse-switch-to-window-config-1)
+    (define-key eyebrowse-mode-map (kbd "M-2") 'eyebrowse-switch-to-window-config-2)
+    (define-key eyebrowse-mode-map (kbd "M-3") 'eyebrowse-switch-to-window-config-3)
+    (define-key eyebrowse-mode-map (kbd "M-4") 'eyebrowse-switch-to-window-config-4)
+    (define-key eyebrowse-mode-map (kbd "M-5") 'eyebrowse-switch-to-window-config-5)
+    (eyebrowse-mode t)
+    (setq eyebrowse-new-workspace t)))
+
+
+(use-package! yasnippet
+  :ensure t
+  :bind
+  (:map yas-minor-mode-map
+   (("<tab>" . yas/expand))))
