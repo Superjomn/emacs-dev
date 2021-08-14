@@ -31,3 +31,5 @@
   :global t
   :group 'chun
   :lighter " chun")
+
+(provide 'chun-mode)

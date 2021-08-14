@@ -75,6 +75,8 @@
 (load! "./base.el")
 ;; chun-mode contains all of the personal settings.
 (load! "./chun-mode.el")
+(use-package! chun-mode
+  :ensure t)
 
 ;; (require 'rtags) ;; optional, must have rtags installed
 ;; (rtags-start-process-unless-running)
