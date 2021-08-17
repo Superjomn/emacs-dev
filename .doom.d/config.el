@@ -209,6 +209,7 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
   :bind (:map org-mode-map
          ("C-c RET" . org-insert-heading)
          ("C-c q t" . org-insert-quote)
+         ("C-c l l" . my-org-insert-link)
          ))
 
 (setq org-journal-dir chun-mode/org-roam-dir)
@@ -297,7 +298,7 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
   :bind
   ("C-c n j" . org-journal-new-entry)
   :custom
-  (org-journal-dir org-roam-directory)
+  (org-journal-dir (concat org-roam-directory "/journal"))
   (org-journal-date-prefix "#+TITLE: ")
   (org-journal-file-format "%Y-%m-%d.org")
   (org-journal-date-format "%A > %d %B %Y"))
@@ -365,9 +366,16 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
     (eyebrowse-mode t)
     (setq eyebrowse-new-workspace t)))
 
-
 (use-package! yasnippet
   :ensure t
   :bind
   (:map yas-minor-mode-map
    (("<tab>" . yas/expand))))
+
+(use-package! atomic-chrome
+  :ensure t
+  :config
+  (atomic-chrome-start-server))
+
+(use-package! google-translate
+  :bind ("C-c t" . google-translate-at-point))
