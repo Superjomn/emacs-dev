@@ -25,6 +25,7 @@
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
 (setq doom-theme 'doom-one)
+(setq doom-theme 'doom-1337)
 
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
@@ -144,7 +145,7 @@
 (setq yas-snippet-dirs chun-mode/yas-snippets-dirs)
 (yas-global-mode 1)
 
-(global-set-key (kbd "M-/") 'yas-expand)
+(global-set-key (kbd "C-M-/") 'yas-expand)
 
 
 ;; Helm related.
@@ -213,7 +214,9 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
          ("C-c q t" . org-insert-quote)
          ))
 
-(setq org-journal-dir chun-mode/org-roam-dir)
+(after! chun-mode
+  (setq org-journal-dir chun-mode/org-roam-dir))
+
 
 (setq org-todo-keyword-faces '(("TODO" :foreground "red"
                              :weight bold)
