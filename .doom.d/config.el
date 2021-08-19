@@ -384,3 +384,6 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
 
 (use-package! google-translate
   :bind ("C-c t" . google-translate-at-point))
+
+(use-package! anki-connect
+  :ensure t)
