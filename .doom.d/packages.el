@@ -79,3 +79,4 @@
 (package! eyebrowse)
 (package! atomic-chrome)  ;; for leetcode
 (package! google-translate)
+(package! ox-gfm)

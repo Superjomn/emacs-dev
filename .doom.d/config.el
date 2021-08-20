@@ -394,7 +394,11 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
   (defun org-buffer-face-mode-variable ()
     (interactive)
     (make-face 'width-font-face)
-    (set-face-attribute 'width-front-face nil :font "Sarasa Fixed SC 15")
+    (set-face-attribute 'width-font-face nil :font "Sarasa Fixed SC 14")
     (setq buffer-face-mode-face 'width-font-face)
     (buffer-face-mode))
   (add-hook 'org-mode-hook 'org-buffer-face-mode-variable))
+
+
+(use-package! ox-gfm
+  :ensure t)
