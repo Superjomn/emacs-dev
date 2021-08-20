@@ -379,3 +379,22 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
 
 (use-package! google-translate
   :bind ("C-c t" . google-translate-at-point))
+
+;; Set default font, it will override the doom-fonts setting
+(let ((emacs-font-size 14)
+      (emacs-font-name "WenQuanYi Micro Hei Mono"))
+  (set-frame-font (format "%s-%s" (eval emacs-font-name) (eval emacs-font-size)))
+  (set-fontset-font (frame-parameter nil 'font) 'unicode (eval emacs-font-name)))
+
+(after! org
+  ;; Set org-download directory.
+  (setq-default org-download-image-dir (concat chun-mode/org-roam-dir "/images"))
+
+  ;; Make the table in org-mode better
+  (defun org-buffer-face-mode-variable ()
+    (interactive)
+    (make-face 'width-font-face)
+    (set-face-attribute 'width-front-face nil :font "Sarasa Fixed SC 15")
+    (setq buffer-face-mode-face 'width-font-face)
+    (buffer-face-mode))
+  (add-hook 'org-mode-hook 'org-buffer-face-mode-variable))
