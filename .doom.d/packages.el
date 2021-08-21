@@ -80,3 +80,4 @@
 (package! atomic-chrome)  ;; for leetcode
 (package! google-translate)
 (package! anki-connect)
+(package! ox-gfm)
