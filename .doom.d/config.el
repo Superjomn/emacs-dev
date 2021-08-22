@@ -24,12 +24,13 @@
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
-(setq doom-theme 'doom-one)
-(setq doom-theme 'doom-1337)
+;; (setq doom-theme 'doom-one)
+;; (setq doom-theme 'doom-1337)
+(setq doom-theme 'doom-acario-dark)
 
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
-(setq org-directory "/Users/yanchunwei/centra/info_center/agenda")
+;; (setq org-directory "/Users/yanchunwei/centra/info_center/agenda")
 
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
@@ -282,7 +283,35 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
       (org-roam-setup)
       ;; If using org-roam-protocol
       (require 'org-roam-protocol)
-      (org-id-update-id-locations))
+      (org-id-update-id-locations)
+
+      (setq org-roam-capture-templates '(
+                                         ("d" "default" plain "%?"
+                                          :if-new
+                                          (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
+                                          :unnarrowed t)
+                                         ("b" "beamer" plain "%?"
+                                          :if-new (file+head "%<%Y%m%d%H%M%S>-beamer-${slug}.org"
+                                                             "#+STARTUP: beamer
+#+TITLE:     ${title}
+#+AUTHOR:    Chunwei Yan
+#+EMAIL:     yanchunwei@baidu.com
+#+DATE:      %Y-%m-%d
+#+DESCRIPTION:
+#+KEYWORDS:
+#+LANGUAGE:  en
+#+OPTIONS:   H:3 num:t toc:t \n:nil @:t ::t |:t ^:t -:t f:t *:t <:t
+#+OPTIONS:   TeX:t LaTeX:t skip:nil d:nil todo:t pri:nil tags:not-in-toc
+#+INFOJS_OPT: view:nil toc:nil ltoc:t mouse:underline buttons:0 path:https://orgmode.org/org-info.js
+#+EXPORT_SELECT_TAGS: export
+#+EXPORT_EXCLUDE_TAGS: noexport
+#+HTML_LINK_UP:
+#+HTML_LINK_HOME:
+#+BEAMER_FRAME_LEVEL: 2")))
+
+            ;; end of org-roam-capture-templates
+            )
+      )
 
 
 (use-package! deft
@@ -458,7 +487,6 @@ marginparsep=7pt, marginparwidth=.6in}
                                     ("\\paragraph{%s}" . "\\paragraph*{%s}")
                                     ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
 
-
 (add-to-list 'org-latex-classes
                ;; beamer class, for presentations
                '("beamer" "\\documentclass[11pt,professionalfonts]{beamer}
@@ -486,6 +514,9 @@ marginparsep=7pt, marginparwidth=.6in}
 " ("\\section{%s}" . "\\section*{%s}")
 ("\\begin{frame}[fragile]\\frametitle{%s}" "\\end{frame}" "\\begin{frame}[fragile]\\frametitle{%s}"
  "\\end{frame}")))
+
+
+
 
 (setq org-latex-pdf-process
       '("xelatex -shell-escape -interaction nonstopmode -output-directory %o %f"))) ;; end of use-package org
@@ -552,3 +583,7 @@ marginparsep=7pt, marginparwidth=.6in}
 
 (use-package! ox-gfm
   :ensure t)
+
+(load-theme 'doom-acario-dark)
+
+
