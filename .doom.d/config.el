@@ -390,6 +390,8 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
 
 
 (use-package! org
+  :config
+  (require 'ox-latex)
   (add-to-list 'org-latex-classes '("cn-article" "\\documentclass[10pt,a4paper]{article}
 \\usepackage{graphicx}
 \\usepackage{xcolor}
@@ -397,6 +399,7 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
 \\usepackage{lmodern}
 \\usepackage{verbatim}
 \\usepackage{fixltx2e}
+\\usepackage{minted}
 \\usepackage{longtable}
 \\usepackage{float}
 \\usepackage{tikz}
@@ -455,11 +458,12 @@ marginparsep=7pt, marginparwidth=.6in}
                                     ("\\paragraph{%s}" . "\\paragraph*{%s}")
                                     ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
 
-  (add-to-list 'org-export-latex-classes
+
+(add-to-list 'org-latex-classes
                ;; beamer class, for presentations
                '("beamer" "\\documentclass[11pt,professionalfonts]{beamer}
-\\mode
-\\usetheme{{{{Warsaw}}}}
+%\\mode
+\\usetheme{Warsaw}
 %\\usecolortheme{{{{beamercolortheme}}}}
 
 \\beamertemplateballitem
@@ -472,17 +476,19 @@ marginparsep=7pt, marginparwidth=.6in}
 \\usepackage{lmodern}
 \\usepackage{fontspec,xunicode,xltxtra}
 \\usepackage{polyglossia}
-\\setmainfont{Times New Roman}
-\\setCJKmainfont{DejaVu Sans YuanTi}
-\\setCJKmonofont{DejaVu Sans YuanTi Mono}
+\\setmainfont{Microsoft YaHei}
+\\setCJKmainfont{Microsoft YaHei}
+\\setCJKmonofont{Microsoft YaHei}
 \\usepackage{verbatim}
 \\usepackage{listings}
-\\institute{{{{beamerinstitute}}}}
-\\subject{{{{beamersubject}}}}" ("\\section{%s}" . "\\section*{%s}")
+%\\institute{{{{beamerinstitute}}}}
+%\\subject{{{{beamersubject}}}}
+" ("\\section{%s}" . "\\section*{%s}")
 ("\\begin{frame}[fragile]\\frametitle{%s}" "\\end{frame}" "\\begin{frame}[fragile]\\frametitle{%s}"
  "\\end{frame}")))
-)
 
+(setq org-latex-pdf-process
+      '("xelatex -shell-escape -interaction nonstopmode -output-directory %o %f"))) ;; end of use-package org
 
 
 ;; (after! org
@@ -513,12 +519,21 @@ marginparsep=7pt, marginparwidth=.6in}
 ;;   )
 
 ;; Set default font, it will override the doom-fonts setting
-(let ((emacs-font-size 14)
-      (emacs-font-name "WenQuanYi Micro Hei Mono"))
-  (set-frame-font (format "%s-%s" (eval emacs-font-name) (eval emacs-font-size)))
-  (set-fontset-font (frame-parameter nil 'font) 'unicode (eval emacs-font-name)))
 
-(after! org
+
+
+(after! chun-mode
+  ;; Currently, on Mac has the required fonts installed.
+  (unless (not (chun/os/on-wsl-p))
+    ;; Set the default
+    (let ((emacs-font-size 14)
+          (emacs-font-name "WenQuanYi Micro Hei Mono"))
+      (set-frame-font (format "%s-%s" (eval emacs-font-name)
+                              (eval emacs-font-size)))
+      (set-fontset-font (frame-parameter nil 'font) 'unicode (eval emacs-font-name)))))
+
+
+(after! '(org chun-mode)
   ;; Set org-download directory.
   (setq-default org-download-image-dir (concat chun-mode/org-roam-dir "/images"))
 
@@ -526,10 +541,13 @@ marginparsep=7pt, marginparwidth=.6in}
   (defun org-buffer-face-mode-variable ()
     (interactive)
     (make-face 'width-font-face)
-    (set-face-attribute 'width-font-face nil :font "Sarasa Fixed SC 14")
+    (set-face-attribute 'width-font-face nil
+                        :font "Sarasa Fixed SC 14")
     (setq buffer-face-mode-face 'width-font-face)
     (buffer-face-mode))
-  (add-hook 'org-mode-hook 'org-buffer-face-mode-variable))
+  ;; Currentlly, other PC doesn't have the fonts required installed.
+  (unless (chun/os/on-mac)
+    (add-hook 'org-mode-hook 'org-buffer-face-mode-variable)))
 
 
 (use-package! ox-gfm

@@ -19,3 +19,14 @@
   (interactive)
   (message (buffer-file-name))
   (kill-new (file-truename buffer-file-name)))
+
+
+(after! chun-mode
+  (defun chun/os/on-wsl-p ()
+    "Tell whether it runs on the WSL of my Windows PC"
+    (string-prefix-p "/mnt" chun-mode/org-roam-dir))
+
+  (defun chun/os/on-mac ()
+    "Tell whether it runs on my Mac"
+    (and (string-prefix-p "~/" chun-mode/org-roam-dir)
+         (chun/os/is-macos))))
