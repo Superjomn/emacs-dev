@@ -81,3 +81,4 @@
 (package! google-translate)
 (package! anki-connect)
 (package! ox-gfm)
+(package! calfw)

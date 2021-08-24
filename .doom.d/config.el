@@ -586,4 +586,7 @@ marginparsep=7pt, marginparwidth=.6in}
 
 (load-theme 'doom-acario-dark)
 
-
+(use-package! calfw
+  :ensure t)
+(use-package! calfw-org
+  :ensure t)
