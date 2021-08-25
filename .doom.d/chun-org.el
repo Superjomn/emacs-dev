@@ -46,11 +46,11 @@
                         x1
                         x2))))))
 
-(defun org-export-output-file-name-modified (orig-fun extension &optional subtreep pub-dir)
-  "Set the org file publish to another directory"
-  (unless pub-dir
-    (setq pub-dir "~/exported-org-files")
-    (unless (file-directory-p pub-dir)
-      (make-directory pub-dir)))
-  (apply orig-fun extension subtreep pub-dir nil))
-(advice-add 'org-export-output-file-name :around #'org-export-output-file-name-modified)
+;; (defun org-export-output-file-name-modified (orig-fun extension &optional subtreep pub-dir)
+;;   "Set the org file publish to another directory"
+;;   (unless pub-dir
+;;     (setq pub-dir "~/exported-org-files")
+;;     (unless (file-directory-p pub-dir)
+;;       (make-directory pub-dir)))
+;;   (apply orig-fun extension subtreep pub-dir nil))
+;; (advice-add 'org-export-output-file-name :around #'org-export-output-file-name-modified)

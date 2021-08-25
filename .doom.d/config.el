@@ -300,6 +300,7 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
 #+DESCRIPTION:
 #+KEYWORDS:
 #+LANGUAGE:  en
+#+LaTeX_CLASS_OPTIONS: [aspectratio=169,8pt]
 #+OPTIONS:   H:3 num:t toc:t \n:nil @:t ::t |:t ^:t -:t f:t *:t <:t
 #+OPTIONS:   TeX:t LaTeX:t skip:nil d:nil todo:t pri:nil tags:not-in-toc
 #+INFOJS_OPT: view:nil toc:nil ltoc:t mouse:underline buttons:0 path:https://orgmode.org/org-info.js
@@ -310,8 +311,7 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
 #+BEAMER_FRAME_LEVEL: 2")))
 
             ;; end of org-roam-capture-templates
-            )
-      )
+            ))
 
 
 (use-package! deft
@@ -489,7 +489,7 @@ marginparsep=7pt, marginparwidth=.6in}
 
 (add-to-list 'org-latex-classes
                ;; beamer class, for presentations
-               '("beamer" "\\documentclass[11pt,professionalfonts]{beamer}
+               '("beamer" "\\documentclass[8pt,professionalfonts]{beamer}
 %\\mode
 \\usetheme{Warsaw}
 %\\usecolortheme{{{{beamercolortheme}}}}
@@ -584,6 +584,6 @@ marginparsep=7pt, marginparwidth=.6in}
 (use-package! ox-gfm
   :ensure t)
 
-(load-theme 'doom-acario-dark)
-
-
+(after! chun-mode
+  (unless (chun/os/on-wsl-p)
+    (load-theme 'doom-acario-dark)))
