@@ -519,7 +519,11 @@ marginparsep=7pt, marginparwidth=.6in}
 
 
 (setq org-latex-pdf-process
-      '("xelatex -shell-escape -interaction nonstopmode -output-directory %o %f"))) ;; end of use-package org
+      '("xelatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
+
+(add-hook 'org-mode-hook 'org-indent-mode)
+
+) ;; end of use-package org
 
 
 ;; (after! org
@@ -589,4 +593,7 @@ marginparsep=7pt, marginparwidth=.6in}
 (use-package! calfw
   :ensure t)
 (use-package! calfw-org
+  :ensure t)
+
+(use-package! anki-editor
   :ensure t)
