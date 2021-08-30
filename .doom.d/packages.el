@@ -80,5 +80,7 @@
 (package! atomic-chrome)  ;; for leetcode
 (package! google-translate)
 (package! anki-connect)
+(package! anki-editor)
 (package! ox-gfm)
 (package! calfw)
+(package! calfw-org)

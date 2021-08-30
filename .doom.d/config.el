@@ -26,7 +26,7 @@
 ;; `load-theme' function. This is the default:
 ;; (setq doom-theme 'doom-one)
 ;; (setq doom-theme 'doom-1337)
-(setq doom-theme 'doom-acario-dark)
+;; (setq doom-theme 'doom-acario-dark)
 
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
@@ -73,10 +73,12 @@
              (format (if (buffer-modified-p)  " ◉ %s" "  ●  %s") project-name))))))
 
 ;; ==============================================================================
-;; Load some utility functions.
-(load! "./base.el")
 ;; chun-mode contains all of the personal settings.
 (load! "./chun-mode.el")
+
+;; Load some utility functions.
+(load! "./base.el")
+
 (use-package! chun-mode
   :ensure t)
 
@@ -342,7 +344,8 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
   :bind
   (:map org-mode-map
         (("s-Y" . org-download-screenshot)
-         ("s-y" . org-download-yank))))
+         ("s-y" . org-download-yank)
+         ("s-v" . org-download-clip))))
 
 
 ;; <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -580,15 +583,21 @@ marginparsep=7pt, marginparwidth=.6in}
   (unless (chun/os/on-mac)
     (add-hook 'org-mode-hook 'org-buffer-face-mode-variable)))
 
+(after! org
+  (add-hook! 'org-mode-hook 'org-download-enable)
+  )
+
 
 (use-package! ox-gfm
   :ensure t)
 
-(after! chun-mode
-  (unless (chun/os/on-wsl-p)
-    (load-theme 'doom-acario-dark)))
+(unless (chun/os/on-wsl-p)
+  (load-theme 'doom-acario-dark t))
 
-(use-package! calfw
+
+(use-package! calfw)
+(use-package! anki-editor
   :ensure t)
 (use-package! calfw-org
-  :ensure t)
+  :config
+  (require 'calfw-org))
