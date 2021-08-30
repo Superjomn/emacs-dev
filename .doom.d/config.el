@@ -268,7 +268,6 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
 
 (setq org-roam-v2-ack t)
 (use-package! org-roam
-      :ensure t
       :custom
       (org-roam-directory (file-truename chun-mode/org-roam-dir))
       (org-roam-graph-viewer "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome")
@@ -381,7 +380,6 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
 ;; mypy flycheck mode
 (load! "./mypy-flycheck.el")
 (use-package! elpy
-  :ensure t
   :init
   (elpy-enable))
 
@@ -392,7 +390,6 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
 
 ;; quickly switch fro different layouts
 (use-package! eyebrowse
-  :ensure t
   :config
   (progn
     (define-key eyebrowse-mode-map (kbd "M-1") 'eyebrowse-switch-to-window-config-1)
@@ -404,21 +401,18 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
     (setq eyebrowse-new-workspace t)))
 
 (use-package! yasnippet
-  :ensure t
   :bind
   (:map yas-minor-mode-map
    (("<tab>" . yas/expand))))
 
 (use-package! atomic-chrome
-  :ensure t
   :config
   (atomic-chrome-start-server))
 
 (use-package! google-translate
   :bind ("C-c t" . google-translate-at-point))
 
-(use-package! anki-connect
-  :ensure t)
+(use-package! anki-connect)
 
 
 (use-package! org
@@ -522,7 +516,11 @@ marginparsep=7pt, marginparwidth=.6in}
 
 
 (setq org-latex-pdf-process
-      '("xelatex -shell-escape -interaction nonstopmode -output-directory %o %f"))) ;; end of use-package org
+      '("xelatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
+
+(add-hook 'org-mode-hook 'org-indent-mode)
+
+) ;; end of use-package org
 
 
 ;; (after! org
@@ -588,8 +586,9 @@ marginparsep=7pt, marginparwidth=.6in}
   )
 
 
-(use-package! ox-gfm
-  :ensure t)
+(use-package! ox-gfm)
+
+(load-theme 'doom-acario-dark t)
 
 (unless (chun/os/on-wsl-p)
   (load-theme 'doom-acario-dark t))
