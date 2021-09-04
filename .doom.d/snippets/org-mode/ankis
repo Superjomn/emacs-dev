@@ -1,0 +1,14 @@
+# -*- mode: snippet -*-
+# name: ankis
+# key: ankis
+# --
+
+* $1 :sentence:
+:PROPERTIES:
+:ANKI_NOTE_TYPE: Basic (and reversed card)
+:END:
+
+** Front
+$2
+** Back
+$3

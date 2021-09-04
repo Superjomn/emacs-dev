@@ -84,3 +84,6 @@
 (package! ox-gfm)
 (package! calfw)
 (package! calfw-org)
+;;(package! epresent)
+(package! org-tree-slide)
+(package! ox-hugo)

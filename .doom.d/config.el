@@ -488,7 +488,7 @@ marginparsep=7pt, marginparwidth=.6in}
                ;; beamer class, for presentations
                '("beamer" "\\documentclass[8pt,professionalfonts]{beamer}
 %\\mode
-\\usetheme{Warsaw}
+%\\usetheme{Warsaw}
 %\\usecolortheme{{{{beamercolortheme}}}}
 
 \\beamertemplateballitem
@@ -600,3 +600,12 @@ marginparsep=7pt, marginparwidth=.6in}
 (use-package! calfw-org
   :config
   (require 'calfw-org))
+
+(use-package! org-tree-slide
+  :bind (:map org-tree-slide-mode-map
+         ("C-M-n" . org-tree-slide-move-next-tree)
+         ("C-M-p" . org-tree-slide-move-previous-tree)
+         ))
+
+(use-package! ox-hugo
+  :after ox)

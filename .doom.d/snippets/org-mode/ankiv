@@ -1,0 +1,13 @@
+# -*- mode: snippet -*-
+# name: ankiv
+# key: ankiv
+# --
+* $1 :vocab:
+:PROPERTIES:
+:ANKI_NOTE_TYPE: Basic (and reversed card)
+:END:
+
+** Front
+$2
+** Back
+$3
