@@ -97,20 +97,21 @@
 
 
 (use-package! org-agenda
-  :ensure t
   :after chun-mode
   :bind
   ("C-c o a" . org-agenda)
   ("C-c x x" . org-capture)
   :init
   (setq chun-agenda-inbox-path (concat chun-mode/org-roam-dir "/20210807163552-agenda_inbox.org"))
-  :config ; execute code after a package is loaded
-  (setq org-agenda-files
-      (list
-       (concat chun-mode/org-roam-dir "/20210803124941-inference_2021_q3_enhancement_agenda.org")
+  :custom
+
+  (org-agenda-files
+      (list (concat chun-mode/org-roam-dir "/20210803124941-inference_2021_q3_enhancement_agenda.org")
        (concat chun-mode/org-roam-dir "/20210803112751-paddle_inference_agenda.org")
        (concat chun-mode/org-roam-dir "/20210806130344-cinn_compiler_agenda.org")
        chun-agenda-inbox-path))
+
+  :config ; execute code after a package is loaded
 
   (setq org-capture-templates `(("i" "inbox" entry
                                  (file chun-agenda-inbox-path) "* TODO %?")

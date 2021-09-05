@@ -83,3 +83,7 @@
 (package! anki-editor)
 (package! ox-gfm)
 (package! calfw)
+(package! org-sidebar) ;; get outline of org-mode file
+
+(package! htmlize) ;; make org-mode export code with syntax highlight
+(package! benchmark-init)

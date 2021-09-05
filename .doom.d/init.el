@@ -189,3 +189,7 @@
 
        :private spacemacs
        )
+
+(when doom-debug-p
+  (require 'benchmark-init)
+  (add-hook 'doom-first-input-hook #'benchmark-init/deactivate))
