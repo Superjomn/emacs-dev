@@ -26,7 +26,7 @@
 ;; `load-theme' function. This is the default:
 ;; (setq doom-theme 'doom-one)
 ;; (setq doom-theme 'doom-1337)
-(setq doom-theme 'doom-acario-dark)
+;; (setq doom-theme 'doom-acario-dark)
 
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
@@ -73,11 +73,14 @@
              (format (if (buffer-modified-p)  " ◉ %s" "  ●  %s") project-name))))))
 
 ;; ==============================================================================
-;; Load some utility functions.
-(load! "./base.el")
 ;; chun-mode contains all of the personal settings.
 (load! "./chun-mode.el")
-(use-package! chun-mode)
+
+;; Load some utility functions.
+(load! "./base.el")
+
+(use-package! chun-mode
+  :ensure t)
 
 ;; (require 'rtags) ;; optional, must have rtags installed
 ;; (rtags-start-process-unless-running)
@@ -300,6 +303,7 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
 #+DESCRIPTION:
 #+KEYWORDS:
 #+LANGUAGE:  en
+#+LaTeX_CLASS_OPTIONS: [aspectratio=169,8pt]
 #+OPTIONS:   H:3 num:t toc:t \n:nil @:t ::t |:t ^:t -:t f:t *:t <:t
 #+OPTIONS:   TeX:t LaTeX:t skip:nil d:nil todo:t pri:nil tags:not-in-toc
 #+INFOJS_OPT: view:nil toc:nil ltoc:t mouse:underline buttons:0 path:https://orgmode.org/org-info.js
@@ -310,8 +314,7 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
 #+BEAMER_FRAME_LEVEL: 2")))
 
             ;; end of org-roam-capture-templates
-            )
-      )
+            ))
 
 
 (use-package! deft
@@ -342,7 +345,8 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
   :bind
   (:map org-mode-map
         (("s-Y" . org-download-screenshot)
-         ("s-y" . org-download-yank))))
+         ("s-y" . org-download-yank)
+         ("s-v" . org-download-clip))))
 
 
 ;; <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -484,7 +488,7 @@ marginparsep=7pt, marginparwidth=.6in}
 
 (add-to-list 'org-latex-classes
                ;; beamer class, for presentations
-               '("beamer" "\\documentclass[11pt,professionalfonts]{beamer}
+               '("beamer" "\\documentclass[8pt,professionalfonts]{beamer}
 %\\mode
 %\\usetheme{Warsaw}
 %\\usecolortheme{{{{beamercolortheme}}}}
@@ -576,13 +580,31 @@ marginparsep=7pt, marginparwidth=.6in}
   (unless (chun/os/on-mac)
     (add-hook 'org-mode-hook 'org-buffer-face-mode-variable)))
 
+(after! org
+  (add-hook! 'org-mode-hook 'org-download-enable)
+  )
+
 
 (use-package! ox-gfm)
 
 (load-theme 'doom-acario-dark t)
 
+(unless (chun/os/on-wsl-p)
+  (load-theme 'doom-acario-dark t))
+
+
 (use-package! calfw)
-(use-package! calfw-org)
+(use-package! anki-editor
+  :ensure t)
+(use-package! calfw-org
+  :config
+  (require 'calfw-org))
+
+(use-package! org-tree-slide
+  :bind (:map org-tree-slide-mode-map
+         ("C-M-n" . org-tree-slide-move-next-tree)
+         ("C-M-p" . org-tree-slide-move-previous-tree)
+         ))
 
 (use-package! anki-editor)
 (use-package! org-sidebar)
@@ -591,3 +613,6 @@ marginparsep=7pt, marginparwidth=.6in}
   :after org
   :config
   (add-hook 'org-mode-hook 'org-download-enable))
+
+(use-package! ox-hugo
+  :after ox)
