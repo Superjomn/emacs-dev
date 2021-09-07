@@ -46,12 +46,58 @@ end tell
 "
   "The applescript template to open an application.")
 
-(defun chun-mode/open-application_ ()
-  "Open an application method."
+(defvar chun-mode/--site-url-dic
+  '(("Paddle-Lite" . "https://github.com/PaddlePaddle/Paddle-Lite")
+    ("Paddle" . "https://github.com/PaddlePaddle/Paddle"))
+  "The key to url.")
+
+(defvar chun-mode/--application-candidates
+  '("Chrome" "Infoflow" "iTerm" "TIDAL" "Google")
+  "The application cadidates")
+
+(defun chun-mode/--process-open-chrome (app)
+  "Check if the app is Chrome and open chrome.
+Returns t or nil
+"
   (if (string-equal app "Chrome")
-      (do-applescript chun-mode/--open-chrome)
-    (do-applescript (format chun-mode/--open-application-tpl app))
-    ))
+      (progn (do-applescript chun-mode/--open-chrome)
+             t
+             )))
+
+(defun chun-mode/--process-open-google (app)
+  "Open chrome and launch google"
+  (if (string-equal app "Google")
+      (progn (chun-mode/--google-this)
+             t
+             )))
+
+(defun chun-mode/--process-other-application (app)
+  "Open application"
+  (if (member app chun-mode/--application-candidates)
+        (progn (do-applescript (format chun-mode/--open-application-tpl app)) t)))
+
+(defun chun-mode/--process-open-site (app)
+  "open a site"
+  (let* ((url (assoc app chun-mode/--site-url-dic)))
+    (if url
+        (progn (chun-mode/--chrome-browse-url (cdr url))
+               t
+               ))))
+
+(defun chun-mode/open-application_ (app)
+  "Open an application method."
+  (let* ((app-launcher-list
+          '(chun-mode/--process-open-chrome
+            chun-mode/--process-open-google
+            chun-mode/--process-other-application
+            chun-mode/--process-open-site
+            ))
+         (i 0))
+    (while (and (< i (length app-launcher-list))
+                (not (funcall (nth i app-launcher-list) app)))
+      (progn
+        (message "try %d-th application" i)
+        (incf i)))))
 
 
 (defun chun-mode/open-application ()
@@ -93,25 +139,55 @@ end tell
                           :foreground "red")
       (set-face-attribute 'minibuffer-prompt frame
                           :foreground "grey")
-      (let ((ivy-height 20)
-            (ivy-count-format ""))
-        (ivy-read "Open application: " '("Chrome" "Infoflow" "iTerm" "TIDAL")
+
+      (let* ((ivy-height 20)
+             (ivy-count-format "")
+             (app-candidates chun-mode/--application-candidates)
+             (site-candidates (mapcar 'car chun-mode/--site-url-dic))
+             )
+        (ivy-read "Open application: " (append app-candidates site-candidates)
                   :action (lambda (app)
-                            (chun-mode/open-application_))
+                            (chun-mode/open-application_ app))
 
                   :unwind (lambda ()
                             (delete-frame)
-                            (other-window 1))
-)))))
+                            (other-window 1)))))))
 
 (require 'subr-x)
-(defun chun-mode/google-this ()
+(defun chun-mode/--google-this ()
   (let* (
-         (query "hello world")
+         (query (read-string "Google it: "))
          (tokens (split-string query))
+         (query-word (string-join tokens "+"))
          (base-url "https://google.com")
-         (url (format base-url "/search?q="))
-         )))
+         (url (format "%s/search?q=%s" base-url query-word))
+         (chrome-applescript "
+tell application \"Google Chrome\"
+    if it is running then
+        activate
+        open location \"%s\"
+        delay 1
+        activate
+    end if
+end tell
+"))
+    (do-applescript (format chrome-applescript url))))
+
+(defun chun-mode/--chrome-browse-url (url)
+  "Open Chrome and go to the url"
+  (message "chrome-browse-url %s" url)
+  (let* ((chrome-applescript "
+tell application \"Google Chrome\"
+    if it is running then
+        activate
+        open location \"%s\"
+        delay 1
+        activate
+    end if
+end tell
+"))
+    (do-applescript (format chrome-applescript url))
+    ))
 
 (map! :leader
       :desc "Open an application"

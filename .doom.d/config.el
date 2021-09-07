@@ -340,6 +340,8 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
 
 (use-package! org-download
   :after org
+  :custom
+  (org-image-actual-width 400)
   :bind
   (:map org-mode-map
         (("s-Y" . org-download-screenshot)
