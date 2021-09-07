@@ -217,8 +217,10 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
          ("C-c q t" . org-insert-quote)
          ("C-c l l" . my-org-insert-link)))
 
-(after! chun-mode
-  (setq org-journal-dir chun-mode/org-roam-dir))
+(use-package! org-journal
+  :after chun-mode
+  :custom
+  (org-journal-dir chun-mode/org-roam-dir))
 
 
 (setq org-todo-keyword-faces '(("TODO" :foreground "red"
@@ -517,9 +519,6 @@ marginparsep=7pt, marginparwidth=.6in}
 
 
 
-(setq org-latex-pdf-process
-      '("xelatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
-
 (add-hook 'org-mode-hook 'org-indent-mode)
 
 ) ;; end of use-package org
@@ -608,6 +607,14 @@ marginparsep=7pt, marginparwidth=.6in}
          ("C-M-n" . org-tree-slide-move-next-tree)
          ("C-M-p" . org-tree-slide-move-previous-tree)
          ))
+
+(use-package! anki-editor)
+(use-package! org-sidebar)
+
+(use-package! org-download
+  :after org
+  :config
+  (add-hook 'org-mode-hook 'org-download-enable))
 
 (use-package! ox-hugo
   :after ox)
