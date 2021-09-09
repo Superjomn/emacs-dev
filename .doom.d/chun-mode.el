@@ -46,10 +46,13 @@ end tell
 "
   "The applescript template to open an application.")
 
-(defvar chun-mode/--site-url-dic
+(setq chun-mode/--site-url-dic
   '(("Paddle-Lite" . "https://github.com/PaddlePaddle/Paddle-Lite")
-    ("Paddle" . "https://github.com/PaddlePaddle/Paddle"))
-  "The key to url.")
+    ("Paddle" . "https://github.com/PaddlePaddle/Paddle")
+    ("CINN" . "https://github.com/PaddlePaddle/CINN")
+    ("Paddle Q3 Enhancement" . "http://wiki.baidu.com/pages/viewpage.action?pageId=1601438812")
+    ("meeting booking" . "http://meeting.baidu.com/index.html#/home")
+    ))
 
 (defvar chun-mode/--application-candidates
   '("Chrome" "Infoflow" "iTerm" "TIDAL" "Google")
