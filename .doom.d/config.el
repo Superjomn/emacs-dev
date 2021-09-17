@@ -277,7 +277,6 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
              ("C-c n f" . org-roam-node-find)
              ("C-c n g" . org-roam-graph)
              ("C-c n i" . org-roam-node-insert)
-             ("C-c n c" . org-roam-capture)
              ;; Dailies
              ("C-c n j" . org-roam-dailies-capture-today))
       :config
@@ -302,13 +301,14 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
 #+KEYWORDS:
 #+LANGUAGE:  en
 #+LaTeX_CLASS_OPTIONS: [aspectratio=169,8pt]
-#+OPTIONS:   H:3 num:t toc:t \n:nil @:t ::t |:t ^:t -:t f:t *:t <:t
+#+OPTIONS:   H:2 num:t toc:t :nil @:t ::t |:t ^:t -:t f:t *:t <:t
 #+OPTIONS:   TeX:t LaTeX:t skip:nil d:nil todo:t pri:nil tags:not-in-toc
 #+INFOJS_OPT: view:nil toc:nil ltoc:t mouse:underline buttons:0 path:https://orgmode.org/org-info.js
 #+EXPORT_SELECT_TAGS: export
 #+EXPORT_EXCLUDE_TAGS: noexport
 #+HTML_LINK_UP:
 #+HTML_LINK_HOME:
+#+BEAMER_THEME: default
 #+BEAMER_FRAME_LEVEL: 2")))
 
             ;; end of org-roam-capture-templates
@@ -427,7 +427,7 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
 \\usepackage{lmodern}
 \\usepackage{verbatim}
 \\usepackage{fixltx2e}
-\\usepackage{minted}
+\\usepackage[cache=false]{minted}
 \\usepackage{longtable}
 \\usepackage{float}
 \\usepackage{tikz}
@@ -508,6 +508,7 @@ marginparsep=7pt, marginparwidth=.6in}
 \\setCJKmonofont{Microsoft YaHei}
 \\usepackage{verbatim}
 \\usepackage{listings}
+\\usepackage[cache=false]{minted}
 %\\institute{{{{beamerinstitute}}}}
 %\\subject{{{{beamersubject}}}}
 " ("\\section{%s}" . "\\section*{%s}")
@@ -569,10 +570,10 @@ marginparsep=7pt, marginparwidth=.6in}
 
 (after! '(org chun-mode)
   ;; Set org-download directory.
-  (setq-default org-download-image-dir (concat chun-mode/org-roam-dir "/images"))
+  (setq org-download-image-dir (concat chun-mode/org-roam-dir "/images"))
 
   ;; Make the table in org-mode better
-  (defun org-buffer-face-mode-variable ()
+  (defun chun/org-table-adjust-face()
     (interactive)
     (make-face 'width-font-face)
     (set-face-attribute 'width-font-face nil
@@ -580,8 +581,8 @@ marginparsep=7pt, marginparwidth=.6in}
     (setq buffer-face-mode-face 'width-font-face)
     (buffer-face-mode))
   ;; Currentlly, other PC doesn't have the fonts required installed.
-  (unless (chun/os/on-mac)
-    (add-hook 'org-mode-hook 'org-buffer-face-mode-variable)))
+  (when (chun/os/on-mac)
+    (add-hook 'org-mode-hook 'chun/org-table-adjust-face)))
 
 (after! org
   (add-hook! 'org-mode-hook 'org-download-enable)
@@ -590,9 +591,7 @@ marginparsep=7pt, marginparwidth=.6in}
 
 (use-package! ox-gfm)
 
-(load-theme 'doom-acario-dark t)
-
-(unless (chun/os/on-wsl-p)
+(when (chun/os/on-wsl-p)
   (load-theme 'doom-acario-dark t))
 
 
