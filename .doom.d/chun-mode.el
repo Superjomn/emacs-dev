@@ -46,17 +46,48 @@ end tell
 "
   "The applescript template to open an application.")
 
-(setq chun-mode/--site-url-dic
-  '(("Paddle-Lite" . "https://github.com/PaddlePaddle/Paddle-Lite")
-    ("Paddle" . "https://github.com/PaddlePaddle/Paddle")
-    ("CINN" . "https://github.com/PaddlePaddle/CINN")
-    ("Paddle Q3 Enhancement" . "http://wiki.baidu.com/pages/viewpage.action?pageId=1601438812")
-    ("meeting booking" . "http://meeting.baidu.com/index.html#/home")
-    ))
+(defvar chun-mode/--site-url-dic '()
+  "The web bookmarks.
+An alist of (title . url)
+"
+  )
+
 
 (defvar chun-mode/--application-candidates
   '("Chrome" "Infoflow" "iTerm" "TIDAL" "Google")
   "The application cadidates")
+
+
+(defun chun-mode/update-web-bookmarks ()
+  "Update the url list from the bookmarks.org"
+  (interactive)
+  ;; clear the dic
+  (setq chun-mode/--site-url-dic '())
+
+  (let* ((bookmarks-file-path (concat chun-mode/org-roam-dir "/20210921113038-bookmarks.org")))
+    (save-current-buffer
+      (set-buffer (find-file-noselect bookmarks-file-path))
+      (let* ((parsetree (org-element-parse-buffer))
+             (counter 0))
+        (org-element-map parsetree 'link
+          (lambda (link)
+            (let* ((plist (nth 1 link))
+                   (content (buffer-substring-no-properties (plist-get plist :contents-begin)
+                                                            (plist-get plist :contents-end)))
+                   (type (plist-get plist :type))
+                   (path (plist-get plist :path))
+                   (is-url nil)
+                   )
+              (setq is-url (or (string= type "https") (string= type "http")))
+              (when is-url
+                  (setq path (format "%s:%s" type path))
+                  (add-to-list 'chun-mode/--site-url-dic `(,content . ,path))
+                  (message "content: %S" content))
+                  (message "site-url-dic: %S" chun-mode/--site-url-dic))
+              link
+              )))))
+  (with-output-to-temp-buffer "*chun-mode*"
+    (print (format "Load %d bookmarks!" (length chun-mode/--site-url-dic)))))
 
 (defun chun-mode/--process-open-chrome (app)
   "Check if the app is Chrome and open chrome.
@@ -110,7 +141,7 @@ Returns t or nil
                                (background-color . "DeepSkyBlue3")
                                (cursor-color . "MediumPurple1")
                                (font . "Menlo 20")
-                               (foreground-color . "#eeeeec")
+                               (foreground-color . "#999999")
                                (height . 20)
                                (internal-border-width . 20)
                                (left . 0.33)
