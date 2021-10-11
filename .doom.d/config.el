@@ -137,20 +137,6 @@
                                     projectile-generic-command))
 
 
-(require 'company-irony-c-headers)
-;; Load with `irony-mode` as a grouped backend
-(eval-after-load 'company
-  '(add-to-list
-    'company-backends '(company-irony-c-headers company-irony)))
-
-
-;; YAS related.
-(setq yas-snippet-dirs chun-mode/yas-snippets-dirs)
-(yas-global-mode 1)
-
-(global-set-key (kbd "C-M-/") 'yas-expand)
-
-
 ;; Helm related.
 (require 'helm)
 (setq helm-mode-fuzzy-match t)
@@ -170,11 +156,8 @@
         (setq projectile-globally-ignored-directories
               (add-to-list 'projectile-globally-ignored-directories s)))
       chun/--projectile-globally-ignored-directories)
-(setq irony-cdb-search-directory-list
-      "/home/chunwei/project/pscore/")
-
-;;; make the code style as google-c-style
-(add-hook 'c-mode-common-hook 'google-set-c-style)
+;; (setq irony-cdb-search-directory-list
+;;       "~/project/cinn2/")
 
 
 (defun chun/update-compile-commands ()
@@ -338,15 +321,7 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
   (org-journal-date-format "%A > %d %B %Y"))
 (setq org-journal-enable-agenda-integration t)
 
-(use-package! org-download
-  :after org
-  :custom
-  (org-image-actual-width 400)
-  :bind
-  (:map org-mode-map
-        (("s-Y" . org-download-screenshot)
-         ("s-y" . org-download-yank)
-         ("s-v" . org-download-clip))))
+
 
 
 ;; <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -401,11 +376,6 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
     (define-key eyebrowse-mode-map (kbd "M-5") 'eyebrowse-switch-to-window-config-5)
     (eyebrowse-mode t)
     (setq eyebrowse-new-workspace t)))
-
-(use-package! yasnippet
-  :bind
-  (:map yas-minor-mode-map
-   (("<tab>" . yas/expand))))
 
 (use-package! atomic-chrome
   :config
@@ -568,22 +538,6 @@ marginparsep=7pt, marginparwidth=.6in}
       (set-fontset-font (frame-parameter nil 'font) 'unicode (eval emacs-font-name)))))
 
 
-(after! '(org chun-mode)
-  ;; Set org-download directory.
-  (setq org-download-image-dir (concat chun-mode/org-roam-dir "/images"))
-
-  ;; Make the table in org-mode better
-  (defun chun/org-table-adjust-face()
-    (interactive)
-    (make-face 'width-font-face)
-    (set-face-attribute 'width-font-face nil
-                        :font "Sarasa Fixed SC 14")
-    (setq buffer-face-mode-face 'width-font-face)
-    (buffer-face-mode))
-  ;; Currentlly, other PC doesn't have the fonts required installed.
-  (when (chun/os/on-mac)
-    (add-hook 'org-mode-hook 'chun/org-table-adjust-face)))
-
 (after! org
   (add-hook! 'org-mode-hook 'org-download-enable)
   )
@@ -593,7 +547,6 @@ marginparsep=7pt, marginparwidth=.6in}
 
 (when (chun/os/on-wsl-p)
   (load-theme 'doom-acario-dark t))
-
 
 (use-package! calfw)
 (use-package! anki-editor
