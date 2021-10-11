@@ -563,3 +563,4 @@ marginparsep=7pt, marginparwidth=.6in}
 
 (use-package! ox-hugo
   :after ox)
+(org-babel-load-file (concat chun-mode/org-roam-dir "/20211001225141-emacs_config.org"))
