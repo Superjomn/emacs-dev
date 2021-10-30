@@ -310,46 +310,8 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
                             (case-fn . downcase))))
 
 
-(use-package! org-journal
-  :after org
-  :bind
-  ("C-c n j" . org-journal-new-entry)
-  :custom
-  (org-journal-dir (concat org-roam-directory "/journal"))
-  (org-journal-date-prefix "#+TITLE: ")
-  (org-journal-file-format "%Y-%m-%d.org")
-  (org-journal-date-format "%A > %d %B %Y"))
-(setq org-journal-enable-agenda-integration t)
-
-
-
 
 ;; <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-;; org babel ;;
-;; auto insert code
-(defun org-insert-src-block (src-code-type)
-  "Insert a `SRC-CODE-TYPE' type source code block in org-mode."
-  (interactive (let ((src-code-types '("emacs-lisp" "python" "C" "sh" "java" "js" "clojure" "C++"
-                                       "css" "calc" "asymptote" "dot" "gnuplot" "ledger" "lilypond"
-                                       "mscgen" "octave" "oz" "plantuml" "R" "sass" "screen" "sql"
-                                       "awk" "ditaa" "haskell" "latex" "lisp" "matlab" "ocaml" "org"
-                                       "perl" "ruby" "scheme" "sqlite")))
-                 (list (ido-completing-read "Source code type: " src-code-types))))
-  (progn (newline-and-indent)
-         (insert (format "#+BEGIN_SRC %s\n" src-code-type))
-         (newline-and-indent)
-         (insert "#+END_SRC\n")
-         (previous-line 2)
-         (org-edit-src-code)))
-(add-hook 'org-mode-hook '(lambda ()
-                            ;; keybiding for insert source code
-                            (local-set-key (kbd "C-c s") 'org-insert-src-block)))
-;; add support for exectuate c++ in org-mode
-(org-babel-do-load-languages 'org-babel-load-languages '((C . t)
-                                                         (python . t)
-                                                         (latex . t)))
-
 (setq doom-font (font-spec :family "JetBrains Mono" :size 14 :weight 'normal)
       doom-variable-pitch-font (font-spec :family "JetBrains Mono" :size 14))
 
@@ -377,9 +339,9 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
     (eyebrowse-mode t)
     (setq eyebrowse-new-workspace t)))
 
-(use-package! atomic-chrome
-  :config
-  (atomic-chrome-start-server))
+;; (use-package! atomic-chrome
+;;   :init
+;;   (atomic-chrome-start-server))
 
 (use-package! google-translate
   :bind ("C-c t" . google-translate-at-point))
@@ -531,7 +493,7 @@ marginparsep=7pt, marginparwidth=.6in}
   ;; Currently, on Mac has the required fonts installed.
   (unless (not (chun/os/on-wsl-p))
     ;; Set the default
-    (let ((emacs-font-size 14)
+    (let ((emacs-font-size 18)
           (emacs-font-name "WenQuanYi Micro Hei Mono"))
       (set-frame-font (format "%s-%s" (eval emacs-font-name)
                               (eval emacs-font-size)))
@@ -563,4 +525,6 @@ marginparsep=7pt, marginparwidth=.6in}
 
 (use-package! ox-hugo
   :after ox)
+
+;; load my config from org
 (org-babel-load-file (concat chun-mode/org-roam-dir "/20211001225141-emacs_config.org"))

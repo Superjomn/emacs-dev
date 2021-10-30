@@ -91,3 +91,8 @@
 ;;(package! epresent)
 (package! org-tree-slide)
 (package! ox-hugo)
+(package! graphviz-dot-mode)
+(package! org-roam-bibtex)
+(package! websocket)
+(package! simple-httpd)
+(package! org-roam-ui :recipe (:host github :repo "org-roam/org-roam-ui" :files ("*.el" "out")))
