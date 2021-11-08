@@ -1,0 +1,15 @@
+# -*- mode: snippet -*-
+# name: ankieasy
+# key: ankieasy
+# --
+
+* $1
+:PROPERTIES:
+:ANKI_NOTE_TYPE: Basic (and reversed card)
+:ANKI_DECK: English-learn-org
+:END:
+
+** Front
+$1
+
+** Back

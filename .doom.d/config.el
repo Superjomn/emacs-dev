@@ -186,7 +186,7 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
 (setq doom-theme 'spacemacs-light)
 
 
-(load! "./chun-agenda.el")
+;; (load! "./chun-agenda.el")
 
 (use-package! org
   :init (setq-default org-export-with-todo-keywords t)
