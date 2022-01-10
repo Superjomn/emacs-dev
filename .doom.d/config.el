@@ -201,7 +201,7 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
          ("C-c l l" . my-org-insert-link)))
 
 (after! chun-mode
-  (setq org-journal-dir chun-mode/org-roam-dir))
+  (setq org-journal-dir (concat chun-mode/org-roam-dir "/journal")))
 
 
 (setq org-todo-keyword-faces '(("TODO" :foreground "red"
