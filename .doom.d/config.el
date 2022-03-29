@@ -375,8 +375,8 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
                                                          (python . t)
                                                          (latex . t)))
 
-(setq doom-font (font-spec :family "JetBrains Mono" :size 14 :weight 'normal)
-      doom-variable-pitch-font (font-spec :family "JetBrains Mono" :size 14))
+(setq doom-font (font-spec :family "JetBrains Mono" :size 16 :weight 'normal)
+      doom-variable-pitch-font (font-spec :family "JetBrains Mono" :size 16))
 
 ;; -------------------------------------- python ---------------------------------
 ;; mypy flycheck mode
@@ -610,3 +610,11 @@ marginparsep=7pt, marginparwidth=.6in}
 
 (use-package! ox-hugo
   :after ox)
+
+(use-package! irony-cdb
+  :config
+  (setq irony-cdb-search-directory-list '("/home/chunwei/project/cinn2/"))
+  )
+
+(require 'irony-cdb-json)
+(irony-cdb-json-add-compile-commands-path "/home/chunwei/project/cinn2" "/home/chunwei/project/cinn2/compile_commands.json")

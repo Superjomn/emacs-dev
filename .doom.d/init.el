@@ -187,7 +187,7 @@
        ;;literate
        (default +bindings +smartparens)
 
-       :private spacemacs
+       ;;:private spacemacs
        )
 
 (when doom-debug-p

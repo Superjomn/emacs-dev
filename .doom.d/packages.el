@@ -91,3 +91,4 @@
 ;;(package! epresent)
 (package! org-tree-slide)
 (package! ox-hugo)
+(package! jupyter)
