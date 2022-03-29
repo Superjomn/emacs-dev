@@ -1,15 +1,14 @@
 # -*- mode: snippet -*-
-# name: ankis
-# key: ankis
+# name: newanki
+# key: newanki
 # --
-
-* $1 :sentence:
+* $1 :vocab:
 :PROPERTIES:
 :ANKI_NOTE_TYPE: Basic (and reversed card)
 :ANKI_DECK: English-learn-org
 :END:
 
 ** Front
-$1
-** Back
 $2
+** Back
+$3

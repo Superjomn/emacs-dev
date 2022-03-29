@@ -137,20 +137,6 @@
                                     projectile-generic-command))
 
 
-(require 'company-irony-c-headers)
-;; Load with `irony-mode` as a grouped backend
-(eval-after-load 'company
-  '(add-to-list
-    'company-backends '(company-irony-c-headers company-irony)))
-
-
-;; YAS related.
-(setq yas-snippet-dirs chun-mode/yas-snippets-dirs)
-(yas-global-mode 1)
-
-(global-set-key (kbd "C-M-/") 'yas-expand)
-
-
 ;; Helm related.
 (require 'helm)
 (setq helm-mode-fuzzy-match t)
@@ -170,11 +156,8 @@
         (setq projectile-globally-ignored-directories
               (add-to-list 'projectile-globally-ignored-directories s)))
       chun/--projectile-globally-ignored-directories)
-(setq irony-cdb-search-directory-list
-      "/home/chunwei/project/pscore/")
-
-;;; make the code style as google-c-style
-(add-hook 'c-mode-common-hook 'google-set-c-style)
+;; (setq irony-cdb-search-directory-list
+;;       "~/project/cinn2/")
 
 
 (defun chun/update-compile-commands ()
@@ -203,7 +186,7 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
 (setq doom-theme 'spacemacs-light)
 
 
-(load! "./chun-agenda.el")
+;; (load! "./chun-agenda.el")
 
 (use-package! org
   :init (setq-default org-export-with-todo-keywords t)
@@ -218,7 +201,7 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
          ("C-c l l" . my-org-insert-link)))
 
 (after! chun-mode
-  (setq org-journal-dir chun-mode/org-roam-dir))
+  (setq org-journal-dir (concat chun-mode/org-roam-dir "/journal")))
 
 
 (setq org-todo-keyword-faces '(("TODO" :foreground "red"
@@ -327,56 +310,9 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
                             (case-fn . downcase))))
 
 
-(use-package! org-journal
-  :after org
-  :bind
-  ("C-c n j" . org-journal-new-entry)
-  :custom
-  (org-journal-dir (concat org-roam-directory "/journal"))
-  (org-journal-date-prefix "#+TITLE: ")
-  (org-journal-file-format "%Y-%m-%d.org")
-  (org-journal-date-format "%A > %d %B %Y"))
-(setq org-journal-enable-agenda-integration t)
 
-(use-package! org-download
-  :after org
-  :custom
-  (org-image-actual-width 400)
-  :bind
-  (:map org-mode-map
-        (("s-Y" . org-download-screenshot)
-         ("s-y" . org-download-yank)
-         ("s-v" . org-download-clip))))
-
-
-;; <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-;; org babel ;;
-;; auto insert code
-(defun org-insert-src-block (src-code-type)
-  "Insert a `SRC-CODE-TYPE' type source code block in org-mode."
-  (interactive (let ((src-code-types '("emacs-lisp" "python" "C" "sh" "java" "js" "clojure" "C++"
-                                       "css" "calc" "asymptote" "dot" "gnuplot" "ledger" "lilypond"
-                                       "mscgen" "octave" "oz" "plantuml" "R" "sass" "screen" "sql"
-                                       "awk" "ditaa" "haskell" "latex" "lisp" "matlab" "ocaml" "org"
-                                       "perl" "ruby" "scheme" "sqlite")))
-                 (list (ido-completing-read "Source code type: " src-code-types))))
-  (progn (newline-and-indent)
-         (insert (format "#+BEGIN_SRC %s\n" src-code-type))
-         (newline-and-indent)
-         (insert "#+END_SRC\n")
-         (previous-line 2)
-         (org-edit-src-code)))
-(add-hook 'org-mode-hook '(lambda ()
-                            ;; keybiding for insert source code
-                            (local-set-key (kbd "C-c s") 'org-insert-src-block)))
-;; add support for exectuate c++ in org-mode
-(org-babel-do-load-languages 'org-babel-load-languages '((C . t)
-                                                         (python . t)
-                                                         (latex . t)))
-
-(setq doom-font (font-spec :family "JetBrains Mono" :size 16 :weight 'normal)
-      doom-variable-pitch-font (font-spec :family "JetBrains Mono" :size 16))
+(setq doom-font (font-spec :family "JetBrains Mono" :size 14 :weight 'normal)
+      doom-variable-pitch-font (font-spec :family "JetBrains Mono" :size 14))
 
 ;; -------------------------------------- python ---------------------------------
 ;; mypy flycheck mode
@@ -402,14 +338,9 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
     (eyebrowse-mode t)
     (setq eyebrowse-new-workspace t)))
 
-(use-package! yasnippet
-  :bind
-  (:map yas-minor-mode-map
-   (("<tab>" . yas/expand))))
-
-(use-package! atomic-chrome
-  :config
-  (atomic-chrome-start-server))
+;; (use-package! atomic-chrome
+;;   :init
+;;   (atomic-chrome-start-server))
 
 (use-package! google-translate
   :bind ("C-c t" . google-translate-at-point))
@@ -561,28 +492,12 @@ marginparsep=7pt, marginparwidth=.6in}
   ;; Currently, on Mac has the required fonts installed.
   (unless (not (chun/os/on-wsl-p))
     ;; Set the default
-    (let ((emacs-font-size 14)
+    (let ((emacs-font-size 18)
           (emacs-font-name "WenQuanYi Micro Hei Mono"))
       (set-frame-font (format "%s-%s" (eval emacs-font-name)
                               (eval emacs-font-size)))
       (set-fontset-font (frame-parameter nil 'font) 'unicode (eval emacs-font-name)))))
 
-
-(after! '(org chun-mode)
-  ;; Set org-download directory.
-  (setq org-download-image-dir (concat chun-mode/org-roam-dir "/images"))
-
-  ;; Make the table in org-mode better
-  (defun chun/org-table-adjust-face()
-    (interactive)
-    (make-face 'width-font-face)
-    (set-face-attribute 'width-font-face nil
-                        :font "Sarasa Fixed SC 14")
-    (setq buffer-face-mode-face 'width-font-face)
-    (buffer-face-mode))
-  ;; Currentlly, other PC doesn't have the fonts required installed.
-  (when (chun/os/on-mac)
-    (add-hook 'org-mode-hook 'chun/org-table-adjust-face)))
 
 (after! org
   (add-hook! 'org-mode-hook 'org-download-enable)
@@ -593,7 +508,6 @@ marginparsep=7pt, marginparwidth=.6in}
 
 (when (chun/os/on-wsl-p)
   (load-theme 'doom-acario-dark t))
-
 
 (use-package! calfw)
 (use-package! anki-editor
@@ -618,3 +532,5 @@ marginparsep=7pt, marginparwidth=.6in}
 
 (require 'irony-cdb-json)
 (irony-cdb-json-add-compile-commands-path "/home/chunwei/project/cinn2" "/home/chunwei/project/cinn2/compile_commands.json")
+;; load my config from org
+(org-babel-load-file (concat chun-mode/org-roam-dir "/20211001225141-emacs_config.org"))

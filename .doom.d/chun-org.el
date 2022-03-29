@@ -17,7 +17,8 @@
                  ("\\paragraph{%s}" . "\\paragraph*{%s}")
                  ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
   (setq org-latex-listings 'minted)
-  (add-to-list 'org-latex-packages-alist '("" "minted")))
+  ;; (add-to-list 'org-latex-packages-alist '("" "minted"))
+  )
 
 
 (require 'mm-url) ; to include mm-url-decode-entities-string
