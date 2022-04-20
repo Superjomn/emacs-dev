@@ -526,5 +526,7 @@ marginparsep=7pt, marginparwidth=.6in}
 (use-package! ox-hugo
   :after ox)
 
+(use-package! crux)
+
 ;; load my config from org
 (org-babel-load-file (concat chun-mode/org-roam-dir "/20211001225141-emacs_config.org"))

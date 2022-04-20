@@ -33,7 +33,7 @@
   :lighter " chun")
 
 (defvar chun-mode/--open-chrome "
-tell application \"Microsoft Edge\" to tell active tab of window 1
+tell application \"Google Chrome\" to tell active tab of window 1
         activate
 end tell
 "
@@ -201,7 +201,7 @@ Returns t or nil
          (base-url "https://google.com")
          (url (format "%s/search?q=%s" base-url query-word))
          (chrome-applescript "
-tell application \"Microsoft Edge\"
+tell application \"Google Chrome\"
     if it is running then
         activate
         open location \"%s\"
@@ -216,7 +216,7 @@ end tell
   "Open Chrome and go to the url"
   (message "chrome-browse-url %s" url)
   (let* ((chrome-applescript "
-tell application \"Microsoft Edge\"
+tell application \"Google Chrome\"
     if it is running then
         activate
         open location \"%s\"
