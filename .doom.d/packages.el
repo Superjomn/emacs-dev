@@ -102,3 +102,5 @@
 (package! srefactor)
 (package! key-chord)
 (package! bash-completion)
+(package! s)
+(package! crux)
