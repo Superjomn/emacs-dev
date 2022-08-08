@@ -23,7 +23,6 @@ Babel mode is a good place to take notes.
 : chun/is-on-windows
 
 
-
 ** string related
 ** time related
 *** insert today's date
@@ -108,6 +107,32 @@ Babel mode is a good place to take notes.
 
 #+RESULTS:
 : chun/get-file-name
+
+
+* Org-mode related
+** COMMENT Copy the section and open it as a html page
+https://orgmode.org/worg/dev/org-element-api.html
+
+
+#+BEGIN_SRC emacs-lisp
+(defun chun/org-html-this ()
+    (interactive)
+    (let*
+        ((cur-tree (org-element-at-point))
+         (tmp-org-file (format "/tmp/%d.org" (random "")))
+         )
+      (message "cur-tree: %S" cur-tree)
+      ))
+#+END_SRC
+
+#+RESULTS:
+: chun/org-html-this
+
+
+
+
+
+
 
 
 * Configs and commands
