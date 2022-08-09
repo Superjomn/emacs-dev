@@ -1,0 +1,153 @@
+#+title: Chun-mode
+#+startup: overview indent
+#+OPTIONS: num:nil
+
+Some emacs configs I used without any personal information.
+
+Babel mode is a good place to take notes.
+
+* Utilities
+** OS related
+*** get OS type
+
+#+BEGIN_SRC emacs-lisp
+(defun chun/is-on-mac ()
+  (string-equal system-type "darwin"))
+(defun chun/is-on-linux ()
+  (string-equal system-type "gnu/linux"))
+(defun chun/is-on-windows ()
+  (string-equal system-type "windows-nt"))
+#+END_SRC
+
+#+RESULTS:
+: chun/is-on-windows
+
+
+** string related
+** time related
+*** insert today's date
+
+#+BEGIN_SRC emacs-lisp
+ (defun chun/insert-current-date (&optional omit-day-of-week-p)
+    "Insert today's date using the current locale.
+  With a prefix argument, the date is inserted without the day of
+  the week."
+    (interactive "P*")
+    (insert (calendar-date-string (calendar-current-date) nil
+				  omit-day-of-week-p)))
+#+END_SRC
+
+#+RESULTS:
+: chun/insert-current-date
+
+** edit related
+*** org-mode inline code with ~~
+
+#+BEGIN_SRC emacs-lisp
+(defun chun/--set-inline-code-wrapper ()
+  (let* (start
+         end
+         (space "[?\s?\n?,]"))
+    (when (re-search-forward space nil t)
+      (setq end (point))
+      (backward-char 1)
+      (when (re-search-backward space nil t)
+        (setq start (point))
+        (goto-char start)
+        (forward-char 1)
+        (insert "~")
+        (goto-char end)
+        (insert "~")))))
+
+(defun chun/wrap-inline-code ()
+  (interactive)
+  (chun/--set-inline-code-wrapper))
+#+END_SRC
+
+#+RESULTS:
+: chun/wrap-inline-code
+
+
+#+BEGIN_SRC emacs-lisp
+(after! org-mode
+  (add-hook 'org-mode
+            (lambda () (local-set-key (kbd "C-x C-w") #'chun/wrap-inline-code))))
+#+END_SRC
+
+#+RESULTS:
+
+** IO related
+*** alias some crux helper functions
+**** Remove the current file and buffer
+#+BEGIN_SRC emacs-lisp
+(defalias 'chun/remove-file 'crux-delete-buffer-and-file)
+#+END_SRC
+
+#+RESULTS:
+: chun/remove-file
+
+**** Find recently visited file
+
+#+BEGIN_SRC emacs-lisp
+(defalias 'chun/find-recent-file 'crux-recentf-find-file)
+#+END_SRC
+
+#+RESULTS:
+: chun/find-recent-file
+
+*** Get current file name
+
+#+BEGIN_SRC emacs-lisp
+(defun chun/get-file-name ()
+  "Get the filename without directory to clipboard."
+  (interactive)
+  (kill-new
+   (file-name-nondirectory (buffer-file-name))))
+#+END_SRC
+
+#+RESULTS:
+: chun/get-file-name
+
+
+* Org-mode related
+** COMMENT Copy the section and open it as a html page
+https://orgmode.org/worg/dev/org-element-api.html
+
+
+#+BEGIN_SRC emacs-lisp
+(defun chun/org-html-this ()
+    (interactive)
+    (let*
+        ((cur-tree (org-element-at-point))
+         (tmp-org-file (format "/tmp/%d.org" (random "")))
+         )
+      (message "cur-tree: %S" cur-tree)
+      ))
+#+END_SRC
+
+#+RESULTS:
+: chun/org-html-this
+
+
+
+
+
+
+
+
+* Configs and commands
+** Treat ~_~ as part of word
+
+#+BEGIN_SRC emacs-lisp
+(defun chun/--treat-_-as-word ()
+  "Treat '_' as part of word."
+  (modify-syntax-entry ?_ "w"))
+
+(add-hook! markdown-mode-hook 'chun/--treat-_-as-word)
+(add-hook! graphviz-mode-hook 'chun/--treat-_-as-word)
+(add-hook! emacs-lisp-mode-hook 'chun/--treat-_-as-word)
+(add-hook! c++-mode-hook 'chun/--treat-_-as-word)
+#+END_SRC
+
+#+RESULTS:
+

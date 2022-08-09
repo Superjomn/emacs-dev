@@ -311,7 +311,6 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
 
 
 
-;; <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 (setq doom-font (font-spec :family "JetBrains Mono" :size 14 :weight 'normal)
       doom-variable-pitch-font (font-spec :family "JetBrains Mono" :size 14))
 
@@ -493,7 +492,7 @@ marginparsep=7pt, marginparwidth=.6in}
   ;; Currently, on Mac has the required fonts installed.
   (unless (not (chun/os/on-wsl-p))
     ;; Set the default
-    (let ((emacs-font-size 18)
+    (let ((emacs-font-size 24)
           (emacs-font-name "WenQuanYi Micro Hei Mono"))
       (set-frame-font (format "%s-%s" (eval emacs-font-name)
                               (eval emacs-font-size)))
@@ -527,6 +526,7 @@ marginparsep=7pt, marginparwidth=.6in}
   :after ox)
 
 (use-package! crux)
+
 
 ;; load my config from org
 (org-babel-load-file (concat chun-mode/org-roam-dir "/20211001225141-emacs_config.org"))
