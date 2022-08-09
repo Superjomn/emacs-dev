@@ -98,6 +98,8 @@
 (package! simple-httpd)
 ;; (package! org-roam-ui :recipe (:host github :repo "org-roam/org-roam-ui" :files ("*.el" "out")))
 (package! clang-format+)
+(package! jupyter)
+(package! swift-mode)
 (package! log4e)
 (package! srefactor)
 (package! key-chord)

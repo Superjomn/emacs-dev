@@ -525,12 +525,8 @@ marginparsep=7pt, marginparwidth=.6in}
 (use-package! ox-hugo
   :after ox)
 
-(use-package! irony-cdb
-  :config
-  (setq irony-cdb-search-directory-list '("/home/chunwei/project/cinn2/"))
-  )
+(use-package! crux)
 
-(require 'irony-cdb-json)
-(irony-cdb-json-add-compile-commands-path "/home/chunwei/project/cinn2" "/home/chunwei/project/cinn2/compile_commands.json")
+
 ;; load my config from org
 (org-babel-load-file (concat chun-mode/org-roam-dir "/20211001225141-emacs_config.org"))
