@@ -106,3 +106,4 @@
 (package! bash-completion)
 (package! s)
 (package! crux)
+(package! ag)
