@@ -492,7 +492,7 @@ marginparsep=7pt, marginparwidth=.6in}
   ;; Currently, on Mac has the required fonts installed.
   (unless (not (chun/os/on-wsl-p))
     ;; Set the default
-    (let ((emacs-font-size 24)
+    (let ((emacs-font-size 28)
           (emacs-font-name "WenQuanYi Micro Hei Mono"))
       (set-frame-font (format "%s-%s" (eval emacs-font-name)
                               (eval emacs-font-size)))
