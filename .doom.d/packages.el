@@ -107,3 +107,4 @@
 (package! s)
 (package! crux)
 (package! ag)
+(package! yaml-mode)
