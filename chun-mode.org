@@ -109,6 +109,23 @@ Babel mode is a good place to take notes.
 : chun/get-file-name
 
 
+* Configs and commands
+** Treat ~_~ as part of word
+
+#+BEGIN_SRC emacs-lisp
+(defun chun/--treat-_-as-word ()
+  "Treat '_' as part of word."
+  (modify-syntax-entry ?_ "w"))
+
+(add-hook! markdown-mode-hook 'chun/--treat-_-as-word)
+(add-hook! graphviz-mode-hook 'chun/--treat-_-as-word)
+(add-hook! emacs-lisp-mode-hook 'chun/--treat-_-as-word)
+(add-hook! c++-mode-hook 'chun/--treat-_-as-word)
+#+END_SRC
+
+#+RESULTS:
+
+
 * Org-mode related
 ** org babel
 
@@ -199,21 +216,69 @@ https://orgmode.org/worg/dev/org-element-api.html
 
 
 
-* Configs and commands
-** Treat ~_~ as part of word
+* Projectile related
+
+Set project directories.
 
 #+BEGIN_SRC emacs-lisp
-(defun chun/--treat-_-as-word ()
-  "Treat '_' as part of word."
-  (modify-syntax-entry ?_ "w"))
-
-(add-hook! markdown-mode-hook 'chun/--treat-_-as-word)
-(add-hook! graphviz-mode-hook 'chun/--treat-_-as-word)
-(add-hook! emacs-lisp-mode-hook 'chun/--treat-_-as-word)
-(add-hook! c++-mode-hook 'chun/--treat-_-as-word)
+(defcustom chun-mode/projectile-dirs '()
+  "The yas-snippets directory."
+  :type '(restricted-sexp :tag "Vector"
+                          :match-alternatives
+                          (lambda (xs) (and (vectorp xs) (seq-every-p #'stringp xs))))
+  :group 'chun)
 #+END_SRC
 
 #+RESULTS:
+: chun-mode/projectile-dirs
+
+Set ignored directories.
+
+#+BEGIN_SRC emacs-lisp
+(defvar chun/projectile-ignored-directories
+  '("^\\.git$" "env"
+    "^\\.idea$" "^cmake-build-debug$"
+    "^build*$" "^cmake-build-debug-*"
+    "^__pycache__$")
+  "Directories to ignore")
+#+END_SRC
+
+#+RESULTS:
+: chun/projectile-globally-ignored-directories
+
+
+Conduct the mainloop
+
+#+BEGIN_SRC emacs-lisp
+(require 'dash)
+
+(after! projectile
+  (-map (lambda (path)
+          (projectile-add-known-project path)) chun-mode/projectile-dirs)
+
+  (setq projectile-indexing-method 'native)
+  (setq projectile-generic-command
+        (mapconcat #'shell-quote-argument
+                   (append (list "rg" "-0" "--files" "--follow" "--color=never" "--hidden")
+                           (cl-loop for dir in chun/projectile-ignored-directories collect
+                                    "--glob" collect (concat "!" dir))) " ") projectile-git-command
+                                    projectile-generic-command))
+#+END_SRC
+
+#+RESULTS:
+: rg -0 --files --follow --color\=never --hidden --glob \!\^\\.git\$ --glob \!env --glob \!\^\\.idea\$ --glob \!\^cmake-build-debug\$ --glob \!\^build\*\$ --glob \!\^cmake-build-debug-\* --glob \!\^__pycache__\$
+
+
+
+
+
+
+
+
+
+
+
+
 
 * Python related
 
@@ -237,13 +302,13 @@ https://orgmode.org/worg/dev/org-element-api.html
 
 
 * anki related
-** some template
+** anki template
 
 #+BEGIN_SRC emacs-lisp
-(setq chun/--anki-deck-candidates
-      '(
-        "English-learn-org"
-        "gpu-related"))
+(defvar chun/--anki-deck-candidates
+  '()
+  "Deck candidates for anki")
+
 
 (defun chun/anki-sentence-template (deck)
   (interactive (list
