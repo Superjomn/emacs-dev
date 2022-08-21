@@ -487,16 +487,11 @@ marginparsep=7pt, marginparwidth=.6in}
 ;; Set default font, it will override the doom-fonts setting
 
 
-
-(after! chun-mode
-  ;; Currently, on Mac has the required fonts installed.
-  (unless (not (chun/os/on-wsl-p))
-    ;; Set the default
-    (let ((emacs-font-size 24)
-          (emacs-font-name "WenQuanYi Micro Hei Mono"))
+(let ((emacs-font-size 12)
+          (emacs-font-name "JetBrains Mono"))
       (set-frame-font (format "%s-%s" (eval emacs-font-name)
                               (eval emacs-font-size)))
-      (set-fontset-font (frame-parameter nil 'font) 'unicode (eval emacs-font-name)))))
+      (set-fontset-font (frame-parameter nil 'font) 'unicode (eval emacs-font-name)))
 
 
 (after! org
