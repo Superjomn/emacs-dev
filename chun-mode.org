@@ -151,7 +151,7 @@ Babel mode is a good place to take notes.
 #+END_SRC
 
 #+RESULTS:
-| (lambda nil (local-set-key (kbd C-c s) 'org-insert-src-block)) | chun/--org-download-override-image-dir-by-file-id | (closure ((hook . org-mode-hook) (--dolist-tail--) t) (&rest _) (add-hook 'before-save-hook 'org-encrypt-entries nil t)) | org-download-enable | org-indent-mode | #[0 \301\211\207 [imenu-create-index-function org-imenu-get-tree] 2] | er/add-org-mode-expansions | +lookup--init-org-mode-handlers-h | (closure ((hook . org-mode-hook) (--dolist-tail--) t) (&rest _) (add-hook 'before-save-hook 'org-encrypt-entries nil t)) | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-show-all append local] 5] | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-babel-show-result-all append local] 5] | org-babel-result-hide-spec | org-babel-hide-all-hashes | doom-disable-show-paren-mode-h | doom-disable-show-trailing-whitespace-h | +org-enable-auto-reformat-tables-h | +org-enable-auto-update-cookies-h | +org-make-last-point-visible-h | org-fancy-priorities-mode | org-superstar-mode | evil-org-mode | toc-org-enable | embrace-org-mode-hook | org-eldoc-load |
+| (lambda nil (local-set-key (kbd C-c s) 'org-insert-src-block)) | (lambda nil (font-lock-add-keywords nil '((next-color-link (0 'org-link t))) t)) | chun/--org-download-override-image-dir-by-file-id | org-download-enable | org-indent-mode | #[0 \301\211\207 [imenu-create-index-function org-imenu-get-tree] 2] | er/add-org-mode-expansions | +lookup--init-org-mode-handlers-h | (closure ((hook . org-mode-hook) (--dolist-tail--) t) (&rest _) (add-hook 'before-save-hook 'org-encrypt-entries nil t)) | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-fold-show-all append local] 5] | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-babel-show-result-all append local] 5] | org-babel-result-hide-spec | org-babel-hide-all-hashes | doom-disable-show-paren-mode-h | doom-disable-show-trailing-whitespace-h | +org-enable-auto-reformat-tables-h | +org-enable-auto-update-cookies-h | +org-make-last-point-visible-h | org-fancy-priorities-mode | org-superstar-mode | evil-org-mode | toc-org-enable | embrace-org-mode-hook | org-eldoc-load |
 
 *** enable execution of several languages
 
@@ -225,24 +225,33 @@ https://orgmode.org/worg/dev/org-element-api.html
         "English-learn-org"
         "gpu-related"))
 
-(defun chun/anki-sentence-template (deck)
+(setq chun/--anki-card-kinds
+      '(
+        "Basic (and reversed card)"
+        "Basic (optional reversed card)"
+        ))
+
+(defun chun/anki-sentence-template (deck card)
   (interactive (list
-                (helm :sources (helm-build-sync-source "test"
-                 :candidates chun/--anki-deck-candidates
-                 :fuzzy-match t)
-      :buffer "*anki deck*")
-                ))
+                (helm :sources (helm-build-sync-source "anki-deck"
+                                 :candidates chun/--anki-deck-candidates
+                                 :fuzzy-match t)
+                      :buffer "*anki deck*")
+                (helm :sources (helm-build-sync-source "anki-card"
+                                 :candidates chun/--anki-card-kinds
+                                 :fuzzy-match t)
+                      :buffer "*anki card*")))
   (let* ((input (read-string "Input:")))
     (insert (format "* %s :sentence:
 :PROPERTIES:
-:ANKI_NOTE_TYPE: Basic (and reversed card)
+:ANKI_NOTE_TYPE: %s
 :ANKI_DECK: %s
 :END:
 
 ,** Front
 %s
 ,** Back
-" input deck input))))
+" input card deck input))))
 #+END_SRC
 
 #+RESULTS:
