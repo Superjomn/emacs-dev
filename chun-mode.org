@@ -125,6 +125,22 @@ Babel mode is a good place to take notes.
 
 #+RESULTS:
 
+** TODO global mark
+General idea:
+
+1. hold a global dictionary mapping from annotation to file&lineno
+2. user's interface
+   - add a record to the dictionary
+   - clean all the records
+   - remove a record
+   - jump to the line of a record
+
+The dependencies of knowledge:
+
+- helm for providing an interface for query the record
+- associate list?
+
+
 
 * Org-mode related
 ** org babel
