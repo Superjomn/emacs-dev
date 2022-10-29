@@ -142,6 +142,146 @@ The dependencies of knowledge:
 - associate list?
 
 
+Define a structure for point
+
+
+#+BEGIN_SRC emacs-lisp
+(require 'cl-lib)
+
+(cl-defstruct chun-point-mark
+  ;; the filepath
+  filename
+  ;; point in a file
+  point
+  )
+#+END_SRC
+
+#+RESULTS:
+: chun-point-mark
+
+Define a global map to remember the ~chun-point-mark~ records.
+
+
+#+BEGIN_SRC emacs-lisp
+(require 'ht)
+
+(setq chun-point-mark-dic
+      (ht-create))
+#+END_SRC
+
+#+RESULTS:
+: #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8125 data ())
+
+Define some helper functions to get necesssary information for the point.
+
+
+#+BEGIN_SRC emacs-lisp
+(defun --chun-point-mark-get-point-for-current-position ()
+  "Get a point-mark instance for the current position."
+  (let* ((file-path (file-truename buffer-file-name))
+         (cur-point (point))
+         )
+    (make-chun-point-mark :filename file-path :point cur-point)))
+#+END_SRC
+
+#+RESULTS:
+: --chun-point-mark-get-point-for-current-position
+
+
+#+BEGIN_SRC emacs-lisp
+(defun --chun-point-mark-goto-position (pos)
+  "Go to the position a point-mark points to.
+pos: chun-point-mark
+"
+  (let* ((file-path (chun-point-mark-filename pos))
+         (the-point (chun-point-mark-point pos))
+         )
+    (switch-to-buffer
+     (find-file-noselect file-path))
+    (goto-char the-point)))
+#+END_SRC
+
+#+RESULTS:
+: --chun-point-mark-goto-position
+
+
+Define serveral functions to manipulating the records.
+
+#+BEGIN_SRC emacs-lisp
+(defun --chun-point-mark-get-record (key)
+  "Get a point-mark record."
+  (ht-get chun-point-mark-dic key)
+  )
+#+END_SRC
+
+#+RESULTS:
+: --chun-point-mark-get-record
+
+#+BEGIN_SRC emacs-lisp
+(defun --chun-point-mark-set-record (key instance)
+  "Set or add a record in point-mark dic.
+key: string
+instance: chun-point-mark
+"
+  (ht-set! chun-point-mark-dic key instance)
+  )
+#+END_SRC
+
+#+RESULTS:
+: --chun-point-mark-set-record
+
+
+
+Define some user interfaces including:
+
+- add-point, add or update a point to the global record
+  - Use a interactive to set a name to this point
+- delete-point, delete a point
+  - Use a helm to choose an existing record to remove
+- goto-point
+  - Use a helm to select an existing record to goto
+
+
+#+BEGIN_SRC emacs-lisp
+(defun chun-point-mark-add-current(key)
+  (interactive "M")
+  (let* ((cur-point
+          (--chun-point-mark-get-point-for-current-position))
+         )
+    (--chun-point-mark-set-record key cur-point)))
+#+END_SRC
+
+#+RESULTS:
+: chun-point-mark-add-current
+
+
+#+BEGIN_SRC emacs-lisp
+(defun chun-point-mark-goto (key)
+  "Goto a point annotated by key."
+  (interactive (list (helm :sources (helm-build-sync-source "keys"
+                                      :candidates (ht-keys chun-point-mark-dic)
+                                      :fuzzy-match t)
+                           :buffer "*chun-point-mark*")))
+
+  (let* ((the-point (--chun-point-mark-get-record key)))
+    (if the-point
+        (--chun-point-mark-goto-position the-point))))
+#+END_SRC
+
+#+RESULTS:
+: chun-point-mark-goto
+
+
+*** tests
+
+#+BEGIN_SRC emacs-lisp
+(--chun-point-mark-get-point-for-current-position)
+#+END_SRC
+
+#+RESULTS:
+: #s(chun-point-mark "/Users/yanchunwei/emacs-dev/chun-mode.org" 5626)
+
+
 
 * Org-mode related
 ** org babel
