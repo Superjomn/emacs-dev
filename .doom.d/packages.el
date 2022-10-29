@@ -108,3 +108,6 @@
 (package! crux)
 (package! ag)
 (package! yaml-mode)
+
+;; for hashtable
+(package! ht)
