@@ -111,3 +111,4 @@
 
 ;; for hashtable
 (package! ht)
+(package! avy)
