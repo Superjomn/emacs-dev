@@ -119,6 +119,12 @@
                                            (interactive)
                                            (switch-to-buffer "*scratch*")))
 
+;; Keymap for avy jump
+(map! :leader
+      :desc "avy jump" "jl" #'avy-goto-line)
+(map! :leader
+      :desc "avy jump" "jj" #'avy-goto-word-0)
+
 
 (require 'dash)
 
@@ -238,7 +244,8 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
 (use-package! elpy
   :commands (elpy-enable))
 (after! elpy
-  (setq elpy-rpc-virtualenv-path "~/project/algo-trading/venv")
+  (setq elpy-rpc-virtualenv-path "/Users/yanchunwei/project/matshow/venv")
+
   ;; format python code before save file
   (add-hook 'elpy-mode-hook (lambda ()
                               (add-hook 'before-save-hook 'elpy-format-code nil t))))
