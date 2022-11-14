@@ -8,6 +8,7 @@
 (setq user-full-name "Superjomn"
       user-mail-address "Superjomn@")
 
+
 ;; Doom exposes five (optional) variables for controlling fonts in Doom. Here
 ;; are the three important ones:
 ;;
@@ -111,8 +112,9 @@
 (map! :leader
       :desc "Open magit status" "gs" #'magit-status)
 
-(map! :leader
-      :desc "Open vterm popup" "'" #'+vterm/toggle)
+(if (string-equal chun-mode/pc-name "Mac Pro")
+        (map! :leader :desc "Open vterm popup" "'" #'+eshell/toggle)
+      (map! :leader :desc "Open vterm popup" "'" #'+vterm/toggle))
 
 (map! :leader
       :desc "Go to scratch buffer" "bs" '(lambda ()

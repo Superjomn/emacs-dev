@@ -122,6 +122,7 @@ Babel mode is a good place to take notes.
 
 
 
+
 * Configs and commands
 ** Treat ~_~ as part of word
 
@@ -285,6 +286,19 @@ Define some user interfaces including:
 : chun-point-mark-goto
 
 
+
+
+** Declare a custom variable for environment name
+
+#+BEGIN_SRC emacs-lisp
+(defcustom chun-mode/pc-name ""
+  "The PC name used for config customization which are different on different PCs."
+  :type 'string
+  :group 'chun)
+#+END_SRC
+
+#+RESULTS:
+: chun-mode/pc-name
 
 
 * Org-mode related
