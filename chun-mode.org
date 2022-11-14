@@ -193,9 +193,11 @@ Define some helper functions to get necesssary information for the point.
 (defun --chun-point-mark-get-point-for-current-position ()
   "Get a point-mark instance for the current position."
   (let* ((file-path (file-truename buffer-file-name))
+         (new-mark (make-marker))
          (cur-point (point))
          )
-    (make-chun-point-mark :filename file-path :point cur-point)))
+    (set-marker new-mark (point))
+    (make-chun-point-mark :filename file-path :point new-mark)))
 #+END_SRC
 
 #+RESULTS:
