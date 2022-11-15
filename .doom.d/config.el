@@ -83,6 +83,11 @@
 (use-package! chun-mode
   :ensure t)
 
+(defcustom chun-mode/pc-name ""
+  "The PC name used for config customization which are different on different PCs."
+  :type 'string
+  :group 'chun)
+
 ;; (require 'rtags) ;; optional, must have rtags installed
 ;; (rtags-start-process-unless-running)
 ;; (cmake-ide-setup)
@@ -193,8 +198,6 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
 ;; set spacemacs theme
 (setq doom-theme 'spacemacs-light)
 
-
-;; (load! "./chun-agenda.el")
 
 (use-package! org
   :init (setq-default org-export-with-todo-keywords t)
@@ -325,7 +328,7 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
 
 ;; -------------------------------------- python ---------------------------------
 ;; mypy flycheck mode
-(load! "./mypy-flycheck.el")
+;;(load! "./mypy-flycheck.el")
 (use-package! elpy
   :init
   (elpy-enable))
