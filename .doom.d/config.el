@@ -109,6 +109,15 @@
 (define-key evil-normal-state-map "vh" 'evil-window-left)
 (define-key evil-normal-state-map "vl" 'evil-window-right)
 
+(defconst chun-mac-os "Mac Pro")
+(defconst chun-ampere-workstation "Ampere Workstation")
+(defun chun--pc-is-mac-pro ()
+  "Tell whether this PC is the MacPro."
+  (string-equal chun-mode/pc-name chun-mac-os))
+(defun chun--pc-is-ampere-workstation ()
+  "Tell whether this PC is the Amere workstation."
+  (string-equal chun-mode/pc-name chun-ampere-workstation))
+
 
 ;; Bug on Mac
 (map! :leader
@@ -117,7 +126,9 @@
 (map! :leader
       :desc "Open magit status" "gs" #'magit-status)
 
-(if (string-equal chun-mode/pc-name "Mac Pro")
+;; I still use vterm in Ubuntu OS.
+;; But in Mac, vterm not work well, so eshell is used instead.
+(if (chun--pc-is-mac-pro)
         (map! :leader :desc "Open vterm popup" "'" #'+eshell/toggle)
       (map! :leader :desc "Open vterm popup" "'" #'+vterm/toggle))
 
@@ -131,6 +142,12 @@
       :desc "avy jump" "jl" #'avy-goto-line)
 (map! :leader
       :desc "avy jump" "jj" #'avy-goto-word-0)
+
+;; Keymap for chun-mode
+(map! :leader
+      :desc "chun/insert today date" "cd" #'chun/insert-current-date)
+(map! :leader
+      :desc "chun/insert anki card" "ck" #'chun/anki-sentence-template)
 
 
 (require 'dash)
@@ -533,6 +550,12 @@ marginparsep=7pt, marginparwidth=.6in}
   :after ox)
 
 (use-package! crux)
+
+;; Use org-reveal to write slides only in Mac.
+(if (chun--pc-is-mac-pro)
+    (progn
+      (load! "~/emacs-dev/org-reveal/ox-reveal.el")
+      (require 'ox-reveal)))
 
 
 ;; load my config from org
