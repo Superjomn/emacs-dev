@@ -238,13 +238,15 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
                              :weight bold)
                             ("DONE" :foreground "forest green"
                              :weight bold)
+                            ("DONE" :foreground "forest green"
+                             :weight bold)
                             ("WAITING" :foreground "orange"
                              :weight bold)
                             ("HOLD" :foreground "magenta"
                              :weight bold)
                             ("CANCELLED" :foreground "forest green"
                              :weight bold)))
-(setq org-todo-keywords '((sequence "TODO(t)" "STRT(s)" "NEXT(n)" "|" "DONE(d)")
+(setq org-todo-keywords '((sequence "TODO(t)" "IDEA(i)" "STRT(s)" "NEXT(n)" "|" "DONE(d)")
                                (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)")))
 
 (load! "./chun-org.el")
@@ -300,7 +302,7 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
       (setq org-roam-capture-templates '(
                                          ("d" "default" plain "%?"
                                           :if-new
-                                          (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
+                                          (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n#+STARTUP: overview indent\n#+bind: org-image-actual-width 400")
                                           :unnarrowed t)
                                          ("b" "beamer" plain "%?"
                                           :if-new (file+head "%<%Y%m%d%H%M%S>-beamer-${slug}.org"

@@ -95,6 +95,7 @@
 ;;         (timeline . " % s")))
 ;;
 
+(require 'subr-x)
 
 (use-package! org-agenda
   :after chun-mode
@@ -103,18 +104,28 @@
   ("C-c x x" . org-capture)
   :init
   (setq chun-agenda-inbox-path (concat chun-mode/org-roam-dir "/20210807163552-agenda_inbox.org"))
+  (setq chun-agenda-random-idea-path (concat chun-mode/org-roam-dir "/20221118080431-random_idea.org"))
   :custom
 
   (org-agenda-files
-      (list (concat chun-mode/org-roam-dir "/20210803124941-inference_2021_q3_enhancement_agenda.org")
-       (concat chun-mode/org-roam-dir "/20210803112751-paddle_inference_agenda.org")
-       (concat chun-mode/org-roam-dir "/20210806130344-cinn_compiler_agenda.org")
-       chun-agenda-inbox-path))
+   (list chun-agenda-inbox-path
+     chun-agenda-random-idea-path
+     ))
 
   :config ; execute code after a package is loaded
 
   (setq org-capture-templates `(("i" "inbox" entry
                                  (file chun-agenda-inbox-path) "* TODO %?")
+                                ("x" "idea" entry (file chun-agenda-random-idea-path)
+                                 ,(string-join
+                                  '("* IDEA %?"
+                                    ":PROPERTIES:"
+                                    ":ADDED-DATE: %U"
+                                    ":END:"
+                                    )
+                                  "\n"
+                                  ))
                                 ("l" "link" entry (file chun-agenda-inbox-path)
                                  "* TODO %(org-cliplink-capture)" :immediate-finish t)
+
                                 )))
