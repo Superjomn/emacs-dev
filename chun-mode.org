@@ -309,47 +309,21 @@ Add marks
 *** Utilities to get content within an org-mode heading
 The English content starts with ~En~ heading, and the Chinese content starts with ~Ch~ heading.
 
-
-#+BEGIN_SRC emacs-lisp
-(defun chun-bili--get-ch-en-content-at-this-point ()
-  "Get the content within this heading."
-  (let* ((root (org-element-at-point))
-         (content-elements (org-element--parse-elements
-                            (org-element-property :contents-begin root)
-                            (org-element-property :contents-end root) nil nil nil nil nil))
-         (res (ht-create))
-         )
-    (org-element-map content-elements 'headline
-      (message "children: %S" content-elements)
-      (lambda (headline)
-        (let* (
-               (title (org-element-property :raw-value headline))
-               (content (buffer-substring-no-properties (org-element-property :contents-begin headline)
-                                                        (org-element-property :contents-end headline)
-                                                        )))
-          (message "visiting element: %S" headline)
-
-          (when (string-equal title "En")
-            (ht-set! res "en" content))
-          (when (string-equal title "Ch")
-            (ht-set! res "ch" content)))))
-    res
-    ))
-
-  (defun chun-bili-get-content-at-this-point ()
-    (interactive)
-    (message "%S" (chun-bili--get-ch-en-content-at-this-point))
-    )
-#+END_SRC
-
 #+RESULTS:
 : chun-bili-get-content-at-this-point
 
 **** Example heading
+:PROPERTIES:
+ANKI_NOTE_TYPE: the note type
+ANKI_DOCK: the dock
+:END:
 ***** En
 a brief summary
+hello world
 ***** Ch
 简要的总结
+
+你好世界
 
 *** Create a bilingual data structure
 A list with each item is a pair of English and Chinese sentences.
