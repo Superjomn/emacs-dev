@@ -516,10 +516,6 @@ Conduct the mainloop
 #+RESULTS:
 : chun/reset-python-hook
 
-
-
-
-
 * anki related
 ** anki template
 

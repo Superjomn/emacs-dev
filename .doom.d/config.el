@@ -551,7 +551,10 @@ marginparsep=7pt, marginparwidth=.6in}
 (use-package! ox-hugo
   :after ox)
 
+(load! "./chun-agenda.el")
+
 (use-package! crux)
+(use-package! epc)
 
 ;; Use org-reveal to write slides only in Mac.
 (if (chun--pc-is-mac-pro)
@@ -562,3 +565,4 @@ marginparsep=7pt, marginparwidth=.6in}
 
 ;; load my config from org
 (org-babel-load-file (concat chun-mode/org-roam-dir "/20211001225141-emacs_config.org"))
+(load! "../bili.el")

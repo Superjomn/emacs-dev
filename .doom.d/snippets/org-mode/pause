@@ -2,4 +2,4 @@
 # name: pause
 # key: pause
 # --
-#+latex: \pause
+#+BEAMER: \pause

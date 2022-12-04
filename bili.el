@@ -18,8 +18,64 @@
   :type 'string
   :group 'chun-bili)
 
+(defcustom chun-bili--to-generate-table t nil
+  :type 'boolean
+  :group 'chun-bili)
+
+(defcustom chun-bili--epc-server-file "../my-server.py" nil
+  :type 'string
+  :group 'chun-bili)
+
+
 (defconst chun-bili-anki-note-type-property-key "ANKI_NOTE_TYPE")
 (defconst chun-bili-anki-dock-property-key "ANKI_DOCK")
+
+(defface chun-bili--en-face
+  '((t :foreground "blue"
+       ;;:background "grey"
+       :weight bold
+       :underline t
+       :height 250))
+  "Face for English sentence."
+  :group 'chun-bili)
+
+(defface chun-bili--ch-face
+  '((t :foreground "black"
+       :height 250
+       ;;:background "aquamarine"
+       ;; :weight bold
+       :italic t
+       :underline nil))
+  "Face for Chinese sentence."
+  :group 'chun-bili)
+
+(defvar elfeed-show-mode-map
+  (let ((map (make-sparse-keymap)))
+    (prog1 map
+      (suppress-keymap map)
+      (define-key map "h" #'describe-mode)
+      (define-key map "q" #'elfeed-kill-buffer)))
+  "Keymap for `elfeed-show-mode'.")
+
+(defun elfeed-show-mode ()
+  "Mode for displaying Elfeed feed entries.
+\\{elfeed-show-mode-map}"
+  (interactive)
+  (kill-all-local-variables)
+  (use-local-map elfeed-show-mode-map)
+  (setq major-mode 'elfeed-show-mode
+        mode-name "elfeed-show"
+        ;; buffer-read-only nil
+        )
+  (buffer-disable-undo)
+  (evil-mode)
+  (toggle-truncate-lines nil)
+  (linum-mode)
+  ;; (make-local-variable 'elfeed-show-entry)
+  ;; (set (make-local-variable 'bookmark-make-record-function)
+  ;;      #'elfeed-show-bookmark-make-record)
+  (run-mode-hooks 'elfeed-show-mode-hook))
+
 
 
 (defun chun-bili-get-content-at-this-point ()
@@ -88,8 +144,7 @@ Returns:
 "
   (let* ((element (org-element-create 'headline))
          (child-element-0 (org-element-create 'headline))
-         (child-element-1 (org-element-create 'headline))
-         )
+         (child-element-1 (org-element-create 'headline)))
     ;; set properties for parent headline
     (org-element-put-property element :level headline-level)
     (org-element-put-property element :raw-value line0)
@@ -102,8 +157,7 @@ Returns:
     (org-element-put-property child-element-0 :level (+ headline-level 1))
     (let* ((paragraph (org-element-create 'paragraph))
            (child-paragraph0 (org-element-create 'paragraph))
-           (child-paragraph1 (org-element-create 'paragraph))
-           )
+           (child-paragraph1 (org-element-create 'paragraph)))
       (org-element-set-contents paragraph
                                 (format "
 :PROPERTIES:
@@ -117,8 +171,7 @@ Returns:
 
       (org-element-adopt-elements element paragraph)
       (org-element-adopt-elements child-element-0 child-paragraph0)
-      (org-element-adopt-elements child-element-1 child-paragraph1)
-      )
+      (org-element-adopt-elements child-element-1 child-paragraph1))
 
     (org-element-put-property child-element-1 :raw-value "Back")
     (org-element-put-property child-element-1 :title "Back")
@@ -128,8 +181,7 @@ Returns:
 
     ;; (chun-bili--org-element-put-anki-properties element "EnCh" "Basic")
 
-    (org-element-interpret-data element)
-    ))
+    (org-element-interpret-data element)))
 
 
 (defun chun-bili--pair-data-to-org (title lines0 lines1 note-type anki-dock headline-level)
@@ -139,8 +191,7 @@ Returns:
          (n (length lines0))
          line0
          line1
-         (org-content (format "* %s\n" title))
-         )
+         (org-content (format "* %s\n" title)))
     (while (< i n)
         (setq line0 (nth i lines0))
         (setq line1 (nth i lines1))
@@ -158,8 +209,7 @@ Returns:
         ((buffer (get-file-buffer chun-bili-publish-file)))
       (with-current-buffer buffer
         (goto-char (point-max))
-        (insert content)
-        ))))
+        (insert content)))))
 
 (defun chun-bili--string-valid (str)
   (if (stringp str) (not (string= (string-trim str) ""))))
@@ -180,6 +230,52 @@ Returns:
   (-filter #'chun-bili--string-valid
            (mapcar #'string-trim (split-string str "\n"))))
 
+;; (defun chun-bili--generate-table (list0 list1)
+;;   "Generate a table for the pair data. "
+;;   (assert (listp list0))
+;;   (assert (listp list1))
+;;   (assert (eq (length list0) (length list1)))
+
+;;   (let* ((cell-lengths '())
+;;          (common-length (length list0))
+;;          (i 0))
+;;     (while (< i common-length)
+;;       (let* ((cell0 (nth i list0))
+;;              (cell1 (nth i list1)))
+;;         (append cell-lengths (max (length cell0) (length cell1))))
+;;       (incf i))
+;;     (with-temp-buffer
+;;       (goto-char (point-min))
+
+;;       )
+;;     )
+;;   )
+
+(defun chun-bili-show ()
+  (interactive)
+  (let* ((ch-en-hashtable (chun-bili--get-ch-en-content-at-this-point))
+         (ch-list (chun-bili--split-valid-lines (ht-get ch-en-hashtable chun-bili--ch)))
+         (en-list (chun-bili--split-valid-lines (ht-get ch-en-hashtable chun-bili--en)))
+         (i 0)
+         (n (length ch-list))
+         (bili-buffer (get-buffer-create "*BILI*")))
+    (assert (eq (length ch-list) (length en-list)) t)
+    (with-current-buffer bili-buffer
+      (erase-buffer)
+      (while (< i n)
+        (let* ((cell0 (nth i en-list))
+               (cell1 (nth i ch-list)))
+
+          (insert (format
+                   (propertize "%s\n" 'face 'chun-bili--en-face) cell0))
+          (insert (format
+                   (propertize "%s\n" 'face 'chun-bili--ch-face) cell1))
+          (incf i))
+        (setq line-spacing 1.5))
+      (elfeed-show-mode)
+      (switch-to-buffer-other-frame bili-buffer))))
+
+
 (defun chun-bili--pair-data-this ()
   (interactive)
   (let* ((pair-dic (chun-bili--get-ch-en-content-at-this-point))
@@ -189,8 +285,7 @@ Returns:
          (lines-ch (chun-bili--split-valid-lines content-ch))
          (element (org-element-at-point))
          (title (org-element-property :raw-value element))
-         org-content
-         )
+         org-content)
 
          (setq anki-note-type (chun-bili--get-anki-note-type element))
          (message "anki-note type %s" anki-note-type)
@@ -202,3 +297,42 @@ Returns:
     (message "%S" org-content)
     (chun-bili--write-to-file org-content chun-bili-publish-file)))
 
+
+(require 'epc)
+
+(defvar my-epc nil)
+(defun bili-restart-epc-server ()
+  (interactive)
+  (setq my-epc (epc:start-epc "/usr/local/bin/python" (list chun-bili--epc-server-file)))
+  )
+(bili-restart-epc-server)
+
+;; (setq bili--rpc-res nil)
+
+(setq bili--tmp-html-file "/tmp/1.html")
+
+(defun bili--rpc-double-lang-to-org-table (lang0 lang1)
+  (deferred:$
+    (epc:call-deferred my-epc 'bili_double_lang_to_org_table (list lang0 lang1))
+    (deferred:nextc it (lambda (x)
+                         (setq bili--rpc-res x)
+                         (message "%S" x)
+                         (with-temp-buffer
+                           (insert x)
+                           (write-region nil nil bili--tmp-html-file nil)
+                           (chun-mode/--chrome-browse-url (concat "file:///" bili--tmp-html-file))
+                           )
+                         ))))
+
+(defun bili-table-it ()
+  "Make an html on the content."
+  (interactive)
+  (let* ((dic (chun-bili--get-ch-en-content-at-this-point))
+         (en-content (ht-get dic chun-bili--en))
+         (ch-content (ht-get dic chun-bili--ch))
+         (org-table-text "")
+         )
+    (bili--rpc-double-lang-to-org-table en-content ch-content)
+    ;; (setq org-table-text bili--rpc-res)
+    ;; (message "table: %s" org-table-text)
+    ))
