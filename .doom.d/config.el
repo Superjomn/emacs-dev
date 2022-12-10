@@ -342,8 +342,8 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
 
 
 
-(setq doom-font (font-spec :family "JetBrains Mono" :size 14 :weight 'normal)
-      doom-variable-pitch-font (font-spec :family "JetBrains Mono" :size 14))
+;; (setq doom-font (font-spec :family "JetBrains Mono" :size 14 :weight 'normal)
+;;       doom-variable-pitch-font (font-spec :family "JetBrains Mono" :size 14))
 
 ;; -------------------------------------- python ---------------------------------
 ;; mypy flycheck mode
@@ -518,10 +518,17 @@ marginparsep=7pt, marginparwidth=.6in}
 ;; Set default font, it will override the doom-fonts setting
 
 
-(let ((emacs-font-size 12)
-          (emacs-font-name "JetBrains Mono"))
+(setq chun--emacs-font-size 16)
+(if (window-system)
+    (setq chun--emacs-font-size 11)
+
+    (set-frame-height (selected-frame) 46)
+    (set-frame-width (selected-frame) 133)
+    )
+
+(let ((emacs-font-name "JetBrains Mono"))
       (set-frame-font (format "%s-%s" (eval emacs-font-name)
-                              (eval emacs-font-size)))
+                              (eval chun--emacs-font-size)))
       (set-fontset-font (frame-parameter nil 'font) 'unicode (eval emacs-font-name)))
 
 
@@ -565,4 +572,7 @@ marginparsep=7pt, marginparwidth=.6in}
 
 ;; load my config from org
 (org-babel-load-file (concat chun-mode/org-roam-dir "/20211001225141-emacs_config.org"))
-(load! "../bili.el")
+
+(if (chun--pc-is-mac-pro)
+  (load! "../bili.el")
+  )
