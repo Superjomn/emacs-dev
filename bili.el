@@ -22,10 +22,8 @@
   :type 'boolean
   :group 'chun-bili)
 
-(defcustom chun-bili--epc-server-file "../my-server.py" nil
-  :type 'string
-  :group 'chun-bili)
-
+(defconst chun-bili--epc-server-file (expand-file-name "my_server.py"
+                                                       (file-name-directory load-file-name)))
 
 (defconst chun-bili-anki-note-type-property-key "ANKI_NOTE_TYPE")
 (defconst chun-bili-anki-dock-property-key "ANKI_DOCK")
@@ -159,8 +157,7 @@ Returns:
            (child-paragraph0 (org-element-create 'paragraph))
            (child-paragraph1 (org-element-create 'paragraph)))
       (org-element-set-contents paragraph
-                                (format "
-:PROPERTIES:
+                                (format ":PROPERTIES:
 :ANKI_NOTE_TYPE: %s
 :ANKI_DECK: %s
 :END:
@@ -195,7 +192,7 @@ Returns:
     (while (< i n)
         (setq line0 (nth i lines0))
         (setq line1 (nth i lines1))
-        (setq org-content (concat org-content "\n" (chun-bili--create-anki-org-record line0 line1
+        (setq org-content (concat org-content "\n" (chun-bili--create-anki-org-record line1 line0
                                                              note-type anki-dock headline-level)))
         (incf i))
 
