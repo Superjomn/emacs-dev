@@ -31,7 +31,6 @@
 
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
-;; (setq org-directory "/Users/yanchunwei/centra/info_center/agenda")
 
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
@@ -157,7 +156,8 @@
   (setq chun/--projectile-known-projects chun-mode/projectile-dirs)
   (-map (lambda (path)
           (projectile-add-known-project path)) chun/--projectile-known-projects)
-  (setq projectile-globally-ignored-directories '("*.git" "env"))
+  (setq projectile-globally-ignored-directories '("*.git" "env" "cmake-build-tritonrelbuildwithasserts"
+                                                  "cmake-build-debug" "build" "__pycache__"))
   (setq projectile-indexing-method 'native)
   (setq projectile-generic-command
         (mapconcat #'shell-quote-argument
@@ -267,12 +267,12 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
 ;; Python config
 (use-package! elpy
   :commands (elpy-enable))
-(after! elpy
-  (setq elpy-rpc-virtualenv-path "/Users/yanchunwei/project/matshow/venv")
+;; (after! elpy
+;;   (setq elpy-rpc-virtualenv-path "/Users/yanchunwei/project/matshow/venv")
 
   ;; format python code before save file
-  (add-hook 'elpy-mode-hook (lambda ()
-                              (add-hook 'before-save-hook 'elpy-format-code nil t))))
+  ;; (add-hook 'elpy-mode-hook (lambda ()
+  ;;                             (add-hook 'before-save-hook 'elpy-format-code nil t))))
 
 ;; avy jump config
 (after! avy
@@ -526,10 +526,10 @@ marginparsep=7pt, marginparwidth=.6in}
     (set-frame-width (selected-frame) 133)
     )
 
-(let ((emacs-font-name "JetBrains Mono"))
-      (set-frame-font (format "%s-%s" (eval emacs-font-name)
-                              (eval chun--emacs-font-size)))
-      (set-fontset-font (frame-parameter nil 'font) 'unicode (eval emacs-font-name)))
+;(let ((emacs-font-name "JetBrains Mono"))
+      ;(set-frame-font (format "%s-%s" (eval emacs-font-name)
+                              ;(eval chun--emacs-font-size)))
+      ;(set-fontset-font (frame-parameter nil 'font) 'unicode (eval emacs-font-name)))
 
 
 (after! org
