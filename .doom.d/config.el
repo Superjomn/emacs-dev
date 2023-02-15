@@ -1,65 +1,22 @@
-;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
-;; Place your private configuration here! Remember, you do not need to run 'doom
-;; sync' after modifying this file!
-
-
-;; Some functionality uses this to identify you, e.g. GPG configuration, email
-;; clients, file templates and snippets.
 (setq user-full-name "Superjomn"
-      user-mail-address "Superjomn@")
+      user-mail-address "yanchunwei _@_ outlook _._ com")
 
 
-;; Doom exposes five (optional) variables for controlling fonts in Doom. Here
-;; are the three important ones:
-;;
-;; + `doom-font'
-;; + `doom-variable-pitch-font'
-;; + `doom-big-font' -- used for `doom-big-font-mode'; use this for
-;;   presentations or streaming.
-;;
-;; They all accept either a font-spec, font string ("Input Mono-12"), or xlfd
-;; font string. You generally only need these two:
-;; (setq doom-font (font-spec :family "monospace" :size 12 :weight 'semi-light)
-;;       doom-variable-pitch-font (font-spec :family "sans" :size 13))
-
-;; There are two ways to load a theme. Both assume the theme is installed and
-;; available. You can either set `doom-theme' or manually load a theme with the
-;; `load-theme' function. This is the default:
-;; (setq doom-theme 'doom-one)
-;; (setq doom-theme 'doom-1337)
-;; (setq doom-theme 'doom-acario-dark)
-
-;; If you use `org' and don't want your org files in the default location below,
-;; change `org-directory'. It must be set before org loads!
-
-;; This determines the style of line numbers in effect. If set to `nil', line
-;; numbers are disabled. For relative line numbers, set this to `relative'.
 (setq display-line-numbers-type t)
 
 
-;; Here are some additional functions/macros that could help you configure Doom:
-;;
-;; - `load!' for loading external *.el files relative to this one
-;; - `use-package!' for configuring packages
-;; - `after!' for running code after a package has loaded
-;; - `add-load-path!' for adding directories to the `load-path', relative to
-;;   this file. Emacs searches the `load-path' when you load packages with
-;;   `require' or `use-package'.
-;; - `map!' for binding new keys
-;;
-;; To get information about any of these functions/macros, move the cursor over
-;; the highlighted symbol at press 'K' (non-evil users must press 'C-c c k').
-;; This will open documentation for it, including demos of how they are used.
-;;
-;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
-;; they are implemented.
+;; helper functions ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defun chun--os-is-mac ()
+  (eq system-type "darwin"))
+(defun chun--os-is-windows ()
+  (eq system-type "windows-nt"))
+(defun chun--os-is-linux ()
+  (eq system-type "gnu/linux"))
+
 
 ;; ==============================================================================
 (display-time-mode 1)                   ; Enable time in the mode-line
 
-;; (if (eq initial-window-system 'x)       ; Startup by full frame
-;;     (toggle-frame-maximized)
-;;   (toggle-frame-fullscreen))
 
 (setq frame-title-format
       '(""
@@ -87,6 +44,7 @@
   :type 'string
   :group 'chun)
 
+;; TODO[Superjomn]: Move to some seperate file such as "cpp-dev.el"
 ;; (require 'rtags) ;; optional, must have rtags installed
 ;; (rtags-start-process-unless-running)
 ;; (cmake-ide-setup)
@@ -95,6 +53,7 @@
 (map! :leader
       :desc "Open like spacemacs" "SPC" #'helm-M-x)
 
+;; Mirror some VIM behavior here
 (define-key evil-normal-state-map "vs" '(lambda ()
                                                 (interactive)
                                                 ;; In some version, the split-window-right-and-focus method is undefined.
@@ -104,19 +63,15 @@
                                                     (split-window-right) (other-window 1)))
                                                 (balance-windows)))
 
-
 (define-key evil-normal-state-map "vh" 'evil-window-left)
 (define-key evil-normal-state-map "vl" 'evil-window-right)
 
-(defconst chun-mac-os "Mac Pro")
-(defconst chun-ampere-workstation "Ampere Workstation")
-(defun chun--pc-is-mac-pro ()
-  "Tell whether this PC is the MacPro."
-  (string-equal chun-mode/pc-name chun-mac-os))
-(defun chun--pc-is-ampere-workstation ()
-  "Tell whether this PC is the Amere workstation."
-  (string-equal chun-mode/pc-name chun-ampere-workstation))
 
+;; Keymap for chun-mode
+(map! :leader
+      :desc "chun/insert today date" "cd" #'chun/insert-current-date)
+(map! :leader
+      :desc "chun/insert anki card" "ck" #'chun/anki-sentence-template)
 
 ;; Bug on Mac
 (map! :leader
@@ -125,9 +80,8 @@
 (map! :leader
       :desc "Open magit status" "gs" #'magit-status)
 
-;; I still use vterm in Ubuntu OS.
-;; But in Mac, vterm not work well, so eshell is used instead.
-(if (chun--pc-is-mac-pro)
+;; On Mac and Windows, vterm not work well, so eshell is used instead.
+(if (not (chun--os-is-linux))
         (map! :leader :desc "Open vterm popup" "'" #'+eshell/toggle)
       (map! :leader :desc "Open vterm popup" "'" #'+vterm/toggle))
 
@@ -244,7 +198,7 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
                              :weight bold)
                             ("HOLD" :foreground "magenta"
                              :weight bold)
-                            ("CANCELLED" :foreground "forest green"
+                            ("CANCEL" :foreground "forest green"
                              :weight bold)))
 (setq org-todo-keywords '((sequence "TODO(t)" "IDEA(i)" "STRT(s)" "NEXT(n)" "|" "DONE(d)")
                                (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)")))
@@ -520,16 +474,10 @@ marginparsep=7pt, marginparwidth=.6in}
 
 (setq chun--emacs-font-size 16)
 (if (window-system)
-    (setq chun--emacs-font-size 11)
+    (setq chun--emacs-font-size 12)
 
-    (set-frame-height (selected-frame) 46)
-    (set-frame-width (selected-frame) 133)
-    )
-
-;(let ((emacs-font-name "JetBrains Mono"))
-      ;(set-frame-font (format "%s-%s" (eval emacs-font-name)
-                              ;(eval chun--emacs-font-size)))
-      ;(set-fontset-font (frame-parameter nil 'font) 'unicode (eval emacs-font-name)))
+    (set-frame-height (selected-frame) 60)
+    (set-frame-width (selected-frame) 140))
 
 
 (after! org
@@ -564,15 +512,19 @@ marginparsep=7pt, marginparwidth=.6in}
 (use-package! epc)
 
 ;; Use org-reveal to write slides only in Mac.
-(if (chun--pc-is-mac-pro)
+(if (chun--os-is-mac)
     (progn
       (load! "~/emacs-dev/org-reveal/ox-reveal.el")
       (require 'ox-reveal)))
 
 
+(org-babel-load-file (concat "~/emacs-dev/chun-mode.org"))
+
+
 ;; load my config from org
 (org-babel-load-file (concat chun-mode/org-roam-dir "/20211001225141-emacs_config.org"))
 
-(if (chun--pc-is-mac-pro)
-  (load! "../bili.el")
-  )
+
+
+(if (chun--os-is-mac)
+  (load! "../bili.el"))

@@ -8,6 +8,11 @@
   :type 'string
   :group 'chun)
 
+(defcustom chun-mode/doom-config-dir "~/.doom.d"
+  "The doom-emacs .doom.d directory."
+  :type 'string
+  :group 'chun)
+
 (defcustom chun-mode/yas-snippets-dirs '("~/project/yas-snippets")
   "The yas-snippets directory."
   :type '(restricted-sexp :tag "Vector"
