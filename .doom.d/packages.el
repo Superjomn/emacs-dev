@@ -92,7 +92,7 @@
 (package! org-tree-slide)
 (package! ox-hugo)
 ;; (package! jupyter)                      ;
-(package! graphviz-dot-mode)
+;(package! graphviz-dot-mode)
 ;; (package! org-roam-bibtex)
 (package! websocket)
 (package! simple-httpd)
@@ -113,3 +113,4 @@
 (package! ht)
 (package! avy)
 (package! epc)
+(package! ox-reveal)

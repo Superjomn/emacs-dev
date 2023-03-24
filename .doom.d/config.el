@@ -85,6 +85,8 @@
         (map! :leader :desc "Open vterm popup" "'" #'+eshell/toggle)
       (map! :leader :desc "Open vterm popup" "'" #'+vterm/toggle))
 
+(map! :leader :desc "Open vterm popup" "'" #'+vterm/toggle)
+
 (map! :leader
       :desc "Go to scratch buffer" "bs" '(lambda ()
                                            (interactive)
@@ -481,8 +483,7 @@ marginparsep=7pt, marginparwidth=.6in}
 
 
 (after! org
-  (add-hook! 'org-mode-hook 'org-download-enable)
-  )
+  (add-hook! 'org-mode-hook 'org-download-enable))
 
 
 (use-package! ox-gfm)
@@ -520,6 +521,8 @@ marginparsep=7pt, marginparwidth=.6in}
 
 (org-babel-load-file (concat "~/emacs-dev/chun-mode.org"))
 
+(elpy-enable)
+
 
 ;; load my config from org
 (org-babel-load-file (concat chun-mode/org-roam-dir "/20211001225141-emacs_config.org"))
@@ -528,3 +531,5 @@ marginparsep=7pt, marginparwidth=.6in}
 
 (if (chun--os-is-mac)
   (load! "../bili.el"))
+
+(require 'ox-reveal)
