@@ -296,10 +296,12 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
                             (nospace . "-")
                             (case-fn . downcase))))
 
+(if (eq system-type 'darwin)
+    (setq doom-font (font-spec :family "JetBrains Mono" :size 15 :weight 'normal)
+          doom-variable-pitch-font (font-spec :family "JetBrains Mono" :size 15))
+    )
 
 
-;; (setq doom-font (font-spec :family "JetBrains Mono" :size 14 :weight 'normal)
-;;       doom-variable-pitch-font (font-spec :family "JetBrains Mono" :size 14))
 
 ;; -------------------------------------- python ---------------------------------
 ;; mypy flycheck mode
