@@ -53,8 +53,7 @@ NOTE: It simply append new records to the list, so an external reset is nessary.
   (setq chun-project--title-to-path-dic (ht-create))
   (let* ((i 0)
          (n (length files))
-         title file
-         )
+         title file)
     (while (< i n)
       (setq file (nth i files))
       (setq title (nth i titles))
@@ -71,28 +70,11 @@ NOTE: It simply append new records to the list, so an external reset is nessary.
     (message "chun-project updated %d items" (length chun-project--titles))
     (chun-project--reset-dic chun-project--org-files chun-project--titles)))
 
-(defun chun-project-search-title (title)
-  (interactive
-   (list
-    (helm :sources (helm-build-async-source "title"
-                     :candidates '("hello" "world")
-                     :fuzzy-match t)
-          :buffer "*chun-project*")))
-  (let* ((path (ht-get chun-project--title-to-path-dic title)))
-    (switch-to-buffer (find-file-noselect path))))
+(defun chun-project-search-title ()
+  (interactive)
+  "Goto an org file with a specific title."
 
-
-(chun-project--get-titles-from-directory "c:/Users/yanch/OneDrive/org-roam/")
-
-(setq chun-project--org-files '())
-(setq chun-project--titles '())
-(chun-project--cache-add-dir (car chun-project--dirs))
-(message "%S" chun-project--titles)
-(message "%S" chun-project--org-files)
-
-(chun-project-update-cache)
-(chun-project-search-title)
-
-(helm-build-async-source "title"
-                     :candidates '("hello" "world")
-                     :fuzzy-match t)
+  (ivy-read "Goto file: " chun-project--titles
+            :action (lambda (title)
+                      (let* ((path (ht-get chun-project--title-to-path-dic title)))
+                        (switch-to-buffer (find-file-noselect path))))))
