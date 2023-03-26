@@ -525,6 +525,5 @@ marginparsep=7pt, marginparwidth=.6in}
 (org-babel-load-file (concat chun-mode/org-roam-dir "/20211001225141-emacs_config.org"))
 
 
-
 (if (chun--os-is-mac)
   (load! "../bili.el"))

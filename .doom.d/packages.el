@@ -113,3 +113,4 @@
 (package! ht)
 (package! avy)
 (package! epc)
+(package! ox-reveal)
