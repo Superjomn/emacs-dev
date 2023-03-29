@@ -534,3 +534,7 @@ marginparsep=7pt, marginparwidth=.6in}
   (load! "../bili.el"))
 
 (require 'ox-reveal)
+;; restore the behaviour mapped to "C-l" in helm
+(after! helm
+  (define-key helm-find-files-map (kbd "C-l") 'helm-find-files-up-one-level)
+  )
