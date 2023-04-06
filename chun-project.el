@@ -78,3 +78,6 @@ NOTE: It simply append new records to the list, so an external reset is nessary.
             :action (lambda (title)
                       (let* ((path (ht-get chun-project--title-to-path-dic title)))
                         (switch-to-buffer (find-file-noselect path))))))
+
+
+(provide 'chun-project)

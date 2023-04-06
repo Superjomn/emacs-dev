@@ -534,7 +534,15 @@ marginparsep=7pt, marginparwidth=.6in}
   (load! "../bili.el"))
 
 (require 'ox-reveal)
+
+;;(load! "~/emacs-dev/chun-project.el")
+;;(after! chun-project
+  ;;(chun-project-update-cache)
+  ;;(global-set-key (kbd "C-c n x") 'chun-project-search-title)
+  ;;)
+
 ;; restore the behaviour mapped to "C-l" in helm
-(after! helm
+(after! helm-files
   (define-key helm-find-files-map (kbd "C-l") 'helm-find-files-up-one-level)
   )
+
