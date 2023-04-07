@@ -546,17 +546,29 @@ Conduct the mainloop
                                  :candidates chun/--anki-card-kinds
                                  :fuzzy-match t)
                       :buffer "*anki card*")))
-  (let* ((input (read-string "Input:")))
-    (insert (format "* %s :sentence:
+  (let* ((input (read-string "Input:"))
+         (org-heading-level (+ 1 (org-current-level)))
+         (org-root-heading-prefix (make-string org-heading-level ?*))
+         (org-body-heading-prefix (make-string (+ 1 org-heading-level) ?*))
+         )
+    (insert (format "%s %s :sentence:
 :PROPERTIES:
 :ANKI_NOTE_TYPE: %s
 :ANKI_DECK: %s
 :END:
 
-,** Front
+%s Front
 %s
-,** Back
-" input card deck input))))
+%s Back
+"
+                    org-root-heading-prefix
+                    input
+                    card
+                    deck
+                    org-body-heading-prefix
+                    input
+                    org-body-heading-prefix
+                    ))))
 #+END_SRC
 
 #+RESULTS:

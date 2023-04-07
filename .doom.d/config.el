@@ -535,11 +535,11 @@ marginparsep=7pt, marginparwidth=.6in}
 
 (require 'ox-reveal)
 
-;;(load! "~/emacs-dev/chun-project.el")
-;;(after! chun-project
-  ;;(chun-project-update-cache)
-  ;;(global-set-key (kbd "C-c n x") 'chun-project-search-title)
-  ;;)
+(load! "~/emacs-dev/chun-project.el")
+(after! chun-project
+  (chun-project-update-cache)
+  (global-set-key (kbd "C-c n x") 'chun-project-search-title)
+  )
 
 ;; restore the behaviour mapped to "C-l" in helm
 (after! helm-files

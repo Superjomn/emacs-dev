@@ -4,7 +4,8 @@
 ;; 2. Scan the all the titles of the org files, and hold it as a helm database
 ;; 3. navigate with helm
 
-(defcustom chun-project--dirs "directories to scan" '()
+(defcustom chun-project--dirs  '()
+        "directories to scan"
   :type 'list
   :group 'chun-project)
 
@@ -29,10 +30,13 @@ path: string
 (defun chun-project--get-titles-from-directory (dir)
   "Get the titles from the files in a directory."
   (message "dir: %S" dir)
-  (let* ((org-files (directory-files (expand-file-name dir) nil "\\.org$"))
-         (org-paths (mapcar (lambda (file) (concat dir "/" file)) org-files))
-         (org-titles (mapcar (lambda (path) (chun-project--get-title-from-org-file path)) org-paths)))
-    `(,org-paths . ,org-titles)))
+  (if (stringp dir)
+      (let* ((org-files (directory-files (expand-file-name dir) nil "\\.org$"))
+             (org-paths (mapcar (lambda (file)
+                                  (concat dir "/" file)) org-files))
+             (org-titles (mapcar (lambda (path)
+                                   (chun-project--get-title-from-org-file path)) org-paths)))
+        `(,org-paths . ,org-titles))))
 
 (defun chun-project--cache-add-dir (dir)
   "Update the org-files and titles cache from a directory.
@@ -63,6 +67,7 @@ NOTE: It simply append new records to the list, so an external reset is nessary.
 (defun chun-project-update-cache ()
   (interactive)
   (progn
+    (message "update cache on dir: %S" chun-project--dirs)
     (setq chun-project--org-files '())
     (setq chun-project--titles '())
     (mapcar (lambda (dir)
