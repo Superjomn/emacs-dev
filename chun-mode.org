@@ -522,7 +522,7 @@ Conduct the mainloop
 : chun/reset-python-hook
 
 * anki related
-** anki template
+** COMMENT anki template
 
 #+BEGIN_SRC emacs-lisp
 (defvar chun/--anki-deck-candidates
