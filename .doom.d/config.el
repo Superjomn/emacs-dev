@@ -462,7 +462,7 @@ marginparsep=7pt, marginparwidth=.6in}
 ;; \\usepackage{amssymb}
 ;; \\usepackage{capt-of}
 ;; \\usepackage{hyperref}
-;; \\usepackage{minted}
+;; \\usepackage{minted}
 ;; \\setCJKmainfont[Scale=0.9]{Adobe Heiti Std}
 ;; \\setCJKmonofont[Scale=0.9]{Adobe Heiti Std}
 ;; \\renewcommand{\\MintedPygmentize}{/home/chunwei/.local/bin/pygmentize}"
@@ -546,3 +546,7 @@ marginparsep=7pt, marginparwidth=.6in}
   (define-key helm-find-files-map (kbd "C-l") 'helm-find-files-up-one-level)
   )
 
+(load! "~/emacs-dev/chun-anki.el")
+
+(if (window-system)
+      (setq org-download-screenshot-method "powershell -c Add-Type -AssemblyName System.Windows.Forms;$image = [Windows.Forms.Clipboard]::GetImage();$image.Save('%s', [System.Drawing.Imaging.ImageFormat]::Png)"))
