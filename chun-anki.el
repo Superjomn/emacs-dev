@@ -30,6 +30,7 @@
                                  :candidates chun-anki-card-kinds
                                  :fuzzy-match t)
                       :buffer "*anki card*")))
+
   (let* ((input (read-string "Input: "))
          (org-root-heading-prefix (make-string chun-anki--org-heading-level ?*))
          (org-body-heading-prefix (make-string (+ 1 chun-anki--org-heading-level) ?*))

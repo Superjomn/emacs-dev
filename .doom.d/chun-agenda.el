@@ -88,3 +88,6 @@ PRIORITY may be one of the characters ?A, ?B, or ?C."
 ;; enable state logging
 (setq org-treat-insert-todo-heading-as-state-change t)
 (setq org-log-into-drawer t)
+
+(setq org-agenda-custom-commands
+      '(("c" "Simple agenda view" agenda "")))
