@@ -550,3 +550,9 @@ marginparsep=7pt, marginparwidth=.6in}
 
 (if (window-system)
       (setq org-download-screenshot-method "powershell -c Add-Type -AssemblyName System.Windows.Forms;$image = [Windows.Forms.Clipboard]::GetImage();$image.Save('%s', [System.Drawing.Imaging.ImageFormat]::Png)"))
+
+
+(setq elfeed-feeds
+      '(
+        ; Lil'Log blog
+        "https://lilianweng.github.io/index.xml" tech ai))

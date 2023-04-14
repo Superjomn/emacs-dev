@@ -114,3 +114,4 @@
 (package! avy)
 (package! epc)
 (package! ox-reveal)
+(package! elfeed)
