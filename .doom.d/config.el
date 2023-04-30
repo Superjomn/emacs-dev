@@ -554,5 +554,6 @@ marginparsep=7pt, marginparwidth=.6in}
 
 (setq elfeed-feeds
       '(
-        ; Lil'Log blog
-        "https://lilianweng.github.io/index.xml" tech ai))
+        ("https://lilianweng.github.io/index.xml" tech ai) ; Lil'Log blog
+        ("https://jaykmody.com/feed.xml" tech ai) ; Jay Mody's blog
+      ))
