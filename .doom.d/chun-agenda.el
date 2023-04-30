@@ -51,7 +51,20 @@
                                  (file chun-agenda--read-list-path)
                                  "* TODO %(org-cliplink-capture)"
                                  :immediate-finish t)
-                                ("e" "English" entry (file chun-agenda--english-inbox-path) "* TODO %? :english:")
+                                ("e" "English" entry (file chun-agenda--english-inbox-path)
+                                 ,(string-join
+                                 '("* %^{Title} :anki:"
+                                 ":PROPERTIES:"
+                                 ":ANKI_NOTE_TYPE: Basic (and reversed card)"
+                                 ":ANKI_DECK: English-learn-org"
+                                 ":END:"
+                                 "** Front"
+                                 "%(identity \"%^{Title}\")"
+                                 "** Back"
+                                 "%^{Body}\n")
+                                 "\n"
+                                   ))
+
                                 ("r" "read"
                                  entry
                                  (file chun-agenda--read-list-path)
@@ -91,3 +104,8 @@ PRIORITY may be one of the characters ?A, ?B, or ?C."
 
 (setq org-agenda-custom-commands
       '(("c" "Simple agenda view" agenda "")))
+
+;; (add-hook 'org-agenda-finalize-hook #'hl-line-mode)
+
+(add-hook 'org-agenda-mode-hook
+          '(lambda () (hl-line-mode 1)))
