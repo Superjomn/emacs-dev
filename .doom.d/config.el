@@ -549,6 +549,7 @@ marginparsep=7pt, marginparwidth=.6in}
 
 (setq elfeed-feeds
       '(
+<<<<<<< HEAD
         ; Lil'Log blog
         "https://lilianweng.github.io/index.xml" tech ai))
 
@@ -557,3 +558,8 @@ marginparsep=7pt, marginparwidth=.6in}
       (elpy-enable)
       (setq elpy-rpc-virtualenv-path "~/tekit_pyenv")
       (setq python-shell-virtualenv-path "~/tekit_pyenv")))
+=======
+        ("https://lilianweng.github.io/index.xml" tech ai) ; Lil'Log blog
+        ("https://jaykmody.com/feed.xml" tech ai) ; Jay Mody's blog
+      ))
+>>>>>>> a68743c8fed2c47e880f037e6bbf9eb41d36c5d0

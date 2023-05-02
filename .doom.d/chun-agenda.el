@@ -51,7 +51,20 @@
                                  (file chun-agenda--read-list-path)
                                  "* TODO %(org-cliplink-capture)"
                                  :immediate-finish t)
-                                ("e" "English" entry (file chun-agenda--english-inbox-path) "* TODO %? :english:")
+                                ("e" "English" entry (file chun-agenda--english-inbox-path)
+                                 ,(string-join
+                                 '("* %^{Title} :anki:"
+                                 ":PROPERTIES:"
+                                 ":ANKI_NOTE_TYPE: Basic (and reversed card)"
+                                 ":ANKI_DECK: English-learn-org"
+                                 ":END:"
+                                 "** Front"
+                                 "%(identity \"%^{Title}\")"
+                                 "** Back"
+                                 "%^{Body}\n")
+                                 "\n"
+                                   ))
+
                                 ("r" "read"
                                  entry
                                  (file chun-agenda--read-list-path)
