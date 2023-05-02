@@ -298,8 +298,7 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
 
 (if (eq system-type 'darwin)
     (setq doom-font (font-spec :family "JetBrains Mono" :size 15 :weight 'normal)
-          doom-variable-pitch-font (font-spec :family "JetBrains Mono" :size 15))
-    )
+          doom-variable-pitch-font (font-spec :family "JetBrains Mono" :size 15)))
 
 
 
@@ -442,7 +441,6 @@ marginparsep=7pt, marginparwidth=.6in}
       '("xelatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
 
 (add-hook 'org-mode-hook 'org-indent-mode)
-
 ) ;; end of use-package org
 
 
@@ -503,8 +501,7 @@ marginparsep=7pt, marginparwidth=.6in}
 (use-package! org-tree-slide
   :bind (:map org-tree-slide-mode-map
          ("C-M-n" . org-tree-slide-move-next-tree)
-         ("C-M-p" . org-tree-slide-move-previous-tree)
-         ))
+         ("C-M-p" . org-tree-slide-move-previous-tree)))
 
 (use-package! ox-hugo
   :after ox)
@@ -538,13 +535,11 @@ marginparsep=7pt, marginparwidth=.6in}
 (load! "~/emacs-dev/chun-project.el")
 (after! chun-project
   (chun-project-update-cache)
-  (global-set-key (kbd "C-c n x") 'chun-project-search-title)
-  )
+  (global-set-key (kbd "C-c n x") 'chun-project-search-title))
 
 ;; restore the behaviour mapped to "C-l" in helm
 (after! helm-files
-  (define-key helm-find-files-map (kbd "C-l") 'helm-find-files-up-one-level)
-  )
+  (define-key helm-find-files-map (kbd "C-l") 'helm-find-files-up-one-level))
 
 (load! "~/emacs-dev/chun-anki.el")
 
@@ -556,3 +551,9 @@ marginparsep=7pt, marginparwidth=.6in}
       '(
         ; Lil'Log blog
         "https://lilianweng.github.io/index.xml" tech ai))
+
+(if (eq system-type 'gnu/linux)
+    (progn
+      (elpy-enable)
+      (setq elpy-rpc-virtualenv-path "~/tekit_pyenv")
+      (setq python-shell-virtualenv-path "~/tekit_pyenv")))
