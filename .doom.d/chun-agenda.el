@@ -91,3 +91,5 @@ PRIORITY may be one of the characters ?A, ?B, or ?C."
 
 (setq org-agenda-custom-commands
       '(("c" "Simple agenda view" agenda "")))
+
+(setq org-columns-default-format "%50ITEM(Task) %10CLOCKSUM %16TIMESTAMP_IA")
