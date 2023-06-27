@@ -36,7 +36,7 @@
                       chun-agenda--read-list-path))
 
   (org-todo-keywords '((sequence "TODO(t)" "NEXT(n)"  "|" "DONE(d!)")
-                       (sequence "IDEA(i)" "BACKLOG(b)" "READY(r)" "ACTIVE(a)" "REVIEW(v)" "WAIT(w@/!)" "HOLD(h)" "|" "CANCELLED(c@)")))
+                       (sequence "READY(r)" "DOING(i)" "WAIT(w@/!)" "HOLD(h@)" "|" "CANCELLED(c@)")))
 
 :config
   (setq org-capture-templates `(("i" "inbox" entry (file chun-agenda--inbox-path) "* TODO %?")
@@ -46,11 +46,13 @@
                                  ,(string-join '("* IDEA %?" ":PROPERTIES:" ":ADDED-DATE: %U"
                                                  ":END:")
                                                "\n"))
+
                                 ("l" "link"
                                  entry
-                                 (file chun-agenda--read-list-path)
+                                 (file+headline chun-agenda--read-list-path "Web")
                                  "* TODO %(org-cliplink-capture)"
                                  :immediate-finish t)
+
                                 ("e" "English" entry (file chun-agenda--english-inbox-path)
                                  ,(string-join
                                  '("* %^{Title} :anki:"

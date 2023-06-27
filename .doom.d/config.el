@@ -63,8 +63,18 @@
                                                     (split-window-right) (other-window 1)))
                                                 (balance-windows)))
 
-(define-key evil-normal-state-map "vh" 'evil-window-left)
-(define-key evil-normal-state-map "vl" 'evil-window-right)
+(defun chun-window-left-balanced ()
+  (interactive)
+  (evil-window-left 1)
+  (balance-windows))
+
+(defun chun-window-right-balanced ()
+  (interactive)
+  (evil-window-right 1)
+  (balance-windows))
+
+(define-key evil-normal-state-map "vh" 'chun-window-left-balanced)
+(define-key evil-normal-state-map "vl" 'chun-window-right-balanced)
 
 
 ;; Keymap for chun-mode
@@ -113,7 +123,10 @@
   (-map (lambda (path)
           (projectile-add-known-project path)) chun/--projectile-known-projects)
   (setq projectile-globally-ignored-directories '("*.git" "env" "cmake-build-tritonrelbuildwithasserts"
-                                                  "cmake-build-debug" "build" "__pycache__"))
+                                                  "cmake-build-debug" "build" "__pycache__"
+                                                  ".pytest_cache"
+                                                  "_play"
+                                                  ))
   (setq projectile-indexing-method 'native)
   (setq projectile-generic-command
         (mapconcat #'shell-quote-argument
@@ -549,17 +562,25 @@ marginparsep=7pt, marginparwidth=.6in}
 
 (setq elfeed-feeds
       '(
-<<<<<<< HEAD
-        ; Lil'Log blog
-        "https://lilianweng.github.io/index.xml" tech ai))
+        ("https://lilianweng.github.io/index.xml" tech ai) ; Lil'Log blog
+        ("https://jaykmody.com/feed.xml" tech ai) ; Jay Mody's blog
+      ))
+
 
 (if (eq system-type 'gnu/linux)
     (progn
       (elpy-enable)
       (setq elpy-rpc-virtualenv-path "~/tekit_pyenv")
       (setq python-shell-virtualenv-path "~/tekit_pyenv")))
-=======
-        ("https://lilianweng.github.io/index.xml" tech ai) ; Lil'Log blog
-        ("https://jaykmody.com/feed.xml" tech ai) ; Jay Mody's blog
-      ))
->>>>>>> a68743c8fed2c47e880f037e6bbf9eb41d36c5d0
+
+
+;; make '_' a part of word during programming
+(defun chun/--treat-_-as-word ()
+  "Treat '_' as part of word."
+  (modify-syntax-entry ?_ "w"))
+
+(add-hook! markdown-mode-hook 'chun/--treat-_-as-word)
+(add-hook! graphviz-mode-hook 'chun/--treat-_-as-word)
+(add-hook! emacs-lisp-mode-hook 'chun/--treat-_-as-word)
+(add-hook! c++-mode-hook 'chun/--treat-_-as-word)
+(add-hook! python-mode-hook 'chun/--treat-_-as-word)
