@@ -39,13 +39,19 @@
                        (sequence "READY(r)" "DOING(i)" "WAIT(w@/!)" "HOLD(h@)" "|" "CANCELLED(c@)")))
 
 :config
-  (setq org-capture-templates `(("i" "inbox" entry (file chun-agenda--inbox-path) "* TODO %?")
-                                ("x" "idea"
+  (setq org-capture-templates `(
+
+                                ;; menu for inbox
+                                ("i" "Inbox")
+                                ("it" "temp" entry (file chun-agenda--inbox-path) "* TODO %?")
+                                ("ix" "idea"
                                  entry
-                                 (file chun-agenda--random-idea-path)
+                                 (file+headline chun-agenda--inbox-path "Ideas")
                                  ,(string-join '("* IDEA %?" ":PROPERTIES:" ":ADDED-DATE: %U"
                                                  ":END:")
                                                "\n"))
+                                ("il" "Life" entry (file+headline chun-agenda--inbox-path "Life") "* TODO %?")
+
 
                                 ("l" "link"
                                  entry
@@ -66,6 +72,11 @@
                                  "%^{Body}\n")
                                  "\n"
                                    ))
+
+                                ("ev" "Word" entry (file+headline chun-agenda--english-inbox-path "Words")
+                                 "* TODO %? :english:")
+                                ("ep" "Phrase" entry (file+headline chun-agenda--english-inbox-path "Phrases")
+                                                                "* TODO %? :english:")
 
                                 ("r" "read"
                                  entry

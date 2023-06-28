@@ -97,7 +97,7 @@ An alist of (title . url)
   ;;   (print (format "Load %d bookmarks!" (length chun-mode/--site-url-dic))))
   (message (format "Load %d bookmarks!" (length chun-mode/--site-url-dic))))
 
-(chun-mode/--update-web-bookmarks)
+;; (chun-mode/--update-web-bookmarks)
 
 (defun chun-mode/--process-open-chrome (app)
   "Check if the app is Chrome and open chrome.
