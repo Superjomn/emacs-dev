@@ -41,7 +41,7 @@
 :config
   (setq org-capture-templates `(
 
-                                ;; menu for inbox
+                                ;; menu for inbox ;;
                                 ("i" "Inbox")
                                 ("it" "temp" entry (file chun-agenda--inbox-path) "* TODO %?")
                                 ("ix" "idea"
@@ -52,14 +52,10 @@
                                                "\n"))
                                 ("il" "Life" entry (file+headline chun-agenda--inbox-path "Life") "* TODO %?")
 
+                                ;; menu for English related ;;
+                                ("e" "English")
 
-                                ("l" "link"
-                                 entry
-                                 (file+headline chun-agenda--read-list-path "Web")
-                                 "* TODO %(org-cliplink-capture)"
-                                 :immediate-finish t)
-
-                                ("e" "English" entry (file chun-agenda--english-inbox-path)
+                                ("ea" "Anki" entry (file chun-agenda--english-inbox-path)
                                  ,(string-join
                                  '("* %^{Title} :anki:"
                                  ":PROPERTIES:"
@@ -78,9 +74,17 @@
                                 ("ep" "Phrase" entry (file+headline chun-agenda--english-inbox-path "Phrases")
                                                                 "* TODO %? :english:")
 
-                                ("r" "read"
+                                ;; menu for Reading related ;;
+                                ("r" "Read")
+                                ("rl" "link"
                                  entry
-                                 (file chun-agenda--read-list-path)
+                                 (file+headline chun-agenda--read-list-path "Web")
+                                 "* TODO %(org-cliplink-capture)"
+                                 :immediate-finish t)
+
+                                ("rp" "Paper"
+                                 entry
+                                 (file+headline chun-agenda--read-list-path "Paper")
                                  "* TODO %?")))
 
 
