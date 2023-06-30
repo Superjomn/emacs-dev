@@ -13,18 +13,20 @@
 :init
   ;; Seems the latest version need the 'org-directory`
   (setq org-directory chun-mode/org-roam-dir)
-  (setq org-agenda-files '("20210807163552-agenda_inbox.org"
+  (setq org-agenda-files '(
+                           "20230629103055-agenda_inbox.org"
                            "20220408141044-book_or_paper_agenda.org"
                            "20221017102352-english_agenda_inbox.org"
                            "20230324163903-random_ideas.org"
                            "20230214102434-read_list.org"
                            ))
 
-  (setq chun-agenda--inbox-path (concat chun-mode/org-roam-dir "/20210807163552-agenda_inbox.org"))
+  (setq chun-agenda--inbox-path (concat chun-mode/org-roam-dir "/20230629103055-agenda_inbox.org"))
   (setq chun-agenda--paper-or-book-path (concat chun-mode/org-roam-dir "/20220408141044-book_or_paper_agenda.org"))
   (setq chun-agenda--english-inbox-path (concat chun-mode/org-roam-dir "/20221017102352-english_agenda_inbox.org"))
   (setq chun-agenda--random-idea-path (concat chun-mode/org-roam-dir "/20230324163903-random_ideas.org"))
   (setq chun-agenda--read-list-path (concat chun-mode/org-roam-dir "/20230214102434-read_list.org"))
+  (setq chun-bookmark-path (concat chun-mode/org-roam-dir "/20210921113038-bookmarks.org"))
 
 
 :custom ; execute code after a package is loaded
@@ -35,7 +37,7 @@
                       chun-agenda-random-idea-path
                       chun-agenda--read-list-path))
 
-  (org-todo-keywords '((sequence "TODO(t)" "NEXT(n)"  "|" "DONE(d!)")
+  (org-todo-keywords '((sequence "TODO(t)" "NEXT(n)" "IDEA"  "|" "DONE(d!)")
                        (sequence "READY(r)" "DOING(i)" "WAIT(w@/!)" "HOLD(h@)" "|" "CANCELLED(c@)")))
 
 :config
@@ -66,8 +68,7 @@
                                  "%(identity \"%^{Title}\")"
                                  "** Back"
                                  "%^{Body}\n")
-                                 "\n"
-                                   ))
+                                 "\n"))
 
                                 ("ev" "Word" entry (file+headline chun-agenda--english-inbox-path "Words")
                                  "* TODO %? :english:")
@@ -85,7 +86,26 @@
                                 ("rp" "Paper"
                                  entry
                                  (file+headline chun-agenda--read-list-path "Paper")
-                                 "* TODO %?")))
+                                 "* TODO %?")
+
+                                ("rc" "Concept"
+                                 entry
+                                 (file+headline chun-agenda--read-list-path "Concept")
+                                 "* TODO %?")
+
+                                ("b" "Bookmark")
+                                ("bl" "Link"
+                                 entry
+                                 (file+headline chun-bookmark-path "misc")
+                                 "* %(org-cliplink-capture)"
+                                 :immediate-finish t)
+
+                                ("bt" "Text"
+                                 entry
+                                 (file+headline chun-bookmark-path "misc")
+                                 "* [[%(current-kill 0 t)][%?]]")
+
+                                ))
 
 
   (setq org-agenda-prefix-format "%i %-2:c %-14t% s%-6e %/b ")

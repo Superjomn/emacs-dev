@@ -66,6 +66,20 @@ An alist of (title . url)
   (interactive)
   (chun-mode/--update-web-bookmarks))
 
+(defun retrieve-org-links (file)
+  "Retrieve URLs and descriptions of all links within this file.
+
+Returns: List[List[str]] where the innermost list contains two strings of both url and description.
+"
+  (with-temp-buffer
+    (insert-file-contents file)
+    (org-mode)
+    (org-element-map (org-element-parse-buffer) 'link
+      (lambda (link)
+        (list (org-element-property :raw-link link)
+              (buffer-substring-no-properties (org-element-property :contents-begin link)
+                                              (org-element-property :contents-end link)))))))
+
 (defun chun-mode/--update-web-bookmarks ()
   "Update the url list from the bookmarks.org"
   ;; clear the dic
@@ -75,26 +89,14 @@ An alist of (title . url)
     (save-current-buffer
       (set-buffer (find-file-noselect bookmarks-file-path))
       (let* ((parsetree (org-element-parse-buffer))
-             (counter 0))
-        (org-element-map parsetree 'link
-          (lambda (link)
-            (let* ((plist (nth 1 link))
-                   (content (buffer-substring-no-properties (plist-get plist :contents-begin)
-                                                            (plist-get plist :contents-end)))
-                   (type (plist-get plist :type))
-                   (path (plist-get plist :path))
-                   (is-url nil)
-                   )
-              (setq is-url (or (string= type "https") (string= type "http")))
-              (when is-url
-                  (setq path (format "%s:%s" type path))
-                  (add-to-list 'chun-mode/--site-url-dic `(,content . ,path))
-                  (message "content: %S" content))
-                  (message "site-url-dic: %S" chun-mode/--site-url-dic))
-              link
-              )))))
-  ;; (with-output-to-temp-buffer "*chun-mode*"
-  ;;   (print (format "Load %d bookmarks!" (length chun-mode/--site-url-dic))))
+             (counter 0)
+             (all-link-desc (retrieve-org-links bookmarks-file-path)))
+        (dolist (link all-link-desc)
+          (let* ((url (car link))
+                 (desc (cdr link))
+                 )
+            (add-to-list 'chun-mode/--site-url-dic `(,desc . ,url)))))))
+
   (message (format "Load %d bookmarks!" (length chun-mode/--site-url-dic))))
 
 ;; (chun-mode/--update-web-bookmarks)

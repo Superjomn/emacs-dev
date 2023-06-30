@@ -584,3 +584,8 @@ marginparsep=7pt, marginparwidth=.6in}
 (add-hook! emacs-lisp-mode-hook 'chun/--treat-_-as-word)
 (add-hook! c++-mode-hook 'chun/--treat-_-as-word)
 (add-hook! python-mode-hook 'chun/--treat-_-as-word)
+
+
+;; google-translate
+(setq google-translate-translation-directions-alist
+      '(("en" . "ch") ("ch" . "en")))
