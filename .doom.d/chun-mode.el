@@ -235,10 +235,10 @@ end tell
     (do-applescript (format chrome-applescript url))
     ))
 
-(map! :leader
-      :desc "Open an application"
-      "c c"
-      #'chun-mode/open-application)
+;; (map! :leader
+;;       :desc "Open an application"
+;;       "c c"
+;;       #'chun-mode/open-application)
 
 
 (provide 'chun-mode)
