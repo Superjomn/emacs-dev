@@ -27,6 +27,7 @@
   (setq chun-agenda--random-idea-path (concat chun-mode/org-roam-dir "/20230324163903-random_ideas.org"))
   (setq chun-agenda--read-list-path (concat chun-mode/org-roam-dir "/20230214102434-read_list.org"))
   (setq chun-bookmark-path (concat chun-mode/org-roam-dir "/20210921113038-bookmarks.org"))
+  (setq chun-anki-inbox-path (concat chun-mode/org-roam-dir "/20230608135539-anki_inbox.org"))
 
 
 :custom ; execute code after a package is loaded
@@ -57,7 +58,7 @@
                                 ;; menu for English related ;;
                                 ("e" "English")
 
-                                ("ea" "Anki" entry (file chun-agenda--english-inbox-path)
+                                ("ea" "Anki" entry (file+headline chun-anki-inbox-path "Phrases")
                                  ,(string-join
                                  '("* %^{Title} :anki:"
                                  ":PROPERTIES:"
@@ -91,6 +92,11 @@
                                 ("rc" "Concept"
                                  entry
                                  (file+headline chun-agenda--read-list-path "Concept")
+                                 "* TODO %?")
+
+                                ("rs" "Sharing"
+                                 entry
+                                 (file+headline chun-agenda--read-list-path "Sharing")
                                  "* TODO %?")
 
                                 ("b" "Bookmark")
