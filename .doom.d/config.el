@@ -555,6 +555,7 @@ marginparsep=7pt, marginparwidth=.6in}
   (define-key helm-find-files-map (kbd "C-l") 'helm-find-files-up-one-level))
 
 (load! "~/emacs-dev/chun-anki.el")
+(load! "./chun-bookmark.el")
 
 (if (window-system)
       (setq org-download-screenshot-method "powershell -c Add-Type -AssemblyName System.Windows.Forms;$image = [Windows.Forms.Clipboard]::GetImage();$image.Save('%s', [System.Drawing.Imaging.ImageFormat]::Png)"))

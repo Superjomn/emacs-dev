@@ -3,8 +3,7 @@
 ;;
 ;;
 
-(define-minor-mode chun-bookmark
-  "Toggles chun mode"
+(define-minor-mode chun-bookmark "Toggles chun mode"
   nil
   :global t
   :group 'chun-bookmark
@@ -24,19 +23,15 @@ An alist of (title . url)
   "Update the url list from the bookmarks.org"
   ;; clear the dic
   (setq chun-bookmark/--site-url-dic '())
-
   (let* ()
-    (save-current-buffer
-      (set-buffer (find-file-noselect chun-bookmark-file-path))
-      (let* ((parsetree (org-element-parse-buffer))
-             (counter 0)
-             (all-link-desc (retrieve-org-links chun-bookmark-file-path)))
-        (dolist (link all-link-desc)
-          (let* ((url (car link))
-                 (desc (cdr link))
-                 )
-            (add-to-list 'chun-bookmark/--site-url-dic `(,desc . ,url)))))))
-
+    (save-current-buffer (set-buffer (find-file-noselect chun-bookmark-file-path))
+                         (let* ((parsetree (org-element-parse-buffer))
+                                (counter 0)
+                                (all-link-desc (retrieve-org-links chun-bookmark-file-path)))
+                           (dolist (link all-link-desc)
+                             (let* ((url (car link))
+                                    (desc (cdr link)))
+                               (add-to-list 'chun-bookmark/--site-url-dic `(,desc . ,url)))))))
   (message (format "Load %d bookmarks!" (length chun-bookmark/--site-url-dic))))
 
 (defun chun-bookmark/open-site ()
@@ -78,25 +73,19 @@ An alist of (title . url)
                           :foreground "red")
       (set-face-attribute 'minibuffer-prompt frame
                           :foreground "grey")
-
       (let* ((ivy-height 20)
              (ivy-count-format "")
-             (site-candidates (mapcar 'car chun-bookmark/--site-url-dic))
-             )
+             (site-candidates (mapcar 'car chun-bookmark/--site-url-dic)))
         (ivy-read "Open url: " site-candidates
                   :action (lambda (app)
                             (chun-bookmark/--process-open-site app))
-
                   :unwind (lambda ()
                             (delete-frame)
-                            (other-window 1)))
-        ))))
+                            (other-window 1)))))))
 
-(with-eval-after-load 'ivy
-  (define-key ivy-minibuffer-map (kbd "C-k") 'ivy-previous-line)
-  (define-key ivy-minibuffer-map (kbd "C-j") 'ivy-next-line)
-  (define-key ivy-minibuffer-map (kbd "C-g") 'keyboard-escape-quit)
-  )
+(with-eval-after-load 'ivy (define-key ivy-minibuffer-map (kbd "C-k") 'ivy-previous-line)
+                      (define-key ivy-minibuffer-map (kbd "C-j") 'ivy-next-line)
+                      (define-key ivy-minibuffer-map (kbd "C-g") 'keyboard-escape-quit))
 
 (defun chun-bookmark/--chrome-browse-url (url)
   "Open Chrome and go to the url"
@@ -111,21 +100,17 @@ tell application \"Google Chrome\"
     end if
 end tell
 "))
-    (do-applescript (format chrome-applescript url))
-    ))
+    (do-applescript (format chrome-applescript url))))
 
 (defun chun-bookmark/--process-open-site (app)
   "open a site"
   (let* ((url (assoc app chun-bookmark/--site-url-dic)))
-    (if url
-        (progn (chun-bookmark/--chrome-browse-url (cdr url))
-               t
-               ))))
+    (if url (progn (chun-bookmark/--chrome-browse-url (cdr url)) t))))
 
-(map! :leader
-      :desc "Open an application"
-      "c c"
-      #'chun-bookmark/open-site)
+(map! 
+ :leader
+ :desc "Open an application"
+ "c c" #'chun-bookmark/open-site)
 
 
 (provide 'chun-mode)
