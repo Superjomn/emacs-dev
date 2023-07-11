@@ -19,8 +19,9 @@
 An alist of (title . url)
 ")
 
-(defun chun-bookmark/--update-web-bookmarks ()
+(defun chun-bookmark/update-web-bookmarks ()
   "Update the url list from the bookmarks.org"
+  (interactive)
   ;; clear the dic
   (setq chun-bookmark/--site-url-dic '())
   (let* ()
@@ -33,6 +34,7 @@ An alist of (title . url)
                                     (desc (cdr link)))
                                (add-to-list 'chun-bookmark/--site-url-dic `(,desc . ,url)))))))
   (message (format "Load %d bookmarks!" (length chun-bookmark/--site-url-dic))))
+
 
 (defun chun-bookmark/open-site ()
   (interactive)
@@ -85,7 +87,9 @@ An alist of (title . url)
 
 (with-eval-after-load 'ivy (define-key ivy-minibuffer-map (kbd "C-k") 'ivy-previous-line)
                       (define-key ivy-minibuffer-map (kbd "C-j") 'ivy-next-line)
-                      (define-key ivy-minibuffer-map (kbd "C-g") 'keyboard-escape-quit))
+                      (define-key ivy-minibuffer-map (kbd "C-g") 'keyboard-escape-quit)
+                      (setq ivy-re-builders-alist '((t . ivy--regex-ignore-order)))
+                      )
 
 (defun chun-bookmark/--chrome-browse-url (url)
   "Open Chrome and go to the url"
