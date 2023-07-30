@@ -37,6 +37,8 @@ Returns a hashmap.
 ;; Example usage:
 ;; Place your cursor anywhere in the Org-mode buffer and call the function `level-wise-traversal`.
 
+(defun chun-mind-map/--get-title (element)
+  (org-element-property :raw-value element))
 
 
 (defun chun-mind-map/build-graph-on-this()
@@ -45,10 +47,13 @@ Returns a hashmap.
          (content (buffer-substring-no-properties (org-element-property :begin element)
                                                   (org-element-property :end element)))
          (headline-to-nodeid-map (ht-create))
-         (graph (chun-mind-map/create-graph)))
-    ;; (message "element: %S" element)
-    ;; (message "section: %S" section)
-    ;; (chun-mind-map/--traversal-within-org-element graph element current-level)
+         (graph (chun-mind-map/create-graph))
+         (title (chun-mind-map/--get-title element))
+
+         (org-file-path (file-truename buffer-file-name))
+         (out-filename (concat (file-name-sans-extension org-file-path) "-" title ".dot"))
+         dot-code
+         )
 
     (save-excursion
       (with-temp-buffer
@@ -58,7 +63,9 @@ Returns a hashmap.
         ))
 
     (message "graph:\n%S" graph)
-    (chun-mind-map/graph-to-dot graph)
+    (with-temp-file out-filename
+      (insert (chun-mind-map/graph-to-dot graph)))
+    (chun-mind-map/compile-dot-to-pdf out-filename)
     ))
 
 (defun chun-mind-map/--visit-headline (graph element headline-to-nodeid-map)
@@ -129,30 +136,6 @@ Returns: nil
 
                ;; (chun-mind-map/--traversal-within-org-element (org-element-contents element) headline-level)))
            ))))))
-
-
-
-
-
-(defun chun-mind-map/build-graph-on-this ()
-  "Build a graph with the headlines' structure within the current section.
-Returns: A graph (plist) containing nodes and connections."
-  (interactive)
-  (let* ((element (org-element-at-point))
-         (section (org-element-property :parent element))
-         (headlines (org-element-headers section))
-         (graph (chun-mind-map/create-graph))) ; Create an empty graph
-
-    ;; Add the headlines as nodes to the graph
-    (dolist (headline headlines)
-      (let* ((headline-text (org-element-property :raw-value headline))
-             (node (chun-mind-map/graph-add-node graph headline-text)))
-        ;; Add connections between headlines (hierarchy)
-        (when (org-element-property :parent headline)
-          (let* ((parent-headline-text (org-element-property :raw-value (org-element-property :parent headline))))
-            (chun-mind-map/graph-add-edge graph parent-headline-text headline-text)))))
-
-    graph))
 
 ;; ============================== utilities to generate DOT code ==============================
 ;;
@@ -235,17 +218,22 @@ Returns: A string containing the DOT code."
                   :penwidth 5
                   :color "#f0f0ff")))
 
-(defun chun-mind-map/dot-node (id label)
-  "Add a dot node
-TODO add necessary properties for this node
-Input:
-  name: str
-Returns: str"
-  (format "node %s[label=\"%s\"];" id label))
-
-(defun chun-mind-map-node-edge (src tgt)
-  "Add a dot edge"
-  (format "%s -> %s;" src tgt))
+(defun chun-mind-map/compile-dot-to-pdf (dot-file)
+  "Compile the DOT-FILE to PDF and open the resulting PDF file."
+  (interactive "fEnter the path to the DOT file: ")
+  (let* ((output-pdf (concat (file-name-sans-extension dot-file) ".pdf"))
+         (command (format "dot -Tpdf \"%s\" -o \"%s\"" dot-file output-pdf))
+         (open-file-command (format "open \"%s\"" output-pdf))
+         )
+    (message "dot command: %s" command)
+    (shell-command command)
+    (if (file-exists-p output-pdf)
+        (progn
+          (message "DOT file compiled successfully to PDF: %s" output-pdf)
+          (shell-command open-file-command)
+          ;; (find-file-other-window output-pdf)
+          )
+      (message "Failed to compile DOT file to PDF."))))
 
 ;; some utilities to help construct a graph, like add node, add edge and so on
 (defun chun-mind-map/create-graph ()
