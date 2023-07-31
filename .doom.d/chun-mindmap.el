@@ -1,45 +1,27 @@
 ;; mind-map
 ;; Convert a subtree in org-mode into a mind-map pdf.
 
-
-(defvar chun-mind-map-graph nil "A dict holding a graph struture.
-the dtype is Dict[str, List[str]], mapping a node to its neighbourhood nodes")
-
-(defun chun-mind-map-visualize-this ()
-  "Visualize the subtree under the current headline."
-  (interactive))
-
 (require 'ht)
 (require 'cl)
-
-(defun chun-mind-map-extract-graph-from-subtree (element)
-  "Extract the graph structure from current subtree.
-Input:
-  - element: a org element
-Returns a hashmap.
-")
-(defun level-wise-traversal ()
-  "Perform level-wise traversal of headlines in the Org-mode buffer."
-  (interactive)
-  (let ((current-level 1))
-    (org-map-entries
-     (lambda ()
-       (let ((level (org-outline-level)))
-         (if (> level current-level)
-             (progn
-               (setq current-level level)
-               (message "Entering Level %d" level))
-           (when (< level current-level)
-             (setq current-level level)
-             (message "Returning to Level %d" level)))))
-     t nil)))
-
-;; Example usage:
-;; Place your cursor anywhere in the Org-mode buffer and call the function `level-wise-traversal`.
 
 (defun chun-mind-map/--get-title (element)
   (org-element-property :raw-value element))
 
+(cl-defstruct chun-mind-map/graph
+  "The graph holds all the stuff for visualization."
+
+  (graph (ht-create))
+  (node-count 0)
+  (nodes (ht-create)))
+
+(cl-defstruct
+  nodeid
+  label
+  ;; figure path, only a single figure is supported
+  (image "")
+  ;; a list
+  (enum '())
+  )
 
 (defun chun-mind-map/build-graph-on-this()
   (interactive)
@@ -82,7 +64,7 @@ Returns a hashmap.
          parent-key
          parent-nodeid)
     ;; insert key into headline-to-node-id-map
-    (ht-set headline-to-nodeid-map current-key (plist-get current-node :nodeid))
+    (ht-set headline-to-nodeid-map current-key (chun-mind-map/node-nodeid current-node))
 
     (while (and parent (not (eq (org-element-type parent) 'headline)))
       (setq parent (org-element-property :parent parent)))
@@ -92,50 +74,8 @@ Returns a hashmap.
       (when (ht-contains? headline-to-nodeid-map parent-key)
         (chun-mind-map/graph-add-edge graph
                                       (ht-get headline-to-nodeid-map parent-key)
-                                      (plist-get current-node :nodeid))))))
+                                      (chun-mind-map/node-nodeid current-node))))))
 
-
-(defun chun-mind-map/--traversal-within-org-element (graph element &optional current-level parent-node)
-  "Build a graph using a tree level-traversal.
-
-Input:
-  - graph: a graph plist
-  - element: an org element
-  - current-level: the level of element's level
-  - parent-node: a plist returned by `chun-mind-map/graph-add-node'
-
-Returns: nil
-"
-  (let* ((level (or current-level 1)))
-    (cond ((not element) nil)
-          ((eq (org-element-type element) 'headline)
-           (let* ((headline-level (org-element-property :level element))
-                  (title (org-element-property :raw-value element))
-                  (content (buffer-substring-no-properties (org-element-property :begin element)
-                                                           (org-element-property :end element)))
-                  (current-node (chun-mind-map/graph-add-node graph title)))
-             ;; (message "testing title: %S" title)
-             (when (eq headline-level level)
-               (message "visit title: %S" title)
-               ;; process the current node
-               (when parent-node
-                 (let* ((src-id (plist-get parent-node :nodeid))
-                        (dst-id (plist-get current-node :nodeid)))
-                   (chun-mind-map/graph-add-edge graph src-id dst-id)))
-
-               ;; (message "content: %S" content)
-               (save-excursion
-                 (with-temp-buffer
-                   (insert content)
-                   (let* ((children (org-element-parse-buffer)))
-                     ;; (message "children: %S" children)
-                     (org-element-map children 'headline (lambda (child) (chun-mind-map/--traversal-within-org-element graph child (+ 1 current-level) current-node)))
-                     ;; (chun-mind-map/--traversal-within-org-element children (+ 1 current-level))
-                     )))
-
-
-               ;; (chun-mind-map/--traversal-within-org-element (org-element-contents element) headline-level)))
-           ))))))
 
 ;; ============================== utilities to generate DOT code ==============================
 ;;
@@ -150,8 +90,8 @@ Returns: A string containing the DOT code."
         (fontname (plist-get dot-style :fontname))
         (node-style (plist-get dot-style :node-style))
         (edge-style (plist-get dot-style :edge-style))
-        (nodes (plist-get graph :nodes))
-        (connections (plist-get graph :graph))
+        (nodes (chun-mind-map/graph-nodes graph))
+        (connections (chun-mind-map/graph-graph graph))
         (indent-level 0)
         (indent " ")
         dot-code)
@@ -185,7 +125,7 @@ Returns: A string containing the DOT code."
         ;; Insert node declarations
         (dolist (node-info (ht-items nodes))
           (let* ((nodeid (car node-info))
-                 (label (car (cdr node-info))))
+                 (label (chun-mind-map/node-label(car (cdr node-info)))))
             (-insert "\"%s\" [label=\"%s\"];\n" nodeid label)))
         ;; Insert edges
         (dolist (source-info (ht-items connections))
@@ -237,23 +177,19 @@ Returns: A string containing the DOT code."
 
 ;; some utilities to help construct a graph, like add node, add edge and so on
 (defun chun-mind-map/create-graph ()
-  (let* ((graph (list
-                 :nodes (ht-create) ;; nodeid -> node properties
-                 :node-count 0
-                 :graph (ht-create) ;; nodeid
-                 )))
-    graph))
+  (make-chun-mind-map/graph))
 
 (defun chun-mind-map/graph-add-node (graph label)
-  (let* ((nodeid (format "n%d" (plist-get graph :node-count)))
-         (node (list :label label :nodeid nodeid))
-         (node-count (plist-get graph :node-count))
-         (nodes (plist-get graph :nodes)))
+  (let* ((nodeid (format "n%d" (chun-mind-map/graph-node-count graph)))
+         (node (make-chun-mind-map/node :nodeid nodeid :label label))
+         (node-count (chun-mind-map/graph-node-count graph))
+         (nodes (chun-mind-map/graph-nodes graph)))
+    (message (format "nodeid: %s label: %s" nodeid label))
 
-    (plist-put graph :node-count (+ node-count 1))
-    (ht-set nodes nodeid label)
+    (incf (chun-mind-map/graph-node-count graph))
+    (ht-set nodes nodeid node)
 
-    (ht-set (plist-get graph :graph) nodeid '())
+    (ht-set (chun-mind-map/graph-graph graph) nodeid '())
     node))
 
 (defun chun-mind-map/graph-add-edge (graph source-node-id target-node-id)
@@ -263,9 +199,9 @@ Input:
   - source-node-id: The ID of the source node.
   - target-node-id: The ID of the target node.
 Returns: Modified graph with the edge added."
-  (message "edge: %S -> %S" source-node-id target-node-id)
-  (let* ((connections (plist-get graph :graph))
-         (existing-edges (ht-get (plist-get graph :graph) source-node-id)))
+  ;; (message "edge: %S -> %S" source-node-id target-node-id)
+  (let* ((connections (chun-mind-map/graph-graph graph))
+         (existing-edges (ht-get (chun-mind-map/graph-graph graph) source-node-id)))
 
     (if existing-edges
         (ht-set connections source-node-id (append existing-edges (list target-node-id)))
