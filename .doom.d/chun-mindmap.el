@@ -3,6 +3,7 @@
 
 (require 'ht)
 (require 'cl)
+(require 'org-element)
 
 (defun chun-mind-map/--get-title (element)
   (org-element-property :raw-value element))
@@ -14,7 +15,7 @@
   (node-count 0)
   (nodes (ht-create)))
 
-(cl-defstruct
+(cl-defstruct chun-mind-map/node
   nodeid
   label
   ;; figure path, only a single figure is supported
@@ -59,10 +60,16 @@
 
   (let* ((parent (org-element-property :parent element))
          (title (org-element-property :raw-value element))
-         (current-node (chun-mind-map/graph-add-node graph title))
+         (first-list (chun-mind-map/--get-first-list-or-enumeration element))
+         (enum '())
+         current-node
          (current-key (--get-node-id element))
          parent-key
          parent-nodeid)
+
+    (if first-list
+        (setq enum (chun-mind-map/--org-list-get-enum first-list)))
+    (setq current-node (chun-mind-map/graph-add-node graph title enum))
     ;; insert key into headline-to-node-id-map
     (ht-set headline-to-nodeid-map current-key (chun-mind-map/node-nodeid current-node))
 
@@ -76,6 +83,31 @@
                                       (ht-get headline-to-nodeid-map parent-key)
                                       (chun-mind-map/node-nodeid current-node))))))
 
+(defun chun-mind-map/--get-first-list-or-enumeration (element)
+  "Get the first list or enumeration within an Org element.
+Ignore nested lists inside sub-headlines."
+  (let* ((found nil))
+    (org-element-map element '(item plain-list headline)
+      (lambda (el)
+        (unless found
+          (cond
+           ((eq (org-element-type el) 'item) (setq found el))
+           ((eq (org-element-type el) 'plain-list) (setq found el))
+           ((eq (org-element-type el) 'headline) (setq found nil))))))
+    found))
+
+(defun chun-mind-map/--org-list-get-enum (list-element)
+  (when (eq (org-element-type list-element) 'plain-list)
+    (let* ((contents (org-element-contents list-element))
+           (ret '())
+           )
+      (dolist (element contents)
+        (let* ((content (buffer-substring (org-element-property :contents-begin element)
+                                          (org-element-property :contents-end element)))
+               (trimed (string-trim-right content)))
+          (setq ret (append ret (list trimed)))))
+      ret
+      )))
 
 ;; ============================== utilities to generate DOT code ==============================
 ;;
@@ -124,14 +156,12 @@ Returns: A string containing the DOT code."
                               (plist-get edge-style :color))
         ;; Insert node declarations
         (dolist (node-info (ht-items nodes))
-          (let* ((nodeid (car node-info))
-                 (label (chun-mind-map/node-label(car (cdr node-info)))))
-            (-insert "\"%s\" [label=\"%s\"];\n" nodeid label)))
+          (let* ((node (car (cdr node-info))))
+            (-insert "%s;\n"(chun-mind-map/dot-node node))))
         ;; Insert edges
         (dolist (source-info (ht-items connections))
           (let* ((source-node-id (car source-info))
                  (target-node-ids (cdr source-info)))
-            (message "targets %S" (car target-node-ids))
             (dolist (target-node-id (car target-node-ids))
               (unless (null target-node-id) (-insert "\"%s\" -> \"%s\";\n" source-node-id target-node-id)))))
 
@@ -140,6 +170,7 @@ Returns: A string containing the DOT code."
         (-insert "}\n")
 
         (buffer-string)))))
+
 
 (defun chun-mind-map/default-dot-style ()
   "Return a hashtable with dot related styles"
@@ -157,6 +188,32 @@ Returns: A string containing the DOT code."
      :edge-style (list
                   :penwidth 5
                   :color "#f0f0ff")))
+
+(defun chun-mind-map/dot-node (node)
+  (if (not (chun-mind-map/node-enum node))
+      (chun-mind-map/dot-plan-node node)
+    (chun-mind-map/dot-list-node node)))
+
+(defun chun-mind-map/dot-plan-node (node)
+  "Add a node in DOT
+Input:
+  - node: `chun-mind-map/node'
+Returns: str"
+  (format "\"%s\" [label=\"%s\"]"
+          (chun-mind-map/node-nodeid node)
+          (chun-mind-map/node-label node)))
+
+(cl-defun chun-mind-map/dot-list-node (node)
+  "Convert a `chun-mind-map/node` to a DOT language representation of a node with a table."
+  (let* ((label (chun-mind-map/node-label node))
+         (enum (chun-mind-map/node-enum node))
+         (table-rows (cons (format "<tr><td><b>%s</b></td></tr>" label)
+                           (mapcar (lambda (item) (format "<tr><td>%s</td></tr>" item)) enum))))
+
+    (message "draw enum %S" (chun-mind-map/node-enum node))
+    (format "%s [label=<<table border=\"0\" cellborder=\"1\" cellspacing=\"0\">%s</table>> style=none]"
+            (chun-mind-map/node-nodeid node)
+            (string-join table-rows "\n"))))
 
 (defun chun-mind-map/compile-dot-to-pdf (dot-file)
   "Compile the DOT-FILE to PDF and open the resulting PDF file."
@@ -179,9 +236,10 @@ Returns: A string containing the DOT code."
 (defun chun-mind-map/create-graph ()
   (make-chun-mind-map/graph))
 
-(defun chun-mind-map/graph-add-node (graph label)
+(defun chun-mind-map/graph-add-node (graph label enum)
+  (message "enum: %S" enum)
   (let* ((nodeid (format "n%d" (chun-mind-map/graph-node-count graph)))
-         (node (make-chun-mind-map/node :nodeid nodeid :label label))
+         (node (make-chun-mind-map/node :nodeid nodeid :label label :enum enum))
          (node-count (chun-mind-map/graph-node-count graph))
          (nodes (chun-mind-map/graph-nodes graph)))
     (message (format "nodeid: %s label: %s" nodeid label))
