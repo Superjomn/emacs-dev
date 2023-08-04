@@ -115,3 +115,5 @@
 (package! epc)
 (package! ox-reveal)
 (package! elfeed)
+(package! google-translate)
+(package! test-simple)

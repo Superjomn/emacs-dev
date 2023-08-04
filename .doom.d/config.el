@@ -36,8 +36,6 @@
 ;; Load some utility functions.
 (load! "./base.el")
 
-(use-package! chun-mode
-  :ensure t)
 
 (defcustom chun-mode/pc-name ""
   "The PC name used for config customization which are different on different PCs."
@@ -540,8 +538,8 @@ marginparsep=7pt, marginparwidth=.6in}
 (org-babel-load-file (concat chun-mode/org-roam-dir "/20211001225141-emacs_config.org"))
 
 
-(if (chun--os-is-mac)
-  (load! "../bili.el"))
+;; (if (chun--os-is-mac)
+;;   (load! "../bili.el"))
 
 (require 'ox-reveal)
 
@@ -588,5 +586,14 @@ marginparsep=7pt, marginparwidth=.6in}
 
 
 ;; google-translate
-(setq google-translate-translation-directions-alist
-      '(("en" . "ch") ("ch" . "en")))
+;;(if google-translate-translation-directions-alist
+      ;;'(("en" . "ch") ("ch" . "en")))
+
+(if (chun/os/is-macos)
+    (setq python-shell-extra-pythonpaths '("/Users/yanchunwei/project/tekit0")))
+
+(defadvice evil-inner-word (around underscore-as-word activate)
+  (let ((table (copy-syntax-table (syntax-table))))
+    (modify-syntax-entry ?_ "w" table)
+    (with-syntax-table table
+      ad-do-it)))

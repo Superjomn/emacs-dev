@@ -117,4 +117,4 @@ end tell
  "c c" #'chun-bookmark/open-site)
 
 
-(provide 'chun-mode)
+(provide 'chun-bookmark)

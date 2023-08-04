@@ -26,4 +26,7 @@
   (setq dot-code (chun-mind-map/graph-to-dot graph))
   (message "%s" dot-code)
   (princ dot-code)
+
+  ;; dot related
+  (assert-equal (chun-mind-map/dot-plan-node node0) "n0[label=\"hello world\"]")
   )

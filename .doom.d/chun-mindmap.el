@@ -109,6 +109,14 @@ Ignore nested lists inside sub-headlines."
       ret
       )))
 
+(defun chun-mind-map/--org-string-to-html (org-string)
+  "Convert Org-mode formatted string to HTML code."
+
+    (org-export-string-as
+     org-string
+     'html
+     '(:with-archived-trees nil :with-tags nil :with-todo-keywords nil)))
+
 ;; ============================== utilities to generate DOT code ==============================
 ;;
 (defun chun-mind-map/graph-to-dot (graph)

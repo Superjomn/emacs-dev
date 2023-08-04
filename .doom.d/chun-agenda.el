@@ -147,7 +147,7 @@ PRIORITY may be one of the characters ?A, ?B, or ?C."
 
 ;; borrowed from https://blog.aaronbieber.com/2016/09/24/an-agenda-for-life-with-org-mode.html
 (setq org-agenda-custom-commands
-      '(("d" "Daily agenda and all TODOs"
+      '(("c" "Daily agenda and all TODOs"
          ((tags "PRIORITY=\"A\""
                 ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
                  (org-agenda-overriding-header "High-priority unfinished tasks:")))
