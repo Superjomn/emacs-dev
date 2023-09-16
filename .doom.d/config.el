@@ -36,6 +36,8 @@
 ;; Load some utility functions.
 (load! "./base.el")
 
+(load! "~/emacs-dev/chun-misc.el")
+
 
 (defcustom chun-mode/pc-name ""
   "The PC name used for config customization which are different on different PCs."
@@ -529,10 +531,9 @@ marginparsep=7pt, marginparwidth=.6in}
       (require 'ox-reveal)))
 
 
-(org-babel-load-file (concat "~/emacs-dev/chun-mode.org"))
+;; (org-babel-load-file (concat "~/emacs-dev/chun-mode.org"))
 
 (elpy-enable)
-
 
 ;; load my config from org
 (org-babel-load-file (concat chun-mode/org-roam-dir "/20211001225141-emacs_config.org"))
@@ -563,6 +564,7 @@ marginparsep=7pt, marginparwidth=.6in}
       '(
         ("https://lilianweng.github.io/index.xml" tech ai) ; Lil'Log blog
         ("https://jaykmody.com/feed.xml" tech ai) ; Jay Mody's blog
+        ("https://lowlevelbits.org/atom.xml" tech compiler llvm) ; LowLevelBits
       ))
 
 
@@ -584,16 +586,25 @@ marginparsep=7pt, marginparwidth=.6in}
 (add-hook! c++-mode-hook 'chun/--treat-_-as-word)
 (add-hook! python-mode-hook 'chun/--treat-_-as-word)
 
+(load! "./chun-mindmap.el")
 
 ;; google-translate
 ;;(if google-translate-translation-directions-alist
       ;;'(("en" . "ch") ("ch" . "en")))
 
 (if (chun/os/is-macos)
+    ;; set PYTHONPATH for elpy mode
     (setq python-shell-extra-pythonpaths '("/Users/yanchunwei/project/tekit0")))
 
+;; TODO does this work?
 (defadvice evil-inner-word (around underscore-as-word activate)
   (let ((table (copy-syntax-table (syntax-table))))
     (modify-syntax-entry ?_ "w" table)
     (with-syntax-table table
       ad-do-it)))
+
+;; (load! "../thirdparty/mlir-mode.el")
+;; (require 'mlir-mode)
+
+(load! "~/emacs-dev/chun-babel.el")
+(load! "~/emacs-dev/chun-projectile.el")
