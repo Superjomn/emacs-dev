@@ -2,6 +2,7 @@
 ;;
 ;;
 ;;
+(require 'ht)
 
 (define-minor-mode chun-bookmark "Toggles chun mode"
   nil

@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: minted
+# key: minted
+# --
+
+#+BEGIN_SRC latex
+\begin{minted}[highlightlines={},xleftmargin=20pt,highlightcolor=yellow]{$1}
+
+\end{minted}
+#+END_SRC

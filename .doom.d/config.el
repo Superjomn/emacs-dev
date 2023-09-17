@@ -31,7 +31,7 @@
 
 ;; ==============================================================================
 ;; chun-mode contains all of the personal settings.
-(load! "./chun-mode.el")
+;;(load! "./chun-mode.el")
 
 ;; Load some utility functions.
 (load! "./base.el")
@@ -118,22 +118,22 @@
 (require 'dash)
 
 ;; projectile
-(after! projectile
-  (setq chun/--projectile-known-projects chun-mode/projectile-dirs)
-  (-map (lambda (path)
-          (projectile-add-known-project path)) chun/--projectile-known-projects)
-  (setq projectile-globally-ignored-directories '("*.git" "env" "cmake-build-tritonrelbuildwithasserts"
-                                                  "cmake-build-debug" "build" "__pycache__"
-                                                  ".pytest_cache"
-                                                  "_play"
-                                                  ))
-  (setq projectile-indexing-method 'native)
-  (setq projectile-generic-command
-        (mapconcat #'shell-quote-argument
-                   (append (list "rg" "-0" "--files" "--follow" "--color=never" "--hidden")
-                           (cl-loop for dir in projectile-globally-ignored-directories collect
-                                    "--glob" collect (concat "!" dir))) " ") projectile-git-command
-                                    projectile-generic-command))
+;; (after! projectile
+;;   (setq chun/--projectile-known-projects chun-mode/projectile-dirs)
+;;   (-map (lambda (path)
+;;           (projectile-add-known-project path)) chun/--projectile-known-projects)
+;;   (setq projectile-globally-ignored-directories '("*.git" "env" "cmake-build-tritonrelbuildwithasserts"
+;;                                                   "cmake-build-debug" "build" "__pycache__"
+;;                                                   ".pytest_cache"
+;;                                                   "_play"
+;;                                                   ))
+;;   (setq projectile-indexing-method 'native)
+;;   (setq projectile-generic-command
+;;         (mapconcat #'shell-quote-argument
+;;                    (append (list "rg" "-0" "--files" "--follow" "--color=never" "--hidden")
+;;                            (cl-loop for dir in projectile-globally-ignored-directories collect
+;;                                     "--glob" collect (concat "!" dir))) " ") projectile-git-command
+;;                                     projectile-generic-command))
 
 
 ;; Helm related.
@@ -197,8 +197,6 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
          ("C-c q t" . org-insert-quote)
          ("C-c l l" . my-org-insert-link)))
 
-(after! chun-mode
-  (setq org-journal-dir (concat chun-mode/org-roam-dir "/journal")))
 
 
 (setq org-todo-keyword-faces '(("TODO" :foreground "red"
@@ -249,54 +247,7 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
   (map! :leader :desc "Jump to a word" "jw" #'avy-goto-word-0)
   (map! :leader :desc "Jump to a line" "jl" #'avy-goto-line))
 
-(setq org-roam-v2-ack t)
-(use-package! org-roam
-      :custom
-      (org-roam-directory (file-truename chun-mode/org-roam-dir))
-      (org-roam-graph-viewer "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome")
-      (org-roam-complete-everywhere t)
-      (org-roam-v2-ack t)
-      :bind (("C-c n l" . org-roam-buffer-toggle)
-             ("C-c n f" . org-roam-node-find)
-             ("C-c n g" . org-roam-graph)
-             ("C-c n i" . org-roam-node-insert)
-             ;; Dailies
-             ("C-c n j" . org-roam-dailies-capture-today))
-      :config
-      (org-roam-setup)
-      ;; If using org-roam-protocol
-      (require 'org-roam-protocol)
-      (org-id-update-id-locations)
-
-      (setq org-roam-capture-templates '(
-                                         ("d" "default" plain "%?"
-                                          :if-new
-                                          (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n#+STARTUP: overview indent\n#+bind: org-image-actual-width 400")
-                                          :unnarrowed t)
-                                         ("b" "beamer" plain "%?"
-                                          :if-new (file+head "%<%Y%m%d%H%M%S>-beamer-${slug}.org"
-                                                             "#+STARTUP: beamer
-#+TITLE:     ${title}
-#+AUTHOR:    Chunwei Yan
-#+EMAIL:     yanchunwei@baidu.com
-#+DATE:      %Y-%m-%d
-#+DESCRIPTION:
-#+KEYWORDS:
-#+LANGUAGE:  en
-#+LaTeX_CLASS_OPTIONS: [aspectratio=169,8pt]
-#+OPTIONS:   H:2 num:t toc:t :nil @:t ::t |:t ^:t -:t f:t *:t <:t
-#+OPTIONS:   TeX:t LaTeX:t skip:nil d:nil todo:t pri:nil tags:not-in-toc
-#+INFOJS_OPT: view:nil toc:nil ltoc:t mouse:underline buttons:0 path:https://orgmode.org/org-info.js
-#+EXPORT_SELECT_TAGS: export
-#+EXPORT_EXCLUDE_TAGS: noexport
-#+HTML_LINK_UP:
-#+HTML_LINK_HOME:
-#+BEAMER_THEME: default
-#+BEAMER_FRAME_LEVEL: 2")))
-
-            ;; end of org-roam-capture-templates
-            ))
-
+(load! "~/emacs-dev/chun-org-roam.el")
 
 (use-package! deft
   :after org
@@ -501,8 +452,8 @@ marginparsep=7pt, marginparwidth=.6in}
 
 (use-package! ox-gfm)
 
-(when (chun/os/on-wsl-p)
-  (load-theme 'doom-acario-dark t))
+;; (when (chun/os/on-wsl-p)
+;;   (load-theme 'doom-acario-dark t))
 
 (use-package! calfw)
 (use-package! anki-editor
@@ -545,6 +496,9 @@ marginparsep=7pt, marginparwidth=.6in}
 (require 'ox-reveal)
 
 (load! "~/emacs-dev/chun-project.el")
+(load! "~/emacs-dev/chun-projectile.el")
+
+
 (after! chun-project
   (chun-project-update-cache)
   (global-set-key (kbd "C-c n x") 'chun-project-search-title))
@@ -580,11 +534,11 @@ marginparsep=7pt, marginparwidth=.6in}
   "Treat '_' as part of word."
   (modify-syntax-entry ?_ "w"))
 
-(add-hook! markdown-mode-hook 'chun/--treat-_-as-word)
-(add-hook! graphviz-mode-hook 'chun/--treat-_-as-word)
-(add-hook! emacs-lisp-mode-hook 'chun/--treat-_-as-word)
-(add-hook! c++-mode-hook 'chun/--treat-_-as-word)
-(add-hook! python-mode-hook 'chun/--treat-_-as-word)
+;; (add-hook! markdown-mode-hook 'chun/--treat-_-as-word)
+;; ;;(add-hook! graphviz-mode-hook 'chun/--treat-_-as-word)
+;; (add-hook! emacs-lisp-mode-hook 'chun/--treat-_-as-word)
+;; (add-hook! c++-mode-hook 'chun/--treat-_-as-word)
+;; (add-hook! python-mode-hook 'chun/--treat-_-as-word)
 
 (load! "./chun-mindmap.el")
 
@@ -607,4 +561,3 @@ marginparsep=7pt, marginparwidth=.6in}
 ;; (require 'mlir-mode)
 
 (load! "~/emacs-dev/chun-babel.el")
-(load! "~/emacs-dev/chun-projectile.el")

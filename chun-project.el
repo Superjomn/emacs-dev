@@ -13,6 +13,7 @@
 (defvar chun-project--titles '() "titles of the org files.")
 (defvar chun-project--title-to-path-dic nil "mapping from title to path.")
 
+(require 'ht)
 
 (defun chun-project--get-title-from-org-file (path)
   "Get the title from an org file.
