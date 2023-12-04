@@ -3,6 +3,7 @@
 ;;
 ;;
 (require 'ht)
+(require 'org)
 
 (define-minor-mode chun-bookmark "Toggles chun mode"
   nil
@@ -35,6 +36,21 @@ An alist of (title . url)
                                     (desc (cdr link)))
                                (add-to-list 'chun-bookmark/--site-url-dic `(,desc . ,url)))))))
   (message (format "Load %d bookmarks!" (length chun-bookmark/--site-url-dic))))
+
+
+(defun retrieve-org-links (file)
+  "Retrieve URLs and descriptions of all links within this file.
+
+Returns: List[List[str]] where the innermost list contains two strings of both url and description.
+"
+  (with-temp-buffer
+    (insert-file-contents file)
+    (org-mode)
+    (org-element-map (org-element-parse-buffer) 'link
+      (lambda (link)
+        (list (org-element-property :raw-link link)
+              (buffer-substring-no-properties (org-element-property :contents-begin link)
+                                              (org-element-property :contents-end link)))))))
 
 
 (defun chun-bookmark/open-site ()

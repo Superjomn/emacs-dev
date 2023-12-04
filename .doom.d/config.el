@@ -561,3 +561,13 @@ marginparsep=7pt, marginparwidth=.6in}
 ;; (require 'mlir-mode)
 
 (load! "~/emacs-dev/chun-babel.el")
+
+(add-hook 'org-mode-hook
+          (lambda ()
+            (setq-local imenu-generic-expression
+                        '(("Headings" "^\\*+ \\(.*\\)$" 1)
+                          ("Links" "\\[\\[\\(.*\\)\\]\\]" 1)))))
+
+
+(setq easy-hugo-basedir "~/project/myblog2022/content-org")
+(setq easy-hugo-root "~/project/superjomn.github.io")

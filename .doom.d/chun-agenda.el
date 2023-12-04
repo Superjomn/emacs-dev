@@ -16,9 +16,10 @@
   (setq org-agenda-files '(
                            "20230629103055-agenda_inbox.org"
                            "20220408141044-book_or_paper_agenda.org"
-                           "20221017102352-english_agenda_inbox.org"
+                           ;; "20221017102352-english_agenda_inbox.org"
                            "20230324163903-random_ideas.org"
                            "20230214102434-read_list.org"
+                           "20231204105512-writing_or_ideas_input_box.org"
                            ))
 
   (setq chun-agenda--inbox-path (concat chun-mode/org-roam-dir "/20230629103055-agenda_inbox.org"))
@@ -28,15 +29,16 @@
   (setq chun-agenda--read-list-path (concat chun-mode/org-roam-dir "/20230214102434-read_list.org"))
   (setq chun-bookmark-path (concat chun-mode/org-roam-dir "/20210921113038-bookmarks.org"))
   (setq chun-anki-inbox-path (concat chun-mode/org-roam-dir "/20230608135539-anki_inbox.org"))
+  (setq chun-blog-writing-input (concat chun-mode/org-roam-dir "/20231204105512-writing_or_ideas_input_box.org"))
 
 
 :custom ; execute code after a package is loaded
-  (org-agenda-files '(
-                      chun-agenda--inbox-path
-                      chun-agenda--paper-or-book-path
-                      chun-agenda--english-inbox-path
-                      chun-agenda-random-idea-path
-                      chun-agenda--read-list-path))
+  ;; (org-agenda-files '(
+  ;;                     chun-agenda--inbox-path
+  ;;                     chun-agenda--paper-or-book-path
+  ;;                     chun-agenda--english-inbox-path
+  ;;                     chun-agenda-random-idea-path
+  ;;                     chun-agenda--read-list-path))
 
   (org-todo-keywords '((sequence "TODO(t)" "NEXT(n)" "IDEA"  "|" "DONE(d!)")
                        (sequence "READY(r)" "DOING(i)" "WAIT(w@/!)" "HOLD(h@)" "|" "CANCELLED(c@)")))
@@ -53,7 +55,8 @@
                                  ,(string-join '("* IDEA %?" ":PROPERTIES:" ":ADDED-DATE: %U"
                                                  ":END:")
                                                "\n"))
-                                ("il" "Life" entry (file+headline chun-agenda--inbox-path "Life") "* TODO %?")
+                                ("il" "Life" entry (file+headline chun-agenda--inbox-path "Life") "* TODO %? :life:")
+                                ("ic" "Child" entry (file+headline chun-agenda--inbox-path "Life") "* TODO %? :life:baby:")
 
                                 ;; menu for English related ;;
                                 ("e" "English")
@@ -110,6 +113,13 @@
                                  entry
                                  (file+headline chun-bookmark-path "misc")
                                  "* [[%(current-kill 0 t)][%?]]")
+
+                                ;; menu for writing related
+                                ("w" "Writing")
+                                ("wb" "Blog"
+                                 entry
+                                 (file+headline chun-blog-writing-input "Blog")
+                                 "* TODO %?")
 
                                 ))
 
