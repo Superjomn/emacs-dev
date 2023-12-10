@@ -29,14 +29,10 @@
            (unless (string= "-" project-name)
              (format (if (buffer-modified-p)  " ◉ %s" "  ●  %s") project-name))))))
 
-;; ==============================================================================
-;; chun-mode contains all of the personal settings.
-;;(load! "./chun-mode.el")
-
 ;; Load some utility functions.
 (load! "./base.el")
 
-(load! "~/emacs-dev/chun-misc.el")
+(load! "./chun-misc.el")
 
 
 (defcustom chun-mode/pc-name ""
@@ -247,7 +243,7 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
   (map! :leader :desc "Jump to a word" "jw" #'avy-goto-word-0)
   (map! :leader :desc "Jump to a line" "jl" #'avy-goto-line))
 
-(load! "~/emacs-dev/chun-org-roam.el")
+(load! "./chun-org-roam.el")
 
 (use-package! deft
   :after org
@@ -491,12 +487,12 @@ marginparsep=7pt, marginparwidth=.6in}
 
 
 ;; (if (chun--os-is-mac)
-;;   (load! "../bili.el"))
+;;   .load! "../bili.el"))
 
 (require 'ox-reveal)
 
-(load! "~/emacs-dev/chun-project.el")
-(load! "~/emacs-dev/chun-projectile.el")
+(load! "./chun-project.el")
+(load! "./chun-projectile.el")
 
 
 (after! chun-project
@@ -507,7 +503,7 @@ marginparsep=7pt, marginparwidth=.6in}
 (after! helm-files
   (define-key helm-find-files-map (kbd "C-l") 'helm-find-files-up-one-level))
 
-(load! "~/emacs-dev/chun-anki.el")
+(load! "./chun-anki.el")
 (load! "./chun-bookmark.el")
 
 (if (window-system)
@@ -557,10 +553,8 @@ marginparsep=7pt, marginparwidth=.6in}
     (with-syntax-table table
       ad-do-it)))
 
-;; (load! "../thirdparty/mlir-mode.el")
-;; (require 'mlir-mode)
-
-(load! "~/emacs-dev/chun-babel.el")
+(load! "./chun-babel.el")
+(load! "./chun-hugo.el")
 
 (add-hook 'org-mode-hook
           (lambda ()
