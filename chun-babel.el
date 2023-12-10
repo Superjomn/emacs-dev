@@ -6,7 +6,7 @@
                                        "awk" "ditaa" "haskell" "latex" "lisp" "matlab" "ocaml" "org"
                                        "perl" "ruby" "scheme" "sqlite"
                                        "cpp" "cmake" "swift" "cuda" "llvm" "td" "ptx" "yaml"
-                                       "groovy"
+                                       "groovy" "markdown"
                                        )))
                  (list (ido-completing-read "Source code type: " src-code-types))))
 

@@ -117,3 +117,4 @@
 (package! elfeed)
 (package! google-translate)
 (package! test-simple)
+(package! markdown-mode)

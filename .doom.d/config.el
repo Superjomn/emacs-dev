@@ -569,5 +569,6 @@ marginparsep=7pt, marginparwidth=.6in}
                           ("Links" "\\[\\[\\(.*\\)\\]\\]" 1)))))
 
 
-(setq easy-hugo-basedir "~/project/myblog2022/content-org")
-(setq easy-hugo-root "~/project/superjomn.github.io")
+;; (setq easy-hugo-basedir "~/project/myblog2022/content-org")
+(setq easy-hugo-root "~/project/superjomn.github.io/")
+(setq easy-hugo-basedir "~/project/superjomn.github.io/")
