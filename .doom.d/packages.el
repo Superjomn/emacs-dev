@@ -118,3 +118,4 @@
 (package! google-translate)
 (package! test-simple)
 (package! markdown-mode)
+(package! json-mode)
