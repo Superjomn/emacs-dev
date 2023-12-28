@@ -562,6 +562,7 @@ marginparsep=7pt, marginparwidth=.6in}
                         '(("Headings" "^\\*+ \\(.*\\)$" 1)
                           ("Links" "\\[\\[\\(.*\\)\\]\\]" 1)))))
 
+;; (load! "./chun-yabai.el")
 
 ;; (setq easy-hugo-basedir "~/project/myblog2022/content-org")
 ;; (setq easy-hugo-root "~/project/superjomn.github.io/")
