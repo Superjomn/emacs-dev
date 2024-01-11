@@ -19,8 +19,7 @@
                            ;; "20221017102352-english_agenda_inbox.org"
                            "20230324163903-random_ideas.org"
                            "20230214102434-read_list.org"
-                           "20231204105512-writing_or_ideas_input_box.org"
-                           ))
+                           "20231204105512-writing_or_ideas_input_box.org"))
 
   (setq chun-agenda--inbox-path (concat chun-mode/org-roam-dir "/20230629103055-agenda_inbox.org"))
   (setq chun-agenda--paper-or-book-path (concat chun-mode/org-roam-dir "/20220408141044-book_or_paper_agenda.org"))
@@ -31,6 +30,22 @@
   (setq chun-anki-inbox-path (concat chun-mode/org-roam-dir "/20230608135539-anki_inbox.org"))
   (setq chun-blog-writing-input (concat chun-mode/org-roam-dir "/20231204105512-writing_or_ideas_input_box.org"))
 
+;; (custom-set-faces '(org-todo ((t
+;;                                  (:foreground "red"
+;;                                   :weight bold))))
+;;                     '(org-doing ((t
+;;                                   (:foreground "yellow"
+;;                                    :weight bold))))
+;;                     '(org-done ((t
+;;                                  (:foreground "grey"
+;;                                         :weight bold))))
+;;                     ;; Add more faces for other keywords as needed
+;;                     )
+(setq org-todo-keyword-faces
+      '(("TODO" . org-todo)
+        ("DOING" . org-doing)
+        ("DONE" . org-done)
+        ))
 
 :custom ; execute code after a package is loaded
   ;; (org-agenda-files '(
@@ -42,6 +57,9 @@
 
   (org-todo-keywords '((sequence "TODO(t)" "NEXT(n)" "IDEA"  "|" "DONE(d!)")
                        (sequence "READY(r)" "DOING(i)" "WAIT(w@/!)" "HOLD(h@)" "|" "CANCELLED(c@)")))
+
+
+
 
 :config
   (setq org-capture-templates `(
@@ -120,14 +138,12 @@
                                  entry
                                  (file+headline chun-blog-writing-input "Blog")
                                  "* TODO %?")
-
-                                ))
+))
 
 
   (setq org-agenda-prefix-format "%i %-2:c %-14t% s%-6e %/b ")
   (setq org-columns-default-format "%50ITEM(Task) %10CLOCKSUM %16TIMESTAMP_IA")
-
-  )
+)
 
 
 (defun air-org-skip-subtree-if-habit ()

@@ -567,3 +567,19 @@ marginparsep=7pt, marginparwidth=.6in}
 ;; (setq easy-hugo-basedir "~/project/myblog2022/content-org")
 ;; (setq easy-hugo-root "~/project/superjomn.github.io/")
 ;; (setq easy-hugo-basedir "~/project/superjomn.github.io/")
+
+
+;; Disable company-mode when using org-mode
+;; It is a nightmare on Mac of intel
+(add-hook 'org-mode-hook (lambda () (company-mode -1)))
+
+;; (require 'quelpa-use-package)
+
+;; (use-package org-hyperscheduler
+;;   :quelpa (org-hyperscheduler :fetcher github :repo "dmitrym0/org-hyperscheduler"))
+
+(use-package! org-hyperscheduler
+  :load-path "~/project/org-hyperscheduler/org-hyperscheduler.el"
+  :config
+  ;; configure your package here
+  )

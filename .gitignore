@@ -1,3 +1,6 @@
 .doom.d/modules
 .doom.d/custom.el
 chun-mode.el
+__pycache__
+*.md
+.idea

@@ -119,3 +119,7 @@
 (package! test-simple)
 (package! markdown-mode)
 (package! json-mode)
+(package! quelpa-use-package)
+
+;; for GhostText in chrome
+(package! atomic-chrome)
