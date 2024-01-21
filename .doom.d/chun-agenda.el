@@ -1,7 +1,7 @@
 (require 'subr-x)
 
 ;; ref https://systemcrafters.net/emacs-from-scratch/organize-your-life-with-org-mode/
-;;
+;; ref https://webusers.i3s.unice.fr/~malapert/emacs_orgmode.html
 ;;
 
 
@@ -188,3 +188,9 @@ PRIORITY may be one of the characters ?A, ?B, or ?C."
 
 
 (setq org-columns-default-format "%50ITEM(Task) %10CLOCKSUM %16TIMESTAMP_IA")
+
+;; Speed exporting by disable eval the code blocks
+(setq org-babel-default-header-args '((:eval . "never-export")))
+
+(setq org-html-table-default-attributes
+      '(:border "0" :cellspacing "0" :cellpadding "6" :rules "none" :frame "none"))
