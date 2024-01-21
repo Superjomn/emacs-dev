@@ -54,4 +54,33 @@
                     org-body-heading-prefix
                     ))))
 
+
+(defun chun-anki-simple-card (deck card)
+  (interactive (list
+                (helm :sources (helm-build-sync-source "anki-deck"
+                                 :candidates chun-anki-deck-candidates
+                                 :fuzzy-match t)
+                      :buffer "*anki deck*")
+                (helm :sources (helm-build-sync-source "anki-card"
+                                 :candidates chun-anki-card-kinds
+                                 :fuzzy-match t)
+                      :buffer "*anki card*")))
+
+  (let* ((label (read-string "Label: "))
+         (org-root-heading-prefix (make-string chun-anki--org-heading-level ?*))
+         )
+    (insert (format "%s %s :anki:
+:PROPERTIES:
+:ANKI_NOTE_TYPE: %s
+:ANKI_DECK: %s
+:END:
+
+"
+                    org-root-heading-prefix
+                    label
+                    card
+                    deck
+                    ))))
+
+
 (provide 'chun-anki)

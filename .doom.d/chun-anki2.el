@@ -12,12 +12,23 @@ org-element: element
           (buffer-substring
            (org-element-property :contents-begin org-element)
            (org-element-property :contents-end org-element)))
+
+    ;; get the body content without properties
+    (save-excursion
+      (with-temp-buffer
+        (insert body)
+        (goto-char (point-min))
+        (when (re-search-forward "^:PROPERTIES:")
+          (cl-assert (re-search-forward "^:END:"))
+          (forward-line)
+          (setq body (buffer-substring (point) (point-max))))))
+
     (setq properties (org-entry-properties))
-    (message "%S" org-element)
-    (message "content: %S" (org-element-contents org-element))
-    (message "label: %s" label)
-    (message "body:[%S] %s" (type-of body) body)
-    (message "properties: [%S] %S" (type-of properties) properties)
+    ;; (message "%S" org-element)
+    ;; (message "content: %S" (org-element-contents org-element))
+    ;; (message "label: %s" label)
+    ;; (message "body:[%S] %s" (type-of body) body)
+    ;; (message "properties: [%S] %S" (type-of properties) properties)
     (list label body properties)))
 
 
@@ -27,20 +38,45 @@ Args:
   label: str
   body: str
   properties: nil | plist
+
+Returns:
+  anki-id: str | nil
+  anki-failed-reason: str | nil
 "
   (let* ((buffer (get-buffer-create "*chun-anki2*")))
-    (message "buffer: %S" buffer)
+    ;; (message "buffer: %S" buffer)
     (save-current-buffer
       (set-buffer buffer)
       (erase-buffer)
-      (insert (format "* %s" label))
+      (insert (format "* %s\n" label))
       (when properties
-        (--insert-property properties :ANKI_NOTE_ID ":ANKI_NOTE_ID:")
-        (--insert-property properties :ANKI_DECK ":ANKI_DECK:")
-        (--insert-property properties :ANKI_NOTE_TYPE ":ANKI_NOTE_TYPE:")
+        (insert (format ":PROPERTIES:\n"))
+        ;; (message "to get property: %S" (assoc "ANKI_NOTE_ID" properties))
+        (--insert-property properties "ANKI_NOTE_ID")
+        (--insert-property properties "ANKI_DECK")
+        (--insert-property properties "ANKI_NOTE_TYPE")
+        (insert (format ":END:\n"))
         )
-      (message "get body: %S" body)
-      (insert body))))
+      (insert (format "** Front\n"))
+      (insert (format "%s\n" label))
+      (insert (format "** Back\n"))
+      (insert body)
+      (org-mode)
+      (anki-editor-push-notes)
+
+      (let* (cur-element
+             cur-properties
+             anki-id
+             anki-failed-reason)
+        (goto-char (point-min))
+        (setq cur-element (org-element-at-point))
+        (setq cur-properties (org-entry-properties))
+        (setq anki-id (--properties-get cur-properties "ANKI_NOTE_ID"))
+        (setq anki-failed-reason (--properties-get cur-properties "ANKI_FAILURE_REASON"))
+        ;; (message "anki-id: %S" anki-id)
+        ;; (message "anki-failed-reason: %S" anki-failed-reason)
+
+        (list anki-id anki-failed-reason)))))
 
 (defun chun/anki-convert ()
   (interactive)
@@ -49,15 +85,37 @@ Args:
          (label (nth 0 contents))
          (body (nth 1 contents))
          (properties (nth 2 contents))
+         (build-res (chun/-build-anki-format-in-tmp-buffer label body properties))
+         (anki-id (nth 0 build-res))
+         (anki-failure-reason (nth 1 build-res))
          )
-    (message "body2: %S" body)
+    ;; (message "body2: %S" body)
+    ;; (message "build res: %S" build-res)
+    (when anki-id ;; successfully pushed an anki
+      (--add-tag "anki_added")
+      (org-set-property "ANKI_NOTE_ID" anki-id)
+      )
+    (when anki-failure-reason
+      (org-set-property "ANKI_FAILURE_REASON" anki-failure-reason)
+      )))
 
-    (chun/-build-anki-format-in-tmp-buffer label body properties)
-    ))
 
-'(("CATEGORY" . "???") ("BLOCKED" . "") ("FILE") ("PRIORITY" . "B") ("ITEM" . "a heading"))
+(defun --add-tag (tag)
+  (let* ((current-tags (org-get-tags)))
+    (unless (member tag current-tags)
+      (org-set-tags (cons tag current-tags)))))
 
-(defun --insert-property (properties key key-s)
-  (let* ((prop (plist-get properties key)))
+(defun --insert-property (properties key)
+  (let* ((prop (assoc key properties)))
     (when prop
-      (insert (format "%s %s" key-s prop)))))
+      (insert (format ":%s: %s\n" key (cdr prop))))))
+
+(defun --properties-get (properties key)
+  "Get value from the properties.
+Args:
+  properties: result from org-element-property
+  key: str
+"
+  (let* ((pair (assoc key properties)))
+    (when pair
+      (cdr pair))))
