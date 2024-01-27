@@ -44,8 +44,7 @@
 (setq org-todo-keyword-faces
       '(("TODO" . org-todo)
         ("DOING" . org-doing)
-        ("DONE" . org-done)
-        ))
+        ("DONE" . org-done)))
 
 :custom ; execute code after a package is loaded
   ;; (org-agenda-files '(
@@ -137,13 +136,11 @@
                                 ("wb" "Blog"
                                  entry
                                  (file+headline chun-blog-writing-input "Blog")
-                                 "* TODO %?")
-))
+                                 "* TODO %?")))
 
 
   (setq org-agenda-prefix-format "%i %-2:c %-14t% s%-6e %/b ")
-  (setq org-columns-default-format "%50ITEM(Task) %10CLOCKSUM %16TIMESTAMP_IA")
-)
+  (setq org-columns-default-format "%50ITEM(Task) %10CLOCKSUM %16TIMESTAMP_IA"))
 
 
 (defun air-org-skip-subtree-if-habit ()
@@ -194,3 +191,19 @@ PRIORITY may be one of the characters ?A, ?B, or ?C."
 
 (setq org-html-table-default-attributes
       '(:border "0" :cellspacing "0" :cellpadding "6" :rules "none" :frame "none"))
+
+
+(defcustom chun-agenda-view-html-path
+  "agenda.html"
+  "The html path to export org-agenda view"
+  :type 'string
+  :group 'chun-agenda)
+
+(defun chun-export-agenda-view-to-html ()
+  "Export the specified Org Agenda view to an HTML file."
+  (interactive)
+  (save-excursion
+    (call-interactively 'org-agenda-list)
+    (org-agenda-write chun-agenda-view-html-path)
+    (call-interactively 'org-agenda-quit)
+    (message (format "Exported agenda to %s" chun-agenda-view-html-path))))
