@@ -203,7 +203,7 @@ PRIORITY may be one of the characters ?A, ?B, or ?C."
   "Export the specified Org Agenda view to an HTML file."
   (interactive)
   (save-excursion
-    (call-interactively 'org-agenda-list)
+    (call-interactively 'org-agenda)
     (org-agenda-write chun-agenda-view-html-path)
     (call-interactively 'org-agenda-quit)
     (message (format "Exported agenda to %s" chun-agenda-view-html-path))))

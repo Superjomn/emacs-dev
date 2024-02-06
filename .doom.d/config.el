@@ -76,8 +76,6 @@
 ;; Keymap for chun-mode
 (map! :leader
       :desc "chun/insert today date" "cd" #'chun/insert-current-date)
-(map! :leader
-      :desc "chun/insert anki card" "ck" #'chun/anki-sentence-template)
 
 ;; Bug on Mac
 (map! :leader
@@ -105,32 +103,26 @@
       :desc "avy jump" "jj" #'avy-goto-word-0)
 
 ;; Keymap for chun-mode
-(map! :leader
-      :desc "chun/insert today date" "cd" #'chun/insert-current-date)
-(map! :leader
-      :desc "chun/insert anki card" "ck" #'chun/anki-sentence-template)
-
+(map! :leader :desc "chun/insert today date"
+      "cd" #'chun/insert-current-date)
+(map! :leader :desc "chun/insert anki card"
+      :mode 'org-mode
+      :map org-mode-map
+      "ak" #'chun/anki-sentence-template)
+(map! :leader :desc "chun/insert simple anki card"
+      :mode 'org-mode
+      :map org-mode-map
+      "as" #'chun-anki-simple-card)
+(map! :leader :desc "chun convert anki card"
+      :mode 'org-mode
+      :map org-mode-map
+      "ac" #'chun/anki-convert)
+(map! :leader :desc "chun reset anki org level"
+      :mode 'org-mode
+      :map org-mode-map
+      "ar" #'chun-anki-reset-org-level)
 
 (require 'dash)
-
-;; projectile
-;; (after! projectile
-;;   (setq chun/--projectile-known-projects chun-mode/projectile-dirs)
-;;   (-map (lambda (path)
-;;           (projectile-add-known-project path)) chun/--projectile-known-projects)
-;;   (setq projectile-globally-ignored-directories '("*.git" "env" "cmake-build-tritonrelbuildwithasserts"
-;;                                                   "cmake-build-debug" "build" "__pycache__"
-;;                                                   ".pytest_cache"
-;;                                                   "_play"
-;;                                                   ))
-;;   (setq projectile-indexing-method 'native)
-;;   (setq projectile-generic-command
-;;         (mapconcat #'shell-quote-argument
-;;                    (append (list "rg" "-0" "--files" "--follow" "--color=never" "--hidden")
-;;                            (cl-loop for dir in projectile-globally-ignored-directories collect
-;;                                     "--glob" collect (concat "!" dir))) " ") projectile-git-command
-;;                                     projectile-generic-command))
-
 
 ;; Helm related.
 (require 'helm)
@@ -180,40 +172,7 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
 ;; set spacemacs theme
 (setq doom-theme 'spacemacs-light)
 
-
-(use-package! org
-  :init (setq-default org-export-with-todo-keywords t)
-  (setq-default org-enforce-todo-dependencies t)
-  (defun org-insert-quote ()
-    (interactive)
-    (insert "#+begin_quote\n\n#+end_quote")
-    (forward-line -1))
-  :bind (:map org-mode-map
-         ("C-c RET" . org-insert-heading)
-         ("C-c q t" . org-insert-quote)
-         ("C-c l l" . my-org-insert-link)))
-
-
-
-(setq org-todo-keyword-faces '(("TODO" :foreground "red"
-                             :weight bold)
-                            ("NEXT" :foreground "blue"
-                             :weight bold)
-                            ("DONE" :foreground "forest green"
-                             :weight bold)
-                            ("DONE" :foreground "forest green"
-                             :weight bold)
-                            ("WAITING" :foreground "orange"
-                             :weight bold)
-                            ("HOLD" :foreground "magenta"
-                             :weight bold)
-                            ("CANCEL" :foreground "forest green"
-                             :weight bold)))
-(setq org-todo-keywords '((sequence "TODO(t)" "IDEA(i)" "STRT(s)" "NEXT(n)" "|" "DONE(d)")
-                               (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)")))
-
 (load! "./chun-org.el")
-
 
 ;; set encoding
 ;; This seems not working
@@ -472,10 +431,10 @@ marginparsep=7pt, marginparwidth=.6in}
 (use-package! epc)
 
 ;; Use org-reveal to write slides only in Mac.
-(if (chun--os-is-mac)
-    (progn
-      (load! "~/emacs-dev/org-reveal/ox-reveal.el")
-      (require 'ox-reveal)))
+;; (if (chun--os-is-mac)
+;;     (progn
+;;       (load! "~/emacs-dev/org-reveal/ox-reveal.el")
+;;       (require 'ox-reveal)))
 
 
 ;; (org-babel-load-file (concat "~/emacs-dev/chun-mode.org"))
@@ -489,7 +448,7 @@ marginparsep=7pt, marginparwidth=.6in}
 ;; (if (chun--os-is-mac)
 ;;   .load! "../bili.el"))
 
-(require 'ox-reveal)
+;;(require 'ox-reveal)
 
 (load! "./chun-project.el")
 (load! "./chun-projectile.el")
@@ -504,6 +463,7 @@ marginparsep=7pt, marginparwidth=.6in}
   (define-key helm-find-files-map (kbd "C-l") 'helm-find-files-up-one-level))
 
 (load! "./chun-anki.el")
+(load! "./chun-anki2.el")
 (load! "./chun-bookmark.el")
 
 (if (window-system)
@@ -556,11 +516,6 @@ marginparsep=7pt, marginparwidth=.6in}
 (load! "./chun-babel.el")
 (load! "./chun-hugo.el")
 
-(add-hook 'org-mode-hook
-          (lambda ()
-            (setq-local imenu-generic-expression
-                        '(("Headings" "^\\*+ \\(.*\\)$" 1)
-                          ("Links" "\\[\\[\\(.*\\)\\]\\]" 1)))))
 
 ;; (load! "./chun-yabai.el")
 
@@ -573,13 +528,7 @@ marginparsep=7pt, marginparwidth=.6in}
 ;; It is a nightmare on Mac of intel
 (add-hook 'org-mode-hook (lambda () (company-mode -1)))
 
-;; (require 'quelpa-use-package)
+(condition-case err
+    (call-interactively #'chun-bookmark/update-web-bookmarks)
+  (error (message "Failed to update bookmarks: %S" err)))
 
-;; (use-package org-hyperscheduler
-;;   :quelpa (org-hyperscheduler :fetcher github :repo "dmitrym0/org-hyperscheduler"))
-
-(use-package! org-hyperscheduler
-  :load-path "~/project/org-hyperscheduler/org-hyperscheduler.el"
-  :config
-  ;; configure your package here
-  )

@@ -82,5 +82,26 @@
                     deck
                     ))))
 
+(defun chun-anki-add-properties (deck card)
+        (interactive (list
+                (helm :sources (helm-build-sync-source "anki-deck"
+                                 :candidates chun-anki-deck-candidates
+                                 :fuzzy-match t)
+                      :buffer "*anki deck*")
+                (helm :sources (helm-build-sync-source "anki-card"
+                                 :candidates chun-anki-card-kinds
+                                 :fuzzy-match t)
+                      :buffer "*anki card*")))
+    (insert (format ":PROPERTIES:
+:ANKI_NOTE_TYPE: %s
+:ANKI_DECK: %s
+:END:
+"
+                    card
+                    deck
+                    ))
+
+    )
+
 
 (provide 'chun-anki)

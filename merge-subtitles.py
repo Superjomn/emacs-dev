@@ -16,12 +16,27 @@ class Subtitle:
 def parse_subtitles(subtitles_file: str):
     subtitles = []
     with open(subtitles_file, 'r', encoding='utf-8') as f:
-        lines = f.readlines()
+        lines = [x.strip() for x in f.readlines()]
 
-    for i in range(0, len(lines), 4):
-        start_time, end_time = lines[i+1].split(" --> ")
-        text = lines[i+2].strip()
-        subtitles.append(Subtitle(start_time.strip(), end_time.strip(), text))
+    i = 0
+    while i < len(lines):
+        index = int(lines[i])
+        i += 1
+
+        assert '-->' in lines[i]
+        start_time, end_time = lines[i].split(" --> ")
+        i += 1
+
+        text = []
+        while i < len(lines) and not lines[i].isdigit():
+            if not lines[i]:
+                i += 1
+                continue
+            text.append(lines[i])
+            i += 1
+
+        subtitles.append(
+            Subtitle(start_time.strip(), end_time.strip(), ' '.join(text)))
 
     return subtitles
 
@@ -59,10 +74,10 @@ def merge_subtitles(subtitles: List[Subtitle], clusters: List[Tuple[int, int]]):
 
 
 @click.command()
-@click.option('--task', type=click.Choice(['cluster', 'merge']), default='merge')
-@click.option('--subtitle_file', type=click.Path(exists=True), required=True)
-@click.option('--cluster_file', type=click.Path(exists=True))
-@click.option('--output_file', type=click.Path())
+@click.option('--task', '-t', type=click.Choice(['cluster', 'merge']), default='merge')
+@click.option('--subtitle_file', '-s',  type=click.Path(exists=True), required=True)
+@click.option('--cluster_file', '-c',  type=click.Path())
+@click.option('--output_file', '-o', type=click.Path())
 def main(
         task: str,
         subtitle_file: str, cluster_file: str, output_file: str):
@@ -70,11 +85,11 @@ def main(
         subtitles = parse_subtitles(subtitle_file)
         clusters = generate_subtitles_clusters(subtitles)
 
-        if not output_file:
+        if not cluster_file:
             for cluster in clusters:
                 print(cluster)
             return
-        with open(output_file, 'w') as f:
+        with open(cluster_file, 'w') as f:
             for cluster in clusters:
                 f.write(f"{cluster[0]} {cluster[1]}\n")
         return

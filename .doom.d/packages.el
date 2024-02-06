@@ -113,7 +113,7 @@
 (package! ht)
 (package! avy)
 (package! epc)
-(package! ox-reveal)
+;;(package! ox-reveal)
 (package! elfeed)
 (package! google-translate)
 (package! test-simple)
