@@ -121,6 +121,10 @@
       :mode 'org-mode
       :map org-mode-map
       "ar" #'chun-anki-reset-org-level)
+(map! :leader :desc "Convert an heading to simple card"
+      :mode 'org-mode
+      :map org-mode-map
+      "at" #'chun-anki-transform-headline)
 
 (require 'dash)
 

@@ -99,6 +99,44 @@ Returns:
       (org-set-property "ANKI_FAILURE_REASON" anki-failure-reason)
       )))
 
+(require 'chun-anki)
+(defun chun-anki-transform-headline (deck card)
+
+  "Transform the current headline to be an simple anki card.
+
+e.g. An heading is like
+
+* <front>
+<back>
+
+Will be transformed to
+
+* <front> :anki:
+:PROPERTIES:
+:ANKI_NOTE_TYPE: Basic (and reversed card)
+:ANKI_DECK: gpu-related
+:END:
+
+<back> "
+
+
+  (interactive (list
+                (helm :sources (helm-build-sync-source "anki-deck"
+                                 :candidates chun-anki-deck-candidates
+                                 :fuzzy-match t)
+                      :buffer "*anki deck*")
+                (helm :sources (helm-build-sync-source "anki-card"
+                                 :candidates chun-anki-card-kinds
+                                 :fuzzy-match t)
+                      :buffer "*anki card*")))
+
+  (progn
+    (org-set-property "ANKI_NOTE_TYPE" card)
+    (org-set-property "ANKI_DECK" deck)
+    (--add-tag "anki")
+    )
+)
+
 
 (defun --add-tag (tag)
   (let* ((current-tags (org-get-tags)))
