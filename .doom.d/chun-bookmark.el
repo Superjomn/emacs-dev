@@ -37,6 +37,11 @@ An alist of (title . url)
                                (add-to-list 'chun-bookmark/--site-url-dic `(,desc . ,url)))))))
   (message (format "Load %d bookmarks!" (length chun-bookmark/--site-url-dic))))
 
+(defun chun-bookmark/open-site()
+  (interactive)
+  (cond ((string-equal system-type "darwin") (chun-bookmark/open-site-on-mac)) )
+  (cond ((string-equal system-type "gnu/linux") (chun-bookmark/open-site-on-linux))))
+
 
 (defun retrieve-org-links (file)
   "Retrieve URLs and descriptions of all links within this file.
@@ -53,7 +58,7 @@ Returns: List[List[str]] where the innermost list contains two strings of both u
                                               (org-element-property :contents-end link)))))))
 
 
-(defun chun-bookmark/open-site ()
+(defun chun-bookmark/open-site-on-mac ()
   (interactive)
 
   (when (null chun-bookmark/--site-url-dic)
@@ -64,7 +69,7 @@ Returns: List[List[str]] where the innermost list contains two strings of both u
     (let ((frame (make-frame '((auto-raise . t)
                                (background-color . "DeepSkyBlue3")
                                (cursor-color . "MediumPurple1")
-                               (font . "Menlo 20")
+                               (font . "JetBrains Mono")
                                (foreground-color . "#999999")
                                (height . 20)
                                (internal-border-width . 20)
@@ -104,16 +109,36 @@ Returns: List[List[str]] where the innermost list contains two strings of both u
                   :action (lambda (app)
                             (chun-bookmark/--process-open-site app))
                   :unwind (lambda ()
+                            (delete-other-windows) ;; fix for ubuntu
                             (delete-frame)
                             (other-window 1)))))))
+
+(defun chun-bookmark/open-site-on-linux ()
+  (interactive)
+     (let* ((ivy-height 20)
+             (ivy-count-format "")
+             (site-candidates (mapcar 'car chun-bookmark/--site-url-dic)))
+       (message "candidates: %S" site-candidates)
+        (ivy-read "Open url: " site-candidates
+                  :action (lambda (app)
+                            (chun-bookmark/--process-open-site app))
+                  ))
+
+  )
 
 (with-eval-after-load 'ivy (define-key ivy-minibuffer-map (kbd "C-k") 'ivy-previous-line)
                       (define-key ivy-minibuffer-map (kbd "C-j") 'ivy-next-line)
                       (define-key ivy-minibuffer-map (kbd "C-g") 'keyboard-escape-quit)
+                      ;; (define-key ivy-minibuffer-map (kbd "C-g") (lambda () (interactive) (delete-frame)))
                       (setq ivy-re-builders-alist '((t . ivy--regex-ignore-order)))
                       )
 
 (defun chun-bookmark/--chrome-browse-url (url)
+  (cond ((string-equal system-type "darwin") (chun-bookmark/--chrome-browse-url-on-mac url)) )
+  (cond ((string-equal system-type "gnu/linux") (chun-bookmark/--chrome-browse-url-on-linux url)) )
+  )
+
+(defun chun-bookmark/--chrome-browse-url-on-mac (url)
   "Open Chrome and go to the url"
   (message "chrome-browse-url %s" url)
   (let* ((chrome-applescript "
@@ -127,6 +152,13 @@ tell application \"Google Chrome\"
 end tell
 "))
     (do-applescript (format chrome-applescript url))))
+
+(defun chun-bookmark/--chrome-browse-url-on-linux (url)
+  "Open the given URL in Google Chrome browser on Ubuntu OS."
+  (interactive "sEnter URL: ")
+  (let ((chrome-command "google-chrome"))
+    (start-process "chrome" nil chrome-command url)))
+
 
 (defun chun-bookmark/--process-open-site (app)
   "open a site"
