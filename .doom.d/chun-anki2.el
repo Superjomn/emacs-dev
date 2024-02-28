@@ -62,6 +62,18 @@ Returns:
       (insert (format "** Back\n"))
       (insert body)
       (org-mode)
+      ;; move to the tail and extract the images from the body
+      (let* ((element (org-element-parse-buffer))
+             org-content
+             )
+        (chun/anki--collect-and-push-images element)
+        (message "*element: %S" element)
+        (setq org-content (org-element-interpret-data element))
+        (erase-buffer)
+        (message "org-content: %s" org-content)
+        (insert org-content)
+        )
+
       (anki-editor-push-notes)
 
       (let* (cur-element
@@ -77,6 +89,44 @@ Returns:
         ;; (message "anki-failed-reason: %S" anki-failed-reason)
 
         (list anki-id anki-failed-reason)))))
+
+(defun chun/anki--collect-and-push-images (element)
+    (org-element-map element 'link
+        (lambda (link)
+          (message "** link: %S" link)
+          (let* (image-path)
+                  (when (and (string-equal (org-element-property :type link) "file")
+                          (string-match-p "\\(png\\|jpg\\|jpeg\\|gif\\|bmp\\|svg\\)$"
+                                          (file-name-extension (org-element-property :path link))))
+                          (setq image-path (org-element-property :path link))
+                          (assert-file-exists image-path)
+                          (message "to push image: %s" image-path)
+                          (setq image-path (anki-editor--anki-connect-store-media-file image-path))
+                          (message "new image path: %s" image-path)
+                          (org-element-put-property link :path image-path)
+                          (org-element-put-property link :raw-link (format "file:%s" image-path))
+                          (message "new link: %S" link)
+                          ))))
+    (message "element: %S" element)
+    ;; (org-element-interpret-data element)
+    )
+
+;; (let* ((org-content "* Headline with images
+;;    [[file:image1.png]]
+;;    Some text here.
+;;    [[file:image2.jpg]]
+;;    More text with an image: [[file:image3.svg]]
+;;    * Another headline without images")
+;;        org-element
+;;        )
+;;   (with-temp-buffer
+;;     (insert org-content)
+;;     (setq org-element (org-element-parse-buffer))
+
+;;         (message "element: %S" org-element)
+;;         (chun/anki--collect-images org-element)
+;;     )
+;;   )
 
 (defun chun/anki-convert ()
   (interactive)
@@ -137,7 +187,6 @@ Will be transformed to
     )
 )
 
-
 (defun --add-tag (tag)
   (let* ((current-tags (org-get-tags)))
     (unless (member tag current-tags)
@@ -157,3 +206,41 @@ Args:
   (let* ((pair (assoc key properties)))
     (when pair
       (cdr pair))))
+
+
+;; borrowed from https://github.com/louietan/anki-editor/issues/30#issuecomment-450463083
+(defun anki-editor--anki-connect-store-media-file (path)
+  "Store media file for PATH, which is an absolute file name.
+The result is the path to the newly stored media file."
+  (unless (-all? #'executable-find '("base64" "sha1sum"))
+    (error "Please make sure `base64' and `sha1sum' are available from your shell, which are required for storing media files"))
+
+  (let* ((hash (secure-hash 'sha1 path))
+         (media-file-name (format "%s-%s%s"
+                                  (file-name-base path)
+                                  hash
+                                  (file-name-extension path t)))
+         content)
+    (when (equal :json-false (anki-editor--anki-connect-invoke-result
+                              "retrieveMediaFile"
+                              `((filename . ,media-file-name))))
+      (message "Storing media file to Anki for %s..." path)
+      (setq content (string-trim
+		     (base64-encode-string
+		      (with-temp-buffer
+			(insert-file-contents path)
+			(buffer-string)))))
+      (anki-editor--anki-connect-invoke-result
+       "storeMediaFile"
+       `((filename . ,media-file-name)
+         (data . ,content))))
+    media-file-name))
+
+(defun assert-file-exists (file-path)
+  "Assert that the file at FILE-PATH exists."
+  (unless (file-exists-p file-path)
+    (error "File does not exist: %s" file-path)))
+
+
+
+;; (anki-editor--anki-connect-store-media-file "/Users/yanchunwei/Library/CloudStorage/OneDrive-Personal/org-roam/images/gpu_related/2024-02-25_15-18-34_screenshot.png")
