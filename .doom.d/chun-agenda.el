@@ -65,7 +65,7 @@
 
                                 ;; menu for inbox ;;
                                 ("i" "Inbox")
-                                ("it" "temp" entry (file chun-agenda--inbox-path) "* TODO %?")
+                                ("it" "Temp" entry (file chun-agenda--inbox-path) "* TODO %?")
                                 ("ix" "idea"
                                  entry
                                  (file+headline chun-agenda--inbox-path "Ideas")
@@ -78,22 +78,27 @@
                                 ;; menu for English related ;;
                                 ("e" "English")
 
-                                ("ea" "Anki" entry (file+headline chun-anki-inbox-path "Phrases")
-                                 ,(string-join
-                                 '("* %^{Title} :anki:"
-                                 ":PROPERTIES:"
-                                 ":ANKI_NOTE_TYPE: Basic (and reversed card)"
-                                 ":ANKI_DECK: English-learn-org"
-                                 ":END:"
-                                 "** Front"
-                                 "%(identity \"%^{Title}\")"
-                                 "** Back"
-                                 "%^{Body}\n")
-                                 "\n"))
+                                ;; ("ea" "Anki" entry (file+headline chun-anki-inbox-path "Phrases")
+                                ;;  ,(string-join
+                                ;;  '("* %^{Title} :anki:"
+                                ;;  ":PROPERTIES:"
+                                ;;  ":ANKI_NOTE_TYPE: Basic (and reversed card)"
+                                ;;  ":ANKI_DECK: English-learn-org"
+                                ;;  ":END:"
+                                ;;  "** Front"
+                                ;;  "%(identity \"%^{Title}\")"
+                                ;;  "** Back"
+                                ;;  "%^{Body}\n")
+                                ;;  "\n"))
 
                                 ("ev" "Word" entry (file+headline chun-agenda--english-inbox-path "Words")
                                  "* TODO %? :english:")
                                 ("ep" "Phrase" entry (file+headline chun-agenda--english-inbox-path "Phrases")
+                                                                "* TODO %? :english:")
+                                ("eo" "Pronunciation" entry (file+headline chun-agenda--english-inbox-path "Pronunciation")
+                                                                "* TODO %? :english:")
+
+                                ("ea" "Abbreviation" entry (file+headline chun-agenda--english-inbox-path "Abbreviation")
                                                                 "* TODO %? :english:")
 
                                 ;; menu for Reading related ;;

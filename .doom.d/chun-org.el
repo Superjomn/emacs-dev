@@ -58,7 +58,7 @@
   :ensure t)
 
 (after! mm-url
-  (defun my-org-insert-link ()
+  (defun chun-org-insert-link-smart ()
     "Insert org link where default description is set to html title."
     (interactive)
     (let* ((url (read-string "URL: "))
@@ -207,3 +207,7 @@ marginparsep=7pt, marginparwidth=.6in}
 
 (add-hook 'org-mode-hook 'org-indent-mode)
 )
+
+;; set some global tags
+;; reference https://orgmode.org/guide/Tags.html
+(setq org-tag-alist '(("@work" . ?w) ("@life" . ?l) ("@read" . ?r)))
