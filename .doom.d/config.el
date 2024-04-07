@@ -34,6 +34,8 @@
 
 (load! "./chun-misc.el")
 
+(load! "~/emacs-dev/thirdparty/my-python-mode.el")
+
 
 (defcustom chun-mode/pc-name ""
   "The PC name used for config customization which are different on different PCs."
@@ -101,30 +103,6 @@
       :desc "avy jump" "jl" #'avy-goto-line)
 (map! :leader
       :desc "avy jump" "jj" #'avy-goto-word-0)
-
-;; Keymap for chun-mode
-(map! :leader :desc "chun/insert today date"
-      "cd" #'chun/insert-current-date)
-(map! :leader :desc "chun/insert anki card"
-      :mode 'org-mode
-      :map org-mode-map
-      "ak" #'chun/anki-sentence-template)
-(map! :leader :desc "chun/insert simple anki card"
-      :mode 'org-mode
-      :map org-mode-map
-      "as" #'chun-anki-simple-card)
-(map! :leader :desc "chun convert anki card"
-      :mode 'org-mode
-      :map org-mode-map
-      "ac" #'chun/anki-convert)
-(map! :leader :desc "chun reset anki org level"
-      :mode 'org-mode
-      :map org-mode-map
-      "ar" #'chun-anki-reset-org-level)
-(map! :leader :desc "Convert an heading to simple card"
-      :mode 'org-mode
-      :map org-mode-map
-      "at" #'chun-anki-transform-headline)
 
 (require 'dash)
 
@@ -401,10 +379,6 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
 ;;(if google-translate-translation-directions-alist
       ;;'(("en" . "ch") ("ch" . "en")))
 
-(if (chun/os/is-macos)
-    ;; set PYTHONPATH for elpy mode
-    (setq python-shell-extra-pythonpaths '("/Users/yanchunwei/project/tekit0")))
-
 ;; TODO does this work?
 (defadvice evil-inner-word (around underscore-as-word activate)
   (let ((table (copy-syntax-table (syntax-table))))
@@ -415,6 +389,40 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
 (load! "./chun-babel.el")
 (load! "./chun-hugo.el")
 (load! "~/emacs-dev/thirdparty/ptx-mode.el")
+
+;; Keymap for chun-mode -------------------------------------
+;; anki related:
+(map! :leader :desc "chun/insert anki card"
+      :mode 'org-mode
+      :map org-mode-map
+      "aak" #'chun/anki-sentence-template)
+(map! :leader :desc "chun/insert simple anki card"
+      :mode 'org-mode
+      :map org-mode-map
+      "aas" #'chun-anki-simple-card)
+(map! :leader :desc "chun convert anki card"
+      :mode 'org-mode
+      :map org-mode-map
+      "aac" #'chun/anki-convert)
+(map! :leader :desc "chun reset anki org level"
+      :mode 'org-mode
+      :map org-mode-map
+      "aar" #'chun-anki-reset-org-level)
+(map! :leader :desc "Convert an heading to simple card"
+      :mode 'org-mode
+      :map org-mode-map
+      "aat" #'chun-anki-transform-headline)
+;; link related
+(map! :leader :desc "Insert org link with title extracted from html"
+      :mode 'org-mode
+      :map org-mode-map
+      "ail" #'chun-org-insert-link-smart)
+;; misc
+(map! :leader :desc "insert date"
+      "amd" #'chun/insert-current-date)
+(map! :leader :desc "Load bookmarks and project"
+      "amb" #'chun-load-worktree)
+
 
 
 ;; (load! "./chun-yabai.el")
@@ -432,3 +440,47 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
     (call-interactively #'chun-bookmark/update-web-bookmarks)
   (error (message "Failed to update bookmarks: %S" err)))
 
+(map! :leader
+      :desc "Open config"
+      "fc"
+      (lambda ()
+        (interactive)
+        (call-interactively 'projectile-find-file-in-directory "~/emacs-dev/.doom.d/")
+        )
+      )
+
+(defun chun-load-worktree ()
+  "Load bookmarks and project cache"
+  (interactive)
+  (call-interactively 'chun-bookmark/update-web-bookmarks)
+  (call-interactively 'chun-project-update-cache)
+  )
+
+;; switch window size
+(defvar my-window-sizes
+  '((80 . 30)   ; Width: 80 characters, Height: 30 lines
+    (137 . 50))) ; Width: 120 characters, Height: 50 lines
+
+(defvar my-current-window-size 0)
+
+(defun chun-switch-window-size ()
+  "Switch between predefined window sizes."
+  (interactive)
+  (setq my-current-window-size (mod (1+ my-current-window-size) (length my-window-sizes)))
+  (let ((size (nth my-current-window-size my-window-sizes)))
+    (setq width (car size)
+          height (cdr size))
+    (set-frame-width (selected-frame) width t)
+    (set-frame-height (selected-frame) height t)))
+
+(defun chun-get-window-size ()
+  (interactive)
+  (message "window: (%d %d)" (frame-width) (frame-height))
+  )
+
+(map! :leader :desc "Switch window size"
+      "amw" #'chun-switch-window-size)
+
+
+;; Set the http proxy for the whole Emacs
+(setq http-proxy "http://127.0.0.1:1095")

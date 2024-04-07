@@ -103,10 +103,15 @@
 
                                 ;; menu for Reading related ;;
                                 ("r" "Read")
-                                ("rl" "link"
+                                ;; ("rl" "link without proxy"
+                                ;;  entry
+                                ;;  (file+headline chun-agenda--read-list-path "Web")
+                                ;;  "* TODO %(org-cliplink-capture)"
+                                ;;  :immediate-finish t)
+                                ("rl" "link through proxy"
                                  entry
                                  (file+headline chun-agenda--read-list-path "Web")
-                                 "* TODO %(org-cliplink-capture)"
+                                 "* TODO %(chun-org-insert-link-smart-str)"
                                  :immediate-finish t)
 
                                 ("rp" "Paper"

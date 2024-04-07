@@ -60,10 +60,13 @@ def generate_subtitles_clusters(subtitles: list):
 def merge_subtitle_cluster(subtitles: List[Subtitle], cluster: Tuple[int, int]):
     if cluster[0] == cluster[1]:
         return subtitles[cluster[0]-1]
-    start_time = subtitles[cluster[0]-1].start_time
-    end_time = subtitles[cluster[1]-1].end_time
-    text = ' '.join([sub.text for sub in subtitles[cluster[0]-1:cluster[1]]])
-    return Subtitle(start_time, end_time, text)
+    try:
+        start_time = subtitles[cluster[0]-1].start_time
+        end_time = subtitles[cluster[1]-1].end_time
+        text = ' '.join([sub.text for sub in subtitles[cluster[0]-1:cluster[1]]])
+        return Subtitle(start_time, end_time, text)
+    except:
+        print(cluster[0])
 
 
 def merge_subtitles(subtitles: List[Subtitle], clusters: List[Tuple[int, int]]):

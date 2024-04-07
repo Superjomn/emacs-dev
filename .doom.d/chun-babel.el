@@ -17,6 +17,9 @@
     (when (string= type "td")
       (setq type "tablegen")
       )
+    (when (string= type "jupyter")
+      (setq type "python")
+      )
     (progn (newline-and-indent)
          (insert (format "#+BEGIN_SRC %s\n" type))
          (newline-and-indent)
@@ -28,9 +31,14 @@
                             ;; keybiding for insert source code
                             (local-set-key (kbd "C-c s") 'org-insert-src-block)))
 
+(use-package jupyter)
+
 (org-babel-do-load-languages 'org-babel-load-languages '((C . t)
                                                          (python . t)
                                                          (latex . t)
                                                          (dot . t)
-                                                         ;;(jupyter . t)
+                                                         (jupyter . t)
+                                                         (jupyter-python3 . t)
+                                                         ;;(ipython . t)
+
                                                          ))

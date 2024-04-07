@@ -7,12 +7,9 @@
     (interactive)
     (insert "#+begin_quote\n\n#+end_quote")
     (forward-line -1))
-  :bind (:map org-mode-map
-         ("C-c RET" . org-insert-heading)
-         ("C-c q t" . org-insert-quote)
-         ("C-c l l" . my-org-insert-link)))
 
-(setq org-todo-keyword-faces '(("TODO" :foreground "orange"
+
+  (setq org-todo-keyword-faces '(("TODO" :foreground "orange"
                              :weight bold)
                             ("NEXT" :foreground "green"
                              :weight bold)
@@ -27,8 +24,16 @@
                             ("CANCEL" :foreground "forest green"
                              :weight bold)))
 
-(setq org-todo-keywords '((sequence "TODO(t)" "IDEA(i)" "STRT(s)" "NEXT(n)" "|" "DONE(d)")
+
+  (setq org-todo-keywords '((sequence "TODO(t)" "IDEA(x)" "DOING(i)" "NEXT(n)" "|" "DONE(d)")
                                (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)")))
+
+  :bind (:map org-mode-map
+         ("C-c RET" . org-insert-heading)
+         ("C-c q t" . org-insert-quote)
+         ("C-c l l" . my-org-insert-link)))
+
+
 
 
 (with-eval-after-load 'ox-latex
@@ -64,6 +69,13 @@
     (let* ((url (read-string "URL: "))
            (title (get-html-title-from-url url)))
       (org-insert-link nil url title)))
+
+  (defun chun-org-insert-link-smart-str ()
+    "Insert org link where default description is set to html title."
+    (interactive)
+    (let* ((url (read-string "URL: "))
+           (title (get-html-title-from-url url)))
+      (format "[[%s][%s]]" url title)))
 
   (defun get-html-title-from-url (url)
     "Return content in <title> tag."
@@ -210,4 +222,4 @@ marginparsep=7pt, marginparwidth=.6in}
 
 ;; set some global tags
 ;; reference https://orgmode.org/guide/Tags.html
-(setq org-tag-alist '(("@work" . ?w) ("@life" . ?l) ("@read" . ?r)))
+(setq org-tag-alist '(("@work" . ?w) ("@life" . ?l) ("@read" . ?r) ("paper" . ?p)))

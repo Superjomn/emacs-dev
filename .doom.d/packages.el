@@ -91,14 +91,13 @@
 ;;(package! epresent)
 (package! org-tree-slide)
 (package! ox-hugo)
-;; (package! jupyter)                      ;
+(package! jupyter)                      ;
 ;(package! graphviz-dot-mode)
 ;; (package! org-roam-bibtex)
 (package! websocket)
 (package! simple-httpd)
 ;; (package! org-roam-ui :recipe (:host github :repo "org-roam/org-roam-ui" :files ("*.el" "out")))
 (package! clang-format+)
-(package! jupyter)
 (package! swift-mode)
 (package! log4e)
 (package! srefactor)
@@ -123,3 +122,6 @@
 
 ;; for GhostText in chrome
 (package! atomic-chrome)
+(package! devdocs)
+
+;;(package! ob-ipython)
