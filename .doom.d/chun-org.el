@@ -9,6 +9,7 @@
     (forward-line -1))
 
 
+  :config
   (setq org-todo-keyword-faces '(("TODO" :foreground "orange"
                              :weight bold)
                             ("NEXT" :foreground "green"

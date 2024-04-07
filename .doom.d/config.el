@@ -167,7 +167,6 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
 ;; Load my config
 (load! "./chun.el")
 
-
 ;; Python config
 (use-package! elpy
   :commands (elpy-enable))

@@ -41,10 +41,10 @@
 ;;                                         :weight bold))))
 ;;                     ;; Add more faces for other keywords as needed
 ;;                     )
-(setq org-todo-keyword-faces
-      '(("TODO" . org-todo)
-        ("DOING" . org-doing)
-        ("DONE" . org-done)))
+;; (setq org-todo-keyword-faces
+;;       '(("TODO" . org-todo)
+;;         ("DOING" . org-doing)
+;;         ("DONE" . org-done)))
 
 :custom ; execute code after a package is loaded
   ;; (org-agenda-files '(

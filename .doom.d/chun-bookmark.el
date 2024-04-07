@@ -55,6 +55,11 @@ Returns: List[List[str]] where the innermost list contains two strings of both u
 
 (defun chun-bookmark/open-site ()
   (interactive)
+
+  (when (null chun-bookmark/--site-url-dic)
+    (chun-bookmark/update-web-bookmarks)
+      )
+
   (with-current-buffer (get-buffer-create "*modal-ivy*")
     (let ((frame (make-frame '((auto-raise . t)
                                (background-color . "DeepSkyBlue3")
