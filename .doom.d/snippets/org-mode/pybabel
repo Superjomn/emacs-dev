@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: pybabel
+# key: pybabel
+# --
+#+BEGIN_SRC python :session $0 :results value
+$1
+#+END_SRC
