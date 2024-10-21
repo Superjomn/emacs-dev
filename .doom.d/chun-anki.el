@@ -5,7 +5,7 @@
   :group 'chun-anki)
 
 (defcustom chun-anki-deck-candidates
-  '("English-learn-org" "gpu-related" "Algorithm")
+  '("English-learn-org" "gpu-related" "Algorithm" "Compiler-related")
   "Anki docs"
   :type 'list
   :group 'chun-anki)

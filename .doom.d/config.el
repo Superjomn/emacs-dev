@@ -35,6 +35,7 @@
 (load! "./chun-misc.el")
 
 (load! "~/emacs-dev/thirdparty/my-python-mode.el")
+;;(load! "~/emacs-dev/dsl-mode.el")
 
 
 (defcustom chun-mode/pc-name ""
@@ -109,6 +110,7 @@
 ;; Helm related.
 (require 'helm)
 (setq helm-mode-fuzzy-match t)
+;;(setq helm-M-x-fuzzy-match t)
 (setq helm-completion-in-region-fuzzy-match t)
 (setq helm-recentf-fuzzy-match t)
 (setq helm-buffers-fuzzy-matching t)
@@ -168,8 +170,8 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
 (load! "./chun.el")
 
 ;; Python config
-(use-package! elpy
-  :commands (elpy-enable))
+;; (use-package! elpy
+;;   :commands (elpy-enable))
 ;; (after! elpy
 ;;   (setq elpy-rpc-virtualenv-path "/Users/yanchunwei/project/matshow/venv")
 
@@ -205,14 +207,14 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
 ;; -------------------------------------- python ---------------------------------
 ;; mypy flycheck mode
 ;;(load! "./mypy-flycheck.el")
-(use-package! elpy
-  :init
-  (elpy-enable))
+;; (use-package! elpy
+;;   :init
+;;   (elpy-enable))
 
-(after! elpy
-  (add-hook! 'elpy-mode-hook (lambda ()
-                               (add-hook! 'before-save-hook
-                                          'elpy-format-code nil t))))
+;; (after! elpy
+;;   (add-hook! 'elpy-mode-hook (lambda ()
+;;                                (add-hook! 'before-save-hook
+;;                                           'elpy-format-code nil t))))
 
 ;; quickly switch fro different layouts
 (use-package! eyebrowse
@@ -315,7 +317,7 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
 
 ;; (org-babel-load-file (concat "~/emacs-dev/chun-mode.org"))
 
-(elpy-enable)
+;; (elpy-enable)
 
 ;; load my config from org
 (org-babel-load-file (concat chun-mode/org-roam-dir "/20211001225141-emacs_config.org"))
@@ -354,11 +356,11 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
       ))
 
 
-(if (eq system-type 'gnu/linux)
-    (progn
-      (elpy-enable)
-      (setq elpy-rpc-virtualenv-path "~/pyenv2")
-      (setq python-shell-virtualenv-path "~/pyenv2")))
+;; (if (eq system-type 'gnu/linux)
+;;     (progn
+;;       (elpy-enable)
+;;       (setq elpy-rpc-virtualenv-path "~/pyenv2")
+;;       (setq python-shell-virtualenv-path "~/pyenv2")))
 
 
 ;; make '_' a part of word during programming
@@ -458,7 +460,9 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
 ;; switch window size
 (defvar my-window-sizes
   '((80 . 30)   ; Width: 80 characters, Height: 30 lines
-    (137 . 50))) ; Width: 120 characters, Height: 50 lines
+    (137 . 50)
+    (113 . 35)
+    )) ; Width: 120 characters, Height: 50 lines
 
 (defvar my-current-window-size 0)
 
@@ -483,3 +487,69 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
 
 ;; Set the http proxy for the whole Emacs
 (setq http-proxy "http://127.0.0.1:1095")
+
+(defun chun/move-done-items-to-backup ()
+  (interactive)
+  (let ((backup-file "~/backup.org")
+        (buffer (current-buffer)))
+    ;; Ensure the backup file exists.
+    (with-temp-buffer
+      (insert-file-contents backup-file)
+      (write-region nil nil backup-file))
+    (save-excursion
+      ;; Start from the beginning of the file.
+      (goto-char (point-min))
+      ;; Loop over all headlines.
+      (while (re-search-forward "^\\*+ \\(DONE\\) " nil t)
+        (let ((element (org-element-at-point)))
+          (when (member "DONE" (org-element-property :todo-keyword element))
+            ;; If the current headline is DONE, move it to the backup file.
+            (let ((beg (progn (org-back-to-heading t) (point)))
+                  (end (progn (org-end-of-subtree t t) (point))))
+              ;; Cut the DONE section.
+              (append-to-file beg end backup-file)
+              (delete-region beg end)
+              (write-region nil nil backup-file))))))
+    ;; Save changes to the original buffer.
+    (with-current-buffer buffer
+      (save-buffer))))
+
+;; (after! python
+;;   (add-to-list 'auto-mode-alist '("\\.pis\\'" . python-mode))
+;;   (add-to-list 'auto-mode-alist '("\\.pim\\'" . python-mode))
+;;   )
+
+
+;; accept completion from copilot and fallback to company
+(use-package! copilot
+  :load-path  "~/project/copilot.el/copilot.el"
+  :hook (prog-mode . copilot-mode)
+  :bind (:map copilot-completion-map
+              ("<tab>" . 'copilot-accept-completion)
+              ("TAB" . 'copilot-accept-completion)
+              ("C-TAB" . 'copilot-accept-completion-by-word)
+              ("C-<tab>" . 'copilot-accept-completion-by-word)))
+
+(setq! gc-cons-threshold 100000000)
+
+(defun chun-org-get-id ()
+  "Create an ID for the current heading and copy it to the clipboard."
+  (interactive)
+  (let ((id (org-id-get-create)))
+    (kill-new id)
+    (message "ID %s copied to clipboard" id)))
+
+(map! :leader :desc "LLM"
+      "llm" #'gptel)
+
+
+(defun org-clean-and-start-h2 ()
+  "Clean up the current org-mode buffer and start an empty H2 heading."
+  (interactive)
+  (delete-region (point-min) (point-max))
+  (insert "* ")
+  ;;(evil-normal-state)
+  (evil-insert-state)
+  )
+
+(add-hook 'org-mode-hook (lambda () (local-set-key (kbd "C-c c") 'org-clean-and-start-h2)))

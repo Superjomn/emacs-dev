@@ -52,7 +52,7 @@
 (package! hydra)
 (package! yasnippet)
 (package! google-c-style)
-(package! company-irony-c-headers)
+;; (package! company-irony-c-headers)
 (package! info-colors)
 (package! spacemacs-theme)
 ;; for operations on directories or paths
@@ -125,3 +125,8 @@
 (package! devdocs)
 
 ;;(package! ob-ipython)
+
+(package! copilot
+  :recipe (:host github :repo "copilot-emacs/copilot.el" :files ("*.el")))
+
+(package! gptel)
