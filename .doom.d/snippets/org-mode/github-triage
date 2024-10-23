@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: github-triage
+# key: github-triage
+# --
+
+Could you help answer or triage this issue? $1

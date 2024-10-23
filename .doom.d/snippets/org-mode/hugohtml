@@ -1,0 +1,12 @@
+# -*- mode: snippet -*-
+# name: hugohtml
+# key: hugohtml
+# --
+
+#+begin_export html
+{{< rawhtml >}}
+
+$1
+
+{{< /rawhtml >}}
+#+end_export

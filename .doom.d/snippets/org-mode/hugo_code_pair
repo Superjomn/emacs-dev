@@ -1,0 +1,23 @@
+# -*- mode: snippet -*-
+# name: hugo_code_pair
+# key: hugo_code_pair
+# --
+
+
+#+begin_export html
+{{< rawhtml >}}
+<table> <tr>
+<td> <pre><code class="$1-html">
+
+</code></pre> </td>
+{{< /rawhtml >}}
+#+end_export
+
+#+begin_export html
+{{< rawhtml >}}
+<td> <pre><code class="$2-html">
+
+</code></pre> </td>
+</tr> </table>
+{{< /rawhtml >}}
+#+end_export

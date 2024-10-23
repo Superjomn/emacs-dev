@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: hugocode
+# key: hugocode
+# --
+<pre><code class="language-html">
+$1
+</code></pre>
