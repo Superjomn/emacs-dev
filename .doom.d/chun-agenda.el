@@ -29,6 +29,7 @@
   (setq chun-bookmark-path (concat chun-mode/org-roam-dir "/20210921113038-bookmarks.org"))
   (setq chun-anki-inbox-path (concat chun-mode/org-roam-dir "/20230608135539-anki_inbox.org"))
   (setq chun-blog-writing-input (concat chun-mode/org-roam-dir "/20231204105512-writing_or_ideas_input_box.org"))
+  (setq chun-agenda-misc-info-path (concat chun-mode/org-roam-dir "/20240612100701-info_inbox.org"))
 
 ;; (custom-set-faces '(org-todo ((t
 ;;                                  (:foreground "red"
@@ -74,6 +75,8 @@
                                                "\n"))
                                 ("il" "Life" entry (file+headline chun-agenda--inbox-path "Life") "* TODO %? :life:")
                                 ("ic" "Child" entry (file+headline chun-agenda--inbox-path "Life") "* TODO %? :life:baby:")
+
+                                ("if" "Info Misc" entry (file chun-agenda-misc-info-path) "* TODO %?")
 
                                 ;; menu for English related ;;
                                 ("e" "English")

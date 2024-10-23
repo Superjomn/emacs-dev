@@ -131,7 +131,18 @@ end tell
 (defun chun-bookmark/--process-open-site (app)
   "open a site"
   (let* ((url (assoc app chun-bookmark/--site-url-dic)))
-    (if url (progn (chun-bookmark/--chrome-browse-url (cdr url)) t))))
+    (if url (progn
+              (chun-bookmark/--chrome-browse-url (cdr url))
+              ;; (chun-bookmark/--open-url-in-safari (cdr url))
+              t))))
+
+(defun chun-bookmark/--open-url-in-safari (url)
+  "Open the given URL in Safari on macOS."
+  (interactive "sURL: ")
+  (let* ((command (format "open -a Safari \"%s\"" url)))
+    (shell-command command))
+  )
+;;(chun-bookmark/--open-url-in-safari "https://www.google.com")
 
 (map! 
  :leader

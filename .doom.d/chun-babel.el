@@ -7,6 +7,7 @@
                                        "perl" "ruby" "scheme" "sqlite"
                                        "cpp" "cmake" "swift" "cuda" "llvm" "td" "ptx" "yaml"
                                        "groovy" "markdown" "json"
+                                       "pimacs"
                                        )))
                  (list (ido-completing-read "Source code type: " src-code-types))))
 
@@ -39,6 +40,7 @@
                                                          (dot . t)
                                                          (jupyter . t)
                                                          (jupyter-python3 . t)
+                                                         (pimacs . t)
                                                          ;;(ipython . t)
 
                                                          ))
