@@ -553,3 +553,37 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
   )
 
 (add-hook 'org-mode-hook (lambda () (local-set-key (kbd "C-c c") 'org-clean-and-start-h2)))
+
+;; For LLM
+;;
+
+(defcustom chun-gptel-model "mistralai/mistral-large-2-instruct"
+  "The model to use for completion."
+  :type 'string
+  :group 'gptel)
+
+(defcustom chun-gptel-host "integrate.api.nvidia.com"
+  "The host to use for completion."
+  :type 'string
+  :group 'gptel)
+
+(defcustom chun-gptel-key ""
+  "The key to use for completion."
+  :type 'string
+  :group 'gptel)
+
+(defcustom chun-gptel-endpoint "/v1/chat/completions"
+  "The endpoint to use for completion."
+  :type 'string
+  :group 'gptel)
+
+(setq gptel-model chun-gptel-model
+      gptel-backend
+      (gptel-make-openai "Nvidia NIM" ;Any name you want
+        :host chun-gptel-host
+        :endpoint chun-gptel-endpoint
+        :stream t
+        :key chun-gptel-key
+        :models '("mistralai/mistral-large-2-instruct")))
+
+(setq gptel-default-mode 'org-mode)

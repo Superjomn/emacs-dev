@@ -224,3 +224,6 @@ marginparsep=7pt, marginparwidth=.6in}
 ;; set some global tags
 ;; reference https://orgmode.org/guide/Tags.html
 (setq org-tag-alist '(("@work" . ?w) ("@life" . ?l) ("@read" . ?r) ("paper" . ?p)))
+
+;; Ajudst the org-mode cache to work with huge files
+(setq org-element-cache-persistent nil)

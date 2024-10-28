@@ -4,7 +4,6 @@
 ;; ref https://webusers.i3s.unice.fr/~malapert/emacs_orgmode.html
 ;;
 
-
 (use-package! org-agenda
 :bind
   ("C-c o a" . org-agenda)
@@ -19,13 +18,16 @@
                            ;; "20221017102352-english_agenda_inbox.org"
                            "20230324163903-random_ideas.org"
                            "20230214102434-read_list.org"
-                           "20231204105512-writing_or_ideas_input_box.org"))
+                           "20231204105512-writing_or_ideas_input_box.org"
+                           "20241027152311-work_agenda.org"
+                           ))
 
   (setq chun-agenda--inbox-path (concat chun-mode/org-roam-dir "/20230629103055-agenda_inbox.org"))
   (setq chun-agenda--paper-or-book-path (concat chun-mode/org-roam-dir "/20220408141044-book_or_paper_agenda.org"))
   (setq chun-agenda--english-inbox-path (concat chun-mode/org-roam-dir "/20221017102352-english_agenda_inbox.org"))
   (setq chun-agenda--random-idea-path (concat chun-mode/org-roam-dir "/20230324163903-random_ideas.org"))
   (setq chun-agenda--read-list-path (concat chun-mode/org-roam-dir "/20230214102434-read_list.org"))
+  (setq chun-work-inbox-path (concat chun-mode/org-roam-dir "/20241027152311-work_agenda.org"))
   (setq chun-bookmark-path (concat chun-mode/org-roam-dir "/20210921113038-bookmarks.org"))
   (setq chun-anki-inbox-path (concat chun-mode/org-roam-dir "/20230608135539-anki_inbox.org"))
   (setq chun-blog-writing-input (concat chun-mode/org-roam-dir "/20231204105512-writing_or_ideas_input_box.org"))
@@ -58,15 +60,15 @@
   (org-todo-keywords '((sequence "TODO(t)" "NEXT(n)" "IDEA"  "|" "DONE(d!)")
                        (sequence "READY(r)" "DOING(i)" "WAIT(w@/!)" "HOLD(h@)" "|" "CANCELLED(c@)")))
 
-
-
-
 :config
   (setq org-capture-templates `(
 
                                 ;; menu for inbox ;;
                                 ("i" "Inbox")
-                                ("it" "Temp" entry (file chun-agenda--inbox-path) "* TODO %?")
+                                ;;("it" "Temp" entry (file chun-agenda--inbox-path) "* TODO %?")
+                                ("it" "Work" entry (file chun-work-inbox-path) ,(string-join '("* TODO %? :work" ":PROPERTIES:" ":ADDED-DATE: %U"
+                                                 ":END:")
+                                               "\n"))
                                 ("ix" "idea"
                                  entry
                                  (file+headline chun-agenda--inbox-path "Ideas")
@@ -153,7 +155,20 @@
 
 
   (setq org-agenda-prefix-format "%i %-2:c %-14t% s%-6e %/b ")
-  (setq org-columns-default-format "%50ITEM(Task) %10CLOCKSUM %16TIMESTAMP_IA"))
+  (setq org-columns-default-format "%50ITEM(Task) %10CLOCKSUM %16TIMESTAMP_IA")
+  )
+
+;; This changes the tags' appearance in org-mode file only.
+(setq org-tag-faces
+      '(("work" . (:foreground "blue" :weight bold))
+        ("personal" . (:foreground "green" :weight bold))
+        ("health" . (:foreground "orange" :weight bold))))
+
+(setq org-agenda-tag-faces
+      '(("work" . (:foreground "blue" :weight bold))
+        ("personal" . (:foreground "green" :weight bold))
+        ("health" . (:foreground "orange" :weight bold)))
+      )
 
 
 (defun air-org-skip-subtree-if-habit ()
@@ -220,3 +235,15 @@ PRIORITY may be one of the characters ?A, ?B, or ?C."
     (org-agenda-write chun-agenda-view-html-path)
     (call-interactively 'org-agenda-quit)
     (message (format "Exported agenda to %s" chun-agenda-view-html-path))))
+
+
+(set-face-attribute 'org-agenda-date nil
+                    :foreground "blue"
+                    :background "grey"
+                    :weight 'bold)
+
+(set-face-attribute 'org-agenda-date-today nil
+                    :foreground "red"
+                    :background "grey"
+                    :weight 'bold)
+
