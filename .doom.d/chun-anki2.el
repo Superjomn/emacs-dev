@@ -209,6 +209,7 @@ Args:
 
 
 ;; borrowed from https://github.com/louietan/anki-editor/issues/30#issuecomment-450463083
+
 (defun anki-editor--anki-connect-store-media-file (path)
   "Store media file for PATH, which is an absolute file name.
 The result is the path to the newly stored media file."
@@ -240,7 +241,6 @@ The result is the path to the newly stored media file."
   "Assert that the file at FILE-PATH exists."
   (unless (file-exists-p file-path)
     (error "File does not exist: %s" file-path)))
-
 
 
 ;; (anki-editor--anki-connect-store-media-file "/Users/yanchunwei/Library/CloudStorage/OneDrive-Personal/org-roam/images/gpu_related/2024-02-25_15-18-34_screenshot.png")

@@ -52,7 +52,7 @@
 (package! hydra)
 (package! yasnippet)
 (package! google-c-style)
-;; (package! company-irony-c-headers)
+(package! company-irony-c-headers)
 (package! info-colors)
 (package! spacemacs-theme)
 ;; for operations on directories or paths
@@ -80,7 +80,9 @@
 (package! atomic-chrome)  ;; for leetcode
 (package! google-translate)
 (package! anki-connect)
-(package! anki-editor)
+;; Depend on old anki-editor
+;;(package! anki-editor)
+(package! anki-connect :recipe (:host github :repo "louietan/anki-connect"))
 (package! ox-gfm)
 (package! calfw)
 (package! org-sidebar) ;; get outline of org-mode file

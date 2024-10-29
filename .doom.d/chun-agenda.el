@@ -237,6 +237,7 @@ PRIORITY may be one of the characters ?A, ?B, or ?C."
     (message (format "Exported agenda to %s" chun-agenda-view-html-path))))
 
 
+;; Change the style of the date headlines in agenda view.
 (set-face-attribute 'org-agenda-date nil
                     :foreground "blue"
                     :background "grey"

@@ -227,3 +227,7 @@ marginparsep=7pt, marginparwidth=.6in}
 
 ;; Ajudst the org-mode cache to work with huge files
 (setq org-element-cache-persistent nil)
+
+(use-package ob-python :ensure org)
+
+(setq org-babel-python-command "python3.12")
