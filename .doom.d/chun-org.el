@@ -231,3 +231,6 @@ marginparsep=7pt, marginparwidth=.6in}
 (use-package ob-python :ensure org)
 
 (setq org-babel-python-command "python3.12")
+
+;; Change the folded headline style "[...]"
+(setq org-ellipsis " ▼ ")

@@ -235,8 +235,20 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
 (use-package! google-translate
   :bind ("C-c t" . google-translate-at-point))
 
-(use-package! anki-connect)
+(setq user-emacs-directory
+      (or (and (file-directory-p (expand-file-name "~/.emacs.d/"))
+               (expand-file-name "~/.emacs.d/"))
+          (and (file-directory-p (expand-file-name "~/.config/emacs/"))
+               (expand-file-name "~/.config/emacs/"))))
 
+
+;; The package! can install the package, but it is not loaded.
+(load! (concat user-emacs-directory "./.local/straight/repos/anki-editor/anki-editor.el"))
+;;(load! (concat user-emacs-directory "./.local/straight/repos/anki-connect/anki-connect.el"))
+;(load! anki-editor-path)
+;(require 'anki-connect)
+
+;;(use-package! anki-connect)
 
  ;; end of use-package org
 
@@ -289,8 +301,7 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
 ;;   (load-theme 'doom-acario-dark t))
 
 (use-package! calfw)
-(use-package! anki-editor
-  :ensure t)
+;;(use-package! anki-editor :ensure t)
 (use-package! calfw-org
   :config
   (require 'calfw-org))

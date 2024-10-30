@@ -81,8 +81,10 @@
 (package! google-translate)
 (package! anki-connect)
 ;; Depend on old anki-editor
-;;(package! anki-editor)
-(package! anki-connect :recipe (:host github :repo "louietan/anki-connect"))
+(package! anki-editor :recipe
+          (:host github
+           :repo "louietan/anki-editor"
+           :files ("*.el")))
 (package! ox-gfm)
 (package! calfw)
 (package! org-sidebar) ;; get outline of org-mode file
