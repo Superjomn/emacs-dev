@@ -260,7 +260,9 @@ PRIORITY may be one of the characters ?A, ?B, or ?C."
 (defun org-agenda-events-to-json (output-file)
   "Export Org agenda events to a JSON file."
   (interactive "FExport JSON to file: ")
-  (let ((events '()))
+  (let ((events '())
+        (today (format-time-string "%Y-%m-%d"))
+        )
     (dolist (file (org-agenda-files))
       (with-current-buffer (find-file-noselect file)
         (org-element-map (org-element-parse-buffer) 'headline
@@ -274,27 +276,35 @@ PRIORITY may be one of the characters ?A, ?B, or ?C."
                    (scheduled (org-element-property :scheduled headline))
                    (deadline (org-element-property :deadline headline))
                    (timestamp (or scheduled deadline))
-                   (is-all-day (and timestamp (not (org-element-property :hour-start timestamp))))
                    (start (when timestamp
                             (org-timestamp-format timestamp "%Y-%m-%dT%H:%M:%S")))
                    (end (when start
                           (let ((time (org-timestamp-to-time timestamp)))
                             (format-time-string "%Y-%m-%dT%H:%M:%S"
-                                                (time-add time (seconds-to-time 3600)))))))
+                                                (time-add time (seconds-to-time 3600))))))
+                   (days-before-today (if timestamp
+                                          (floor (org-agenda-days-before-today timestamp))
+                                        0))
+                   (delayed-task (> days-before-today 0))
+                   (is-all-day (and timestamp (not (org-element-property :hour-start timestamp))))
+                   )
                    ;;(tags (org-element-property :tags headline))
                    
-                   
+              ;;(setq is-all-day (or is-all-day delayed-task))
+              ;;(when delayed-task (setq start today)) ;; We only track the delayed tasks on today
+
               ;; For all-day event, just start date is necessary
-              (when is-all-day
+              (when (and is-all-day (not delayed-task))
                 (setq start (org-timestamp-format timestamp "%Y-%m-%d")))
+
+              ;; If one is nil, get the other's value
+              (setq start (or start end))
+              (setq end (or end start))
 
               (message "title: %s, start: %S, end: %S" title start end)
               (when (and (org-agenda-event-include-p todo-state)
+                         (not (string-empty-p title))
                          (or start end))
-                  
-                ;; If one is nil, get the other's value
-                (setq start (or start end))
-                (setq end (or end start))
 
                 (if (not is-all-day)
                     (push `(("title" . ,title)
@@ -305,7 +315,17 @@ PRIORITY may be one of the characters ?A, ?B, or ?C."
                   (push `(("title" . ,title)
                         ("start" . ,start)
                         )
-                          events))))))))
+                          events)))
+
+              ;; deal with the delayed task, push additional record to today
+              (when (and delayed-task (org-agenda-event-include-p todo-state))
+                  (setq new-title (format "%dX: %s" days-before-today title))
+                  (setq start today)
+                  (push `(("title" . ,new-title) ("start" . ,start)) events)
+                  )
+
+              )))))
+
     (with-temp-file output-file
       (insert "var events = ")
       (insert (json-encode (nreverse events))))
@@ -326,6 +346,12 @@ Inputs:
 Returns:
  a list of (title start end)"
   )
+
+(defun org-agenda-days-before-today (timestamp)
+  "Calculate the number of days before today for a given TIMESTAMP."
+  (let ((time (org-timestamp-to-time timestamp)))
+    (/ (float-time (time-subtract (current-time) time)) 86400)))
+
 
 (defun chun-agenda-lanuch-web-view ()
   "Launch a web view for org-agenda."
