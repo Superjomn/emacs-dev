@@ -1,4 +1,5 @@
 (require 'subr-x)
+(require 'json)
 
 ;; ref https://systemcrafters.net/emacs-from-scratch/organize-your-life-with-org-mode/
 ;; ref https://webusers.i3s.unice.fr/~malapert/emacs_orgmode.html
@@ -13,13 +14,14 @@
   ;; Seems the latest version need the 'org-directory`
   (setq org-directory chun-mode/org-roam-dir)
   (setq org-agenda-files '(
-                           "20230629103055-agenda_inbox.org"
+                           ;; "20230629103055-agenda_inbox.org"
                            "20220408141044-book_or_paper_agenda.org"
                            ;; "20221017102352-english_agenda_inbox.org"
                            "20230324163903-random_ideas.org"
                            "20230214102434-read_list.org"
                            "20231204105512-writing_or_ideas_input_box.org"
                            "20241027152311-work_agenda.org"
+                           "20241106091348-personal_agenda_inbox.org"
                            ))
 
   (setq chun-agenda--inbox-path (concat chun-mode/org-roam-dir "/20230629103055-agenda_inbox.org"))
@@ -32,6 +34,7 @@
   (setq chun-anki-inbox-path (concat chun-mode/org-roam-dir "/20230608135539-anki_inbox.org"))
   (setq chun-blog-writing-input (concat chun-mode/org-roam-dir "/20231204105512-writing_or_ideas_input_box.org"))
   (setq chun-agenda-misc-info-path (concat chun-mode/org-roam-dir "/20240612100701-info_inbox.org"))
+  (setq chun-personal-inbox-path (concat chun-mode/org-roam-dir "/20241106091348-personal_agenda_inbox.org"))
 
 ;; (custom-set-faces '(org-todo ((t
 ;;                                  (:foreground "red"
@@ -66,13 +69,16 @@
                                 ;; menu for inbox ;;
                                 ("i" "Inbox")
                                 ;;("it" "Temp" entry (file chun-agenda--inbox-path) "* TODO %?")
-                                ("it" "Work" entry (file chun-work-inbox-path) ,(string-join '("* TODO %? :work" ":PROPERTIES:" ":ADDED-DATE: %U"
+                                ("it" "Work" entry (file chun-work-inbox-path) ,(string-join '("* TODO %? :work:" ":PROPERTIES:" ":ADDED-DATE: %U"
                                                  ":END:")
                                                "\n"))
-                                ("ix" "idea"
-                                 entry
-                                 (file+headline chun-agenda--inbox-path "Ideas")
-                                 ,(string-join '("* IDEA %?" ":PROPERTIES:" ":ADDED-DATE: %U"
+                                ;; ("ix" "idea"
+                                ;;  entry
+                                ;;  (file+headline chun-agenda--inbox-path "Ideas")
+                                ;;  ,(string-join '("* IDEA %?" ":PROPERTIES:" ":ADDED-DATE: %U"
+                                ;;                  ":END:")
+                                ;;                "\n"))
+                                ("ix" "Personal" entry (file chun-personal-inbox-path) ,(string-join '("* TODO %? :agenda:personal:" ":PROPERTIES:" ":ADDED-DATE: %U"
                                                  ":END:")
                                                "\n"))
                                 ("il" "Life" entry (file+headline chun-agenda--inbox-path "Life") "* TODO %? :life:")
@@ -247,4 +253,84 @@ PRIORITY may be one of the characters ?A, ?B, or ?C."
                     :foreground "red"
                     :background "grey"
                     :weight 'bold)
+
+
+;; export events to web
+
+(defun org-agenda-events-to-json (output-file)
+  "Export Org agenda events to a JSON file."
+  (interactive "FExport JSON to file: ")
+  (let ((events '()))
+    (dolist (file (org-agenda-files))
+      (with-current-buffer (find-file-noselect file)
+        (org-element-map (org-element-parse-buffer) 'headline
+          (lambda (headline)
+            (let* ((raw-title (org-element-property :raw-value headline))
+                   (title (if raw-title
+                              (org-no-properties
+                               (replace-regexp-in-string "\\[\\[.*?\\]\\[\\(.*?\\)\\]\\]" "\\1" raw-title)) ;; Extract plain text from links
+                            ""))
+                   (todo-state (org-element-property :todo-keyword headline))
+                   (scheduled (org-element-property :scheduled headline))
+                   (deadline (org-element-property :deadline headline))
+                   (timestamp (or scheduled deadline))
+                   (is-all-day (and timestamp (not (org-element-property :hour-start timestamp))))
+                   (start (when timestamp
+                            (org-timestamp-format timestamp "%Y-%m-%dT%H:%M:%S")))
+                   (end (when start
+                          (let ((time (org-timestamp-to-time timestamp)))
+                            (format-time-string "%Y-%m-%dT%H:%M:%S"
+                                                (time-add time (seconds-to-time 3600)))))))
+                   ;;(tags (org-element-property :tags headline))
+                   
+                   
+              ;; For all-day event, just start date is necessary
+              (when is-all-day
+                (setq start (org-timestamp-format timestamp "%Y-%m-%d")))
+
+              (message "title: %s, start: %S, end: %S" title start end)
+              (when (and (org-agenda-event-include-p todo-state)
+                         (or start end))
+                  
+                ;; If one is nil, get the other's value
+                (setq start (or start end))
+                (setq end (or end start))
+
+                (if (not is-all-day)
+                    (push `(("title" . ,title)
+                        ("start" . ,start)
+                        ("end" . ,end)
+                        )
+                          events)
+                  (push `(("title" . ,title)
+                        ("start" . ,start)
+                        )
+                          events))))))))
+    (with-temp-file output-file
+      (insert "var events = ")
+      (insert (json-encode (nreverse events))))
+    (message "Exported to %s" output-file)))
+
+(defun org-agenda-event-include-p (state)
+  "Determine if an event with the given STATE should be included.
+Customize this function to adjust filtering logic."
+  (member state '("TODO" "DOING")))
+
+(defun chun-org-get-event (title start end)
+  "
+Inputs:
+  - title: string
+  - start: optional[str]
+  - end: optional[str]
+
+Returns:
+ a list of (title start end)"
+  )
+
+(defun chun-agenda-lanuch-web-view ()
+  "Launch a web view for org-agenda."
+  (interactive)
+    (org-agenda-events-to-json "/Users/chunwei/emacs-dev/org-agenda-web-view/events.js")
+    (browse-url (concat "file://" (expand-file-name "~/emacs-dev/org-agenda-web-view/web.html")))
+  )
 

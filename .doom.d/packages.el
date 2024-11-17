@@ -134,3 +134,6 @@
   :recipe (:host github :repo "copilot-emacs/copilot.el" :files ("*.el")))
 
 (package! gptel)
+
+(package! org-appear)
+(package! org-modern)

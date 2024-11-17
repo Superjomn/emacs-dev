@@ -314,7 +314,6 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
 (use-package! ox-hugo
   :after ox)
 
-(load! "./chun-agenda.el")
 
 (use-package! crux)
 (use-package! epc)
@@ -429,6 +428,17 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
       :mode 'org-mode
       :map org-mode-map
       "ail" #'chun-org-insert-link-smart)
+
+;; chun-memo
+(map! :leader :desc "chun memo build db"
+      :mode 'org-mode
+      :map org-mode-map
+      "amb" #'chun-memo-build-db)
+(map! :leader :desc "chun memo query"
+      :mode 'org-mode
+      :map org-mode-map
+      "amq" #'chun-memo-query)
+
 ;; misc
 (map! :leader :desc "insert date"
       "amd" #'chun/insert-current-date)
@@ -598,3 +608,48 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
         :models '("mistralai/mistral-large-2-instruct")))
 
 (setq gptel-default-mode 'org-mode)
+
+(setq jupyter-use-zmq nil)
+(defun my-jupyter-api-http-request--ignore-login-error-a
+    (func url endpoint method &rest data)
+  (cond
+   ((member endpoint '("login"))
+    (ignore-error (jupyter-api-http-error)
+      (apply func url endpoint method data)))
+   (:else
+    (apply func url endpoint method data))))
+(advice-add
+ #'jupyter-api-http-request
+ :around #'my-jupyter-api-http-request--ignore-login-error-a)
+
+(load! "./chun-agenda.el")
+
+
+;; Make org-passwords work
+(require 'org-passwords)
+
+(require 'org-crypt)
+(org-crypt-use-before-save-magic)
+(setq org-tags-exclude-from-inheritance '("crypt"))
+
+(setq org-crypt-key nil)
+;; GPG key to use for encryption.
+;; nil means  use symmetric encryption unconditionally.
+;; "" means use symmetric encryption unless heading sets CRYPTKEY property.
+
+(setq auto-save-default nil)
+;; Auto-saving does not cooperate with org-crypt.el: so you need to
+;; turn it off if you plan to use org-crypt.el quite often.  Otherwise,
+;; you'll get an (annoying) message each time you start Org.
+
+
+;;; some configs borrowed from https://hieuphay.com/doom-emacs-config/
+
+;; Enable automatic visiable of the hidden elements
+(use-package! org-appear
+  :hook
+  (org-mode . org-appear-mode)
+  :config
+  (setq org-hide-emphasis-markers t
+        org-appear-autolinks 'just-brackets))
+
