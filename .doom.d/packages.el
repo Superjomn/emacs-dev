@@ -137,3 +137,4 @@
 
 (package! org-appear)
 (package! org-modern)
+(package! svg-tag-mode)

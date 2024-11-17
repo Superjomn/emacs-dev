@@ -200,3 +200,6 @@
       (python-shell-completion-native-get-completions
        (get-buffer-process (current-buffer))
        nil "_"))))
+
+(setq comp-deferred-compilation t)
+(setq native-comp-driver-options '("-B" "/Library/Developer/CommandLineTools/usr/bin")) ;; Adjust path if needed

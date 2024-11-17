@@ -230,7 +230,135 @@ marginparsep=7pt, marginparwidth=.6in}
 
 (use-package ob-python :ensure org)
 
-(setq org-babel-python-command "python3.12")
+(setq org-babel-python-command "/Users/yanchunwei/miniconda3/bin/python")
 
 ;; Change the folded headline style "[...]"
-(setq org-ellipsis " ▼ ")
+;;(setq org-ellipsis " ▼ ")
+(setq org-ellipsis " ↪ ")
+
+(defun org-babel-tangle-python-blocks-to-file (output-file)
+  "Extract all Python code blocks from the current org-mode file and export them to a specified Python file."
+  (interactive "FExport Python blocks to file: ")
+  (let ((org-file (buffer-file-name))
+        (org-confirm-babel-evaluate nil))  ;; Disable confirmation prompts for Babel
+    (if (and org-file (string-equal (file-name-extension org-file) "org"))
+        (org-babel-tangle-file org-file output-file "python")
+      (error "Current buffer is not an org-mode file"))))
+
+;; For org-modern
+;;
+(use-package! org-modern
+  :hook (org-mode . org-modern-mode)
+  :config
+  (setq
+   ;; Edit settings
+   org-catch-invisible-edits 'show-and-error
+   org-special-ctrl-a/e t
+   org-insert-heading-respect-content t
+   ;; Appearance
+   org-modern-radio-target    '("❰" t "❱")
+   org-modern-internal-target '("↪ " t "")
+   org-modern-todo nil
+   org-modern-tag nil
+   org-modern-timestamp t
+   org-modern-statistics nil
+   org-modern-progress nil
+   org-modern-priority nil
+   org-modern-horizontal-rule "──────────"
+   org-modern-hide-stars "·"
+   org-modern-star ["⁖"]
+   org-modern-keyword "‣"
+   org-modern-list '((43 . "•")
+                     (45 . "–")
+                     (42 . "↪")))
+  (custom-set-faces!
+    `((org-modern-tag)
+      :background ,(doom-blend (doom-color 'blue) (doom-color 'bg) 0.1)
+      :foreground ,(doom-color 'grey))
+    `((org-modern-radio-target org-modern-internal-target)
+      :inherit 'default :foreground ,(doom-color 'blue)))
+  )
+
+;; End org-modern
+
+
+;; For svg-tag-mode
+;; Borrowed from https://hieuphay.com/doom-emacs-config/
+(use-package! svg-tag-mode
+  :config
+  (defconst date-re "[0-9]\\{4\\}-[0-9]\\{2\\}-[0-9]\\{2\\}")
+  (defconst time-re "[0-9]\\{2\\}:[0-9]\\{2\\}")
+  (defconst day-re "[A-Za-z]\\{3\\}")
+  (defconst day-time-re (format "\\(%s\\)? ?\\(%s\\)?" day-re time-re))
+
+  (defun svg-progress-percent (value)
+    (svg-image (svg-lib-concat
+                (svg-lib-progress-bar
+                 (/ (string-to-number value) 100.0) nil
+                 :height 0.8 :foreground (doom-color 'fg) :background (doom-color 'bg)
+                 :margin 0 :stroke 2 :radius 3 :padding 2 :width 11)
+                (svg-lib-tag (concat value "%") nil
+                             :height 0.8 :foreground (doom-color 'fg) :background (doom-color 'bg)
+                             :stroke 0 :margin 0)) :ascent 'center))
+
+  (defun svg-progress-count (value)
+    (let* ((seq (mapcar #'string-to-number (split-string value "/")))
+           (count (float (car seq)))
+           (total (float (cadr seq))))
+      (svg-image (svg-lib-concat
+                  (svg-lib-progress-bar (/ count total) nil
+                                        :foreground (doom-color 'fg)
+                                        :background (doom-color 'bg) :height 0.8
+                                        :margin 0 :stroke 2 :radius 3 :padding 2 :width 11)
+                  (svg-lib-tag value nil
+                               :foreground (doom-color 'fg)
+                               :background (doom-color 'bg)
+                               :stroke 0 :margin 0 :height 0.8)) :ascent 'center)))
+
+  (set-face-attribute 'svg-tag-default-face nil :family "Alegreya Sans")
+  (setq svg-tag-tags
+        `(;; Progress e.g. [63%] or [10/15]
+          ("\\(\\[[0-9]\\{1,3\\}%\\]\\)" . ((lambda (tag)
+                                              (svg-progress-percent (substring tag 1 -2)))))
+          ("\\(\\[[0-9]+/[0-9]+\\]\\)" . ((lambda (tag)
+                                            (svg-progress-count (substring tag 1 -1)))))
+          ;; Task priority e.g. [#A], [#B], or [#C]
+          ("\\[#A\\]" . ((lambda (tag) (svg-tag-make tag :face 'error :inverse t :height .85
+                                                     :beg 2 :end -1 :margin 0 :radius 10))))
+          ("\\[#B\\]" . ((lambda (tag) (svg-tag-make tag :face 'warning :inverse t :height .85
+                                                     :beg 2 :end -1 :margin 0 :radius 10))))
+          ("\\[#C\\]" . ((lambda (tag) (svg-tag-make tag :face 'org-todo :inverse t :height .85
+                                                     :beg 2 :end -1 :margin 0 :radius 10))))
+          ;; The todo Keywords
+          ;;("work" . ((lambda (tag) (svg-tag-make tag :inverse t :height .85 :face 'org-todo))))
+          ("TODO" . ((lambda (tag) (svg-tag-make tag :inverse t :height .85 :face 'org-todo))))
+          ("CANCELLED" . ((lambda (tag) (svg-tag-make tag :inverse t :height .85 :face 'org-todo))))
+          ("DOING" . ((lambda (tag) (svg-tag-make tag :inverse t :height .85 :face 'org-todo))))
+          ("HOLD" . ((lambda (tag) (svg-tag-make tag :height .85 :face 'org-todo))))
+          ("DONE\\|STOP" . ((lambda (tag) (svg-tag-make tag :inverse t :height .85 :face 'org-done))))
+          ("NEXT\\|WAIT" . ((lambda (tag) (svg-tag-make tag :inverse t :height .85 :face '+org-todo-active))))
+          ("REPEAT\\|EVENT\\|PROJ\\|IDEA" .
+           ((lambda (tag) (svg-tag-make tag :inverse t :height .85 :face '+org-todo-project))))
+          ("REVIEW" . ((lambda (tag) (svg-tag-make tag :inverse t :height .85 :face '+org-todo-onhold))))))
+
+  :hook (org-mode . svg-tag-mode)
+  )
+
+(defun org-agenda-show-svg ()
+    (let* ((case-fold-search nil)
+           (keywords (mapcar #'svg-tag--build-keywords svg-tag--active-tags))
+           (keyword (car keywords)))
+      (while keyword
+        (save-excursion
+          (while (re-search-forward (nth 0 keyword) nil t)
+            (overlay-put (make-overlay
+                          (match-beginning 0) (match-end 0))
+                         'display  (nth 3 (eval (nth 2 keyword)))) ))
+        (pop keywords)
+        (setq keyword (car keywords)))))
+(add-hook 'org-agenda-finalize-hook #'org-agenda-show-svg)
+;;
+;; End svg-tag-mode
+
+;; remove color numbers
+(add-hook 'org-mode-hook (lambda () (display-line-numbers-mode 0)))
