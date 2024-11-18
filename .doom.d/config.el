@@ -653,3 +653,29 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
   (setq org-hide-emphasis-markers t
         org-appear-autolinks 'just-brackets))
 
+;; Make background transparent
+(add-to-list 'default-frame-alist '(alpha-background . 96))
+
+(setq doom-modeline-height 35)
+
+;; max-width of the buffer contents
+;; (use-package! olivetti
+;;   :config
+;;   (setq-default olivetti-body-width 130)
+;;   (add-hook 'mixed-pitch-mode-hook  (lambda () (setq-local olivetti-body-width 80))))
+
+;; (use-package! auto-olivetti
+;;   :custom
+;;   (auto-olivetti-enabled-modes '(text-mode prog-mode helpful-mode ibuffer-mode image-mode))
+;;   :config
+;;   (auto-olivetti-mode))
+
+;; make scroll more smoothly
+(pixel-scroll-precision-mode t)
+
+(setq doom-theme 'doom-gruvbox
+      doom-themes-treemacs-enable-variable-pitch nil)
+
+(use-package! doom-modeline
+  :config
+  (setq doom-modeline-persp-name t))

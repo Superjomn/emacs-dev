@@ -276,10 +276,14 @@ PRIORITY may be one of the characters ?A, ?B, or ?C."
                    (scheduled (org-element-property :scheduled headline))
                    (deadline (org-element-property :deadline headline))
                    (timestamp (or scheduled deadline))
-                   (start (when timestamp
-                            (org-timestamp-format timestamp "%Y-%m-%dT%H:%M:%S")))
-                   (end (when start
-                          (let ((time (org-timestamp-to-time timestamp)))
+                   (start (if scheduled
+                              (org-timestamp-format scheduled "%Y-%m-%dT%H:%M:%S")
+                            (let ((time (org-timestamp-to-time deadline))) ;; end - 1hour
+                              (format-time-string "%Y-%m-%dT%H:%M:%S"
+                                                  (time-subtract time (seconds-to-time 3600))))))
+                   (end (if deadline
+                              (org-timestamp-format deadline "%Y-%m-%dT%H:%M:%S")
+                          (let ((time (org-timestamp-to-time timestamp))) ;; start + 1hour
                             (format-time-string "%Y-%m-%dT%H:%M:%S"
                                                 (time-add time (seconds-to-time 3600))))))
                    (days-before-today (if timestamp

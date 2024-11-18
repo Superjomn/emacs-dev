@@ -362,3 +362,36 @@ marginparsep=7pt, marginparwidth=.6in}
 
 ;; remove color numbers
 (add-hook 'org-mode-hook (lambda () (display-line-numbers-mode 0)))
+;; Some functionality uses this to identify you, e.g. GPG configuration, email
+;; clients, file templates and snippets.
+(setq user-full-name "Hieu Phay"
+      user-mail-address "hieunguyen31371@gmail.com"
+      default-input-method 'vietnamese-telex
+      +doom-dashboard-banner-dir doom-private-dir
+      +doom-dashboard-banner-file "favicon-pixel.png"
+      +doom-dashboard-banner-padding '(0 . 2))
+
+;; Turn on pixel scrolling
+(pixel-scroll-precision-mode t)
+
+;; Turn on abbrev mode
+(setq-default abbrev-mode t)
+
+;; Start Doom fullscreen
+(add-to-list 'default-frame-alist '(width . 92))
+(add-to-list 'default-frame-alist '(height . 40))
+;; (add-to-list 'default-frame-alist '(alpha 97 100))
+
+;; If you use `org' and don't want your org files in the default location below,
+;; change `org-directory'. It must be set before org loads!
+(if (and (string-match-p "Windows" (getenv "PATH")) (not IS-WINDOWS))
+    (setq dropbox-directory "/mnt/c/Users/X380/Dropbox/")
+  (setq dropbox-directory "~/Dropbox/"))
+
+(setq org-directory (concat dropbox-directory "Notes/"))
+
+
+;; This determines the style of line numbers in effect. If set to `nil', line
+;; numbers are disabled. For relative line numbers, set this to `relative'.
+(setq display-line-numbers-type 'relative)
+(remove-hook! '(text-mode-hook) #'display-line-numbers-mode)

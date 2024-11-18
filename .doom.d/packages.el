@@ -138,3 +138,7 @@
 (package! org-appear)
 (package! org-modern)
 (package! svg-tag-mode)
+
+(package! olivetti)
+;;(package! auto-olivetti)
+(package! doom-modeline)
