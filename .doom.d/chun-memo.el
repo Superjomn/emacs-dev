@@ -75,7 +75,7 @@
 (defun chun-memo-query ()
   "Query the memo database with Helm and copy the selected entry to the clipboard."
   (interactive)
-  (chun-memo-build-db)
+  ;;(chun-memo-build-db)
   (helm :sources (helm-build-sync-source "Chun Memo Query"
                    :candidates (mapcar #'car chun-memo-db)
                    :action (lambda (key)

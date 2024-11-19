@@ -13,7 +13,7 @@
 :init
   ;; Seems the latest version need the 'org-directory`
   (setq org-directory chun-mode/org-roam-dir)
-  (setq org-agenda-files '(
+  (setq-default org-agenda-files '(
                            ;; "20230629103055-agenda_inbox.org"
                            "20220408141044-book_or_paper_agenda.org"
                            ;; "20221017102352-english_agenda_inbox.org"
@@ -363,4 +363,3 @@ Returns:
     (org-agenda-events-to-json "/Users/chunwei/emacs-dev/org-agenda-web-view/events.js")
     (browse-url (concat "file://" (expand-file-name "~/emacs-dev/org-agenda-web-view/web.html")))
   )
-

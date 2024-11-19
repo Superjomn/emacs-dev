@@ -624,7 +624,6 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
 
 (load! "./chun-agenda.el")
 
-
 ;; Make org-passwords work
 (require 'org-passwords)
 
