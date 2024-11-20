@@ -329,8 +329,10 @@ marginparsep=7pt, marginparwidth=.6in}
                                                      :beg 2 :end -1 :margin 0 :radius 10))))
           ("\\[#C\\]" . ((lambda (tag) (svg-tag-make tag :face 'org-todo :inverse t :height .85
                                                      :beg 2 :end -1 :margin 0 :radius 10))))
-          ;; The todo Keywords
-          ;;("work" . ((lambda (tag) (svg-tag-make tag :inverse t :height .85 :face 'org-todo))))
+          ;; The todo Keywords and tags
+          ("work" . ((lambda (tag) (svg-tag-make tag :inverse t :height .85 :face 'org-todo))))
+          ("personal" . ((lambda (tag) (svg-tag-make tag :inverse t :height .85 :face 'org-todo))))
+
           ("TODO" . ((lambda (tag) (svg-tag-make tag :inverse t :height .85 :face 'org-todo))))
           ("CANCELLED" . ((lambda (tag) (svg-tag-make tag :inverse t :height .85 :face 'org-todo))))
           ("DOING" . ((lambda (tag) (svg-tag-make tag :inverse t :height .85 :face 'org-todo))))

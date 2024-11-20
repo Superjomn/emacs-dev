@@ -305,7 +305,7 @@ PRIORITY may be one of the characters ?A, ?B, or ?C."
               (setq start (or start end))
               (setq end (or end start))
 
-              (message "title: %s, start: %S, end: %S" title start end)
+              ;;(message "title: %s, start: %S, end: %S" title start end)
               (when (and (org-agenda-event-include-p todo-state)
                          (not (string-empty-p title))
                          (or start end))

@@ -157,6 +157,7 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
 (setq doom-theme 'spacemacs-light)
 
 (load! "./chun-org.el")
+(load! "./chun-memo.el")
 
 ;; set encoding
 ;; This seems not working
@@ -438,6 +439,10 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
       :mode 'org-mode
       :map org-mode-map
       "amq" #'chun-memo-query)
+(map! :leader :desc "open web calendar"
+      :mode 'org-mode
+      :map org-mode-map
+      "amw" #'chun-agenda-lanuch-web-view)
 
 ;; misc
 (map! :leader :desc "insert date"
