@@ -162,6 +162,9 @@
 
   (setq org-agenda-prefix-format "%i %-2:c %-14t% s%-6e %/b ")
   (setq org-columns-default-format "%50ITEM(Task) %10CLOCKSUM %16TIMESTAMP_IA")
+  (setq org-agenda-skip-scheduled-if-done t)
+  (setq org-agenda-skip-deadline-if-done t)
+  (setq org-agenda-skip-timestamp-if-done t)
   )
 
 ;; This changes the tags' appearance in org-mode file only.
@@ -214,7 +217,14 @@ PRIORITY may be one of the characters ?A, ?B, or ?C."
                                                    (air-org-skip-subtree-if-priority ?A)
                                                    (org-agenda-skip-if nil '(scheduled deadline))))
                     (org-agenda-overriding-header "ALL normal priority tasks:"))))
-         ((org-agenda-compact-blocks t)))))
+         ((org-agenda-compact-blocks t)))
+        ("r" "Recently Added Items in Two Weeks"
+           alltodo ""
+           ((org-agenda-skip-function
+             (lambda ()
+               (org-agenda-skip-if-not-recent 3)))
+            (org-agenda-overriding-header "Recently Added Items in Two Weeks")
+            ))))
 
 
 
@@ -254,112 +264,11 @@ PRIORITY may be one of the characters ?A, ?B, or ?C."
                     :background "grey"
                     :weight 'bold)
 
-
-;; export events to web
-
-(defun org-agenda-events-to-json (output-file)
-  "Export Org agenda events to a JSON file."
-  (interactive "FExport JSON to file: ")
-  (let ((events '())
-        (today (format-time-string "%Y-%m-%d"))
-        )
-    (dolist (file (org-agenda-files))
-      (with-current-buffer (find-file-noselect file)
-        (org-element-map (org-element-parse-buffer) 'headline
-          (lambda (headline)
-            (let* ((raw-title (org-element-property :raw-value headline))
-                   (title (if raw-title
-                              (org-no-properties
-                               (replace-regexp-in-string "\\[\\[.*?\\]\\[\\(.*?\\)\\]\\]" "\\1" raw-title)) ;; Extract plain text from links
-                            ""))
-                   (todo-state (org-element-property :todo-keyword headline))
-                   (scheduled (org-element-property :scheduled headline))
-                   (deadline (org-element-property :deadline headline))
-                   (timestamp (or scheduled deadline))
-                   (start (if scheduled
-                              (org-timestamp-format scheduled "%Y-%m-%dT%H:%M:%S")
-                            (let ((time (org-timestamp-to-time deadline))) ;; end - 1hour
-                              (format-time-string "%Y-%m-%dT%H:%M:%S"
-                                                  (time-subtract time (seconds-to-time 3600))))))
-                   (end (if deadline
-                              (org-timestamp-format deadline "%Y-%m-%dT%H:%M:%S")
-                          (let ((time (org-timestamp-to-time timestamp))) ;; start + 1hour
-                            (format-time-string "%Y-%m-%dT%H:%M:%S"
-                                                (time-add time (seconds-to-time 3600))))))
-                   (days-before-today (if timestamp
-                                          (floor (org-agenda-days-before-today timestamp))
-                                        0))
-                   (delayed-task (> days-before-today 0))
-                   (is-all-day (and timestamp (not (org-element-property :hour-start timestamp))))
-                   )
-                   ;;(tags (org-element-property :tags headline))
-                   
-              ;;(setq is-all-day (or is-all-day delayed-task))
-              ;;(when delayed-task (setq start today)) ;; We only track the delayed tasks on today
-
-              ;; For all-day event, just start date is necessary
-              (when (and is-all-day (not delayed-task))
-                (setq start (org-timestamp-format timestamp "%Y-%m-%d")))
-
-              ;; If one is nil, get the other's value
-              (setq start (or start end))
-              (setq end (or end start))
-
-              ;;(message "title: %s, start: %S, end: %S" title start end)
-              (when (and (org-agenda-event-include-p todo-state)
-                         (not (string-empty-p title))
-                         (or start end))
-
-                (if (not is-all-day)
-                    (push `(("title" . ,title)
-                        ("start" . ,start)
-                        ("end" . ,end)
-                        )
-                          events)
-                  (push `(("title" . ,title)
-                        ("start" . ,start)
-                        )
-                          events)))
-
-              ;; deal with the delayed task, push additional record to today
-              (when (and delayed-task (org-agenda-event-include-p todo-state))
-                  (setq new-title (format "%dX: %s" days-before-today title))
-                  (setq start today)
-                  (push `(("title" . ,new-title) ("start" . ,start)) events)
-                  )
-
-              )))))
-
-    (with-temp-file output-file
-      (insert "var events = ")
-      (insert (json-encode (nreverse events))))
-    (message "Exported to %s" output-file)))
-
-(defun org-agenda-event-include-p (state)
-  "Determine if an event with the given STATE should be included.
-Customize this function to adjust filtering logic."
-  (member state '("TODO" "DOING")))
-
-(defun chun-org-get-event (title start end)
-  "
-Inputs:
-  - title: string
-  - start: optional[str]
-  - end: optional[str]
-
-Returns:
- a list of (title start end)"
-  )
-
-(defun org-agenda-days-before-today (timestamp)
-  "Calculate the number of days before today for a given TIMESTAMP."
-  (let ((time (org-timestamp-to-time timestamp)))
-    (/ (float-time (time-subtract (current-time) time)) 86400)))
-
-
-(defun chun-agenda-lanuch-web-view ()
-  "Launch a web view for org-agenda."
-  (interactive)
-    (org-agenda-events-to-json "/Users/chunwei/emacs-dev/org-agenda-web-view/events.js")
-    (browse-url (concat "file://" (expand-file-name "~/emacs-dev/org-agenda-web-view/web.html")))
-  )
+(defun org-agenda-skip-if-not-recent (n-weeks)
+  "Skip entries that do not have an :ADDED-DATE: property within the last N weeks."
+  (let* ((added-date (org-entry-get (point) "ADDED-DATE"))
+         (date (and added-date (org-time-string-to-time added-date)))
+         (cutoff (time-subtract (current-time) (days-to-time (* n-weeks 7)))))
+    (if (or (not date) (time-less-p date cutoff))
+        (org-end-of-subtree t)
+      nil)))

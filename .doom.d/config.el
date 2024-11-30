@@ -628,6 +628,8 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
  :around #'my-jupyter-api-http-request--ignore-login-error-a)
 
 (load! "./chun-agenda.el")
+(load! "./chun-agenda-web-view.el")
+(require 'chun-agenda-web-view)
 
 ;; Make org-passwords work
 (require 'org-passwords)
@@ -683,3 +685,36 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
 (use-package! doom-modeline
   :config
   (setq doom-modeline-persp-name t))
+
+(defun chun-split-command-lines (start end)
+  "Split a single-line shell command into multiple lines with '\\' continuation."
+  (interactive "r")
+  (let* ((command (buffer-substring-no-properties start end))
+         (lines (chun-str-split command))
+         (content (mapconcat 'identity lines " \\\n"))
+         )
+    (message "lines: %S\ncontent: %S" lines content)
+    (delete-region start end)
+    (insert content)
+    ))
+
+
+
+(use-package elpy
+  :ensure t
+  :init
+  (elpy-enable)
+
+  :hook ((elpy-mode . flycheck-mode)
+           (elpy-mode . (lambda ()
+                          (set (make-local-variable 'company-backends)
+                               '((elpy-company-backend :with company-yasnippet))))))
+
+  :config
+  (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
+  ; fix for MacOS, see https://github.com/jorgenschaefer/elpy/issues/1550
+  (setq elpy-shell-echo-output nil)
+  (setq elpy-rpc-python-command "/Users/chunwei/_pyenv/bin/python")
+  (setq elpy-rpc-timeout 2)
+
+  )

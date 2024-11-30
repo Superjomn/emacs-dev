@@ -15,7 +15,7 @@
 ;;      directory (for easy access to its source code).
 
 (doom! :input
-       ;;chinese
+       chinese
        ;;japanese
        ;;layout            ; auie,ctsrnm is the superior home row
 
@@ -136,7 +136,7 @@
        ;;idris             ; a language you can depend on
        json              ; At least it ain't XML
        ;;(java +meghanada) ; the poster child for carpal tunnel syndrome
-       ;;javascript        ; all(hope(abandon(ye(who(enter(here))))))
+       javascript        ; all(hope(abandon(ye(who(enter(here))))))
        ;;julia             ; a better, faster MATLAB
        ;;kotlin            ; a better, slicker Java(Script)
        latex             ; writing papers in Emacs has never been so fun
@@ -203,3 +203,6 @@
 
 (setq comp-deferred-compilation t)
 (setq native-comp-driver-options '("-B" "/Library/Developer/CommandLineTools/usr/bin")) ;; Adjust path if needed
+
+(add-to-list 'exec-path "/usr/local/bin")
+(add-to-list 'exec-path "/opt/homebrew/bin/")

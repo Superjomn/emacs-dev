@@ -3,6 +3,14 @@
 
 ;; string-related functions
 ;;
+;;
+(defun chun-str-split (string &optional sep)
+  "Split STRING into a list of substrings using SEP as a delimiter.
+If SEP is nil or empty, split on whitespace like Python's str.split()."
+  (if (or (not sep) (string-empty-p sep))
+      (split-string string)  ;; Default split on whitespace.
+    (split-string string (regexp-quote sep)))) ;; Split by exact SEP.
+
 (defun chun-str--join (separator strings)
   "Join a list of strings with a separator.
 Inputs:
@@ -39,6 +47,32 @@ Returns:
     (chun-str--join dilimiter titles)))
 
 
+(defun chun-org--get-file-title (file)
+  "Get the title of the org file.
+
+Inputs:
+  - file (string): the path to the org file.
+
+Returns:
+  - (string): the title of the org file.
+"
+
+  (with-temp-buffer
+    (insert-file-contents file)
+    (chun-org--get-file-title-from-buffer))
+  )
+
+(defun chun-org--get-file-title-from-buffer ()
+  "Get the title of the org file from the current buffer.
+
+Returns:
+  - (string): the title of the org file.
+"
+  (save-excursion
+   (goto-char (point-min))
+   (if (re-search-forward "^#\\+TITLE: \\(.*\\)$" nil t)
+       (match-string 1)
+     (buffer-name))))
 
 
 (provide 'chun-core)
