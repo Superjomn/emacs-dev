@@ -33,3 +33,12 @@
                            (cl-loop for dir in chun/projectile-ignored-directories collect
                                     "--glob" collect (concat "!" dir))) " ") projectile-git-command
                                     projectile-generic-command)
+
+;; For large project
+(setq projectile-enable-caching t)
+
+(after! projectile
+  (map! :leader
+        (:prefix ("p" . "projectile")
+                 :desc "grep" "a" #'projectile-ag
+                 )))

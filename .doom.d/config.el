@@ -49,8 +49,8 @@
 ;; (cmake-ide-setup)
 
 (require 'helm)
-(map! :leader
-      :desc "Open like spacemacs" "SPC" #'helm-M-x)
+(map! :leader :desc "Open like spacemacs" "SPC" #'helm-M-x)
+(map! :leader :desc "Open treemacs" "ft" #'treemacs)
 
 ;; Mirror some VIM behavior here
 (define-key evil-normal-state-map "vs" '(lambda ()
@@ -443,6 +443,10 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
       :mode 'org-mode
       :map org-mode-map
       "amw" #'chun-agenda-lanuch-web-view)
+(map! :leader :desc "open agenda"
+      :mode 'org-mode
+      :map org-mode-map
+      "aaa" #'chun-agenda/org-agenda-in-workspace)
 
 ;; misc
 (map! :leader :desc "insert date"
@@ -698,8 +702,6 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
     (insert content)
     ))
 
-
-
 (use-package elpy
   :ensure t
   :init
@@ -716,5 +718,44 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
   (setq elpy-shell-echo-output nil)
   (setq elpy-rpc-python-command "/Users/chunwei/_pyenv/bin/python")
   (setq elpy-rpc-timeout 2)
-
   )
+
+(setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
+(setq flycheck-python-flake8-executable "~/_pyenv/bin/flake8")
+(setq fycheck-python-pylint-executable "/Users/chunwei/_pyenv/bin/pylint")
+
+(global-eldoc-mode 1)
+
+(add-hook 'elpy-mode-hook (lambda () (eldoc-mode 1)))
+
+(add-hook 'python-mode-hook
+          (lambda ()
+            (modify-syntax-entry ?_ "w")))
+
+(add-hook 'fish-mode-hook
+          (lambda ()
+            (modify-syntax-entry ?_ "w")))
+
+;; navigate the file in remote git repo
+(after! browse-at-remote
+  (setq browse-at-remote-remote-type-regexps
+        '((:host "^codeberg\\.org$" :type "codeberg")
+        (:host "^github\\.com$" :type "github")
+        (:host "^bitbucket\\.org$" :type "bitbucket")
+        (:host "^gitlab\\.com$" :type "gitlab")
+        (:host "^git\\.savannah\\.gnu\\.org$" :type "gnu")
+        (:host "^gist\\.github\\.com$" :type "gist")
+        (:host "^git\\.sr\\.ht$" :type "sourcehut")
+        (:host "^.*\\.visualstudio\\.com$" :type "ado")
+        (:host "^pagure\\.io$" :type "pagure")
+        (:host "^.*\\.fedoraproject\\.org$" :type "pagure")
+        (:host "^.*\\.googlesource\\.com$" :type "gitiles")
+        (:host "^gitlab\\.gnome\\.org$" :type "gitlab")
+        (:host "^gitlab\\." :type "gitlab")
+        (:host "^gitlab\\-master\\.nvidia\\.com$" :type "gitlab"))
+        ))
+
+(use-package! fish-mode
+  :mode ("\\.fish\\'" . fish-mode)
+  :config
+  (setq fish-enable-auto-indent t))

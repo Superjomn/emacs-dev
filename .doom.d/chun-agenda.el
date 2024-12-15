@@ -272,3 +272,18 @@ PRIORITY may be one of the characters ?A, ?B, or ?C."
     (if (or (not date) (time-less-p date cutoff))
         (org-end-of-subtree t)
       nil)))
+
+
+;; dedicated workspace for agenda
+;;
+(defun chun-agenda/org-agenda-in-workspace ()
+  "Open org-agenda in a dedicated workspace."
+  (interactive)
+  (let ((agenda-workspace-name "Agenda"))
+    (unless (+workspace-exists-p agenda-workspace-name)
+      (+workspace/new agenda-workspace-name))
+    (+workspace-switch agenda-workspace-name)
+    ;; Clear exising buffers
+    ;;(dolist (buf (+workspace-buffer-list agenda-workspace-name))
+      ;;(kill-buffer buf))
+    (org-agenda nil "c")))

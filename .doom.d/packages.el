@@ -142,3 +142,7 @@
 (package! olivetti)
 ;;(package! auto-olivetti)
 (package! doom-modeline)
+
+(package! browse-at-remote)
+(package! fish-mode)
+(package! all-the-icons)
