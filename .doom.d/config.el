@@ -31,6 +31,7 @@
 
 ;; Load some utility functions.
 (load! "./base.el")
+(load! "./chun-core.el")
 
 (load! "./chun-misc.el")
 

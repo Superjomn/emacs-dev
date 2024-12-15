@@ -1,14 +1,10 @@
 (require 'org)
 (require 'helm)
 (require 'seq)
+(require 'chun-core)
 
-(defcustom chun-memo-files '("/Users/chunwei/Library/CloudStorage/OneDrive-Personal/org-roam/20220712090007-gpu_related.org"
-                             "/Users/chunwei/Library/CloudStorage/OneDrive-Personal/org-roam/20230412140520-nvidia_tekit.org"
-                             "/Users/chunwei/Library/CloudStorage/OneDrive-Personal/org-roam/20230607090933-chatgpt.org"
-                             )
-  "List of Org-mode files to search for memo entries."
-  :type '(repeat string)
-  :group 'chun-memo)
+(defvar chun-memo-files (chun-org-roam--get-files-with-tag "memo")
+  "List of org-mode files to search for memo entries.")
 
 (defcustom chun-memo-key-enable-headline-hierarchy t
   "If non-nil, include all parent headlines in the key for memo entries."
@@ -53,7 +49,6 @@
                           (mapconcat 'identity titles chun-memo-key-concat-delimiter))))
                 (push (cons key content) chun-memo-db))))))))
 
-
 (defun chun-memo--org-get-title (file)
   "Get the title of the current org-mode file."
   (with-temp-buffer
@@ -75,7 +70,9 @@
 (defun chun-memo-query ()
   "Query the memo database with Helm and copy the selected entry to the clipboard."
   (interactive)
-  ;;(chun-memo-build-db)
+  (if (= (length chun-memo-db) 0)
+      (chun-memo-build-db))
+
   (helm :sources (helm-build-sync-source "Chun Memo Query"
                    :candidates (mapcar #'car chun-memo-db)
                    :action (lambda (key)

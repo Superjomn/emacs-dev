@@ -69,10 +69,29 @@ Returns:
   - (string): the title of the org file.
 "
   (save-excursion
-   (goto-char (point-min))
-   (if (re-search-forward "^#\\+TITLE: \\(.*\\)$" nil t)
-       (match-string 1)
-     (buffer-name))))
+    (goto-char (point-min))
+    (if (re-search-forward "^#\\+TITLE: \\(.*\\)$" nil t)
+        (match-string 1)
+      (buffer-name))))
 
+;; org-roam related
+
+(require 'org-roam)
+(defun chun-org-roam--get-files-with-tag (tag)
+  "Return a list of org-roam files that have the specified TAG."
+  (let* ((file-lists
+          (org-roam-db-query
+           [:select [file]
+            :from tags
+            :inner :join nodes
+            :on (= tags:node-id nodes:id)
+            :where (= tags:tag $s1)]
+           tag))
+         files '()
+         )
+    (dolist (file-list file-lists)
+      (push (car file-list) files))
+    files
+    ))
 
 (provide 'chun-core)
