@@ -724,6 +724,8 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
 (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
 (setq flycheck-python-flake8-executable "~/_pyenv/bin/flake8")
 (setq fycheck-python-pylint-executable "/Users/chunwei/_pyenv/bin/pylint")
+(with-eval-after-load 'flycheck
+  (add-to-list 'flycheck-disabled-checkers 'python-mypy))
 
 (global-eldoc-mode 1)
 
@@ -760,3 +762,5 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
   :mode ("\\.fish\\'" . fish-mode)
   :config
   (setq fish-enable-auto-indent t))
+
+(load! "./sync-project.el")
