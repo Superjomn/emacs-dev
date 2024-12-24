@@ -254,37 +254,6 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
 
  ;; end of use-package org
 
-
-;; (after! org
-;;   (add-to-list 'org-latex-classes
-;;                '("cn-article"
-;;                  "\\documentclass{ctexart}
-;; \\usepackage[UTF8]{ctex}
-;; \\usepackage{graphicx}
-;; \\usepackage{grffile}
-;; \\usepackage{longtable}
-;; \\usepackage{wrapfig}
-;; \\usepackage{rotating}
-;; \\usepackage[normalem]{ulem}
-;; \\usepackage{amsmath}
-;; \\usepackage{textcomp}
-;; \\usepackage{amssymb}
-;; \\usepackage{capt-of}
-;; \\usepackage{hyperref}
-;; \\usepackage{minted}
-;; \\setCJKmainfont[Scale=0.9]{Adobe Heiti Std}
-;; \\setCJKmonofont[Scale=0.9]{Adobe Heiti Std}
-;; \\renewcommand{\\MintedPygmentize}{/home/chunwei/.local/bin/pygmentize}"
-;;                  ("\\section{%s}" . "\\section*{%s}")
-;;                  ("\\subsection{%s}" . "\\subsection*{%s}")
-;;                  ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-;;                  ("\\paragraph{%s}" . "\\paragraph*{%s}")
-;;                  ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
-;;   )
-
-;; Set default font, it will override the doom-fonts setting
-
-
 (setq chun--emacs-font-size 16)
 (if (window-system)
     (setq chun--emacs-font-size 12)
@@ -561,7 +530,7 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
               ("C-TAB" . 'copilot-accept-completion-by-word)
               ("C-<tab>" . 'copilot-accept-completion-by-word)))
 
-(setq! gc-cons-threshold 100000000)
+;;(setq gc-cons-threshold 50000000)  ;; ~50 MB before GC
 
 (defun chun-org-get-id ()
   "Create an ID for the current heading and copy it to the clipboard."
@@ -667,7 +636,9 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
 ;; Make background transparent
 (add-to-list 'default-frame-alist '(alpha-background . 96))
 
-(setq doom-modeline-height 35)
+(setq doom-modeline-height 45)
+
+
 
 ;; max-width of the buffer contents
 ;; (use-package! olivetti
@@ -703,33 +674,33 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
     (insert content)
     ))
 
-(use-package elpy
-  :ensure t
-  :init
-  (elpy-enable)
+;; (use-package elpy
+;;   :ensure t
+;;   :init
+;;   (elpy-enable)
 
-  :hook ((elpy-mode . flycheck-mode)
-           (elpy-mode . (lambda ()
-                          (set (make-local-variable 'company-backends)
-                               '((elpy-company-backend :with company-yasnippet))))))
+;;   :hook ((elpy-mode . flycheck-mode)
+;;            (elpy-mode . (lambda ()
+;;                           (set (make-local-variable 'company-backends)
+;;                                '((elpy-company-backend :with company-yasnippet))))))
 
-  :config
-  (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
-  ; fix for MacOS, see https://github.com/jorgenschaefer/elpy/issues/1550
-  (setq elpy-shell-echo-output nil)
-  (setq elpy-rpc-python-command "/Users/chunwei/_pyenv/bin/python")
-  (setq elpy-rpc-timeout 2)
-  )
+;;   :config
+;;   (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
+;;   ; fix for MacOS, see https://github.com/jorgenschaefer/elpy/issues/1550
+;;   (setq elpy-shell-echo-output nil)
+;;   (setq elpy-rpc-python-command "/Users/chunwei/_pyenv/bin/python")
+;;   (setq elpy-rpc-timeout 2)
+;;   )
 
-(setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
-(setq flycheck-python-flake8-executable "~/_pyenv/bin/flake8")
-(setq fycheck-python-pylint-executable "/Users/chunwei/_pyenv/bin/pylint")
-(with-eval-after-load 'flycheck
-  (add-to-list 'flycheck-disabled-checkers 'python-mypy))
+;; (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
+;; (setq flycheck-python-flake8-executable "~/_pyenv/bin/flake8")
+;; (setq fycheck-python-pylint-executable "/Users/chunwei/_pyenv/bin/pylint")
+;; (with-eval-after-load 'flycheck
+;;   (add-to-list 'flycheck-disabled-checkers 'python-mypy))
 
-(global-eldoc-mode 1)
+;; (global-eldoc-mode 1)
 
-(add-hook 'elpy-mode-hook (lambda () (eldoc-mode 1)))
+;; (add-hook 'elpy-mode-hook (lambda () (eldoc-mode 1)))
 
 (add-hook 'python-mode-hook
           (lambda ()
@@ -762,5 +733,6 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
   :mode ("\\.fish\\'" . fish-mode)
   :config
   (setq fish-enable-auto-indent t))
+
 
 (load! "./sync-project.el")
