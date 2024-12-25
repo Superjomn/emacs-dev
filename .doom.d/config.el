@@ -530,6 +530,11 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
               ("C-TAB" . 'copilot-accept-completion-by-word)
               ("C-<tab>" . 'copilot-accept-completion-by-word)))
 
+;; Address some issues regarding copilot
+(require 'whitespace)
+(setq whitespace-style (remove 'newline-mark whitespace-style))
+
+
 ;;(setq gc-cons-threshold 50000000)  ;; ~50 MB before GC
 
 (defun chun-org-get-id ()
@@ -706,6 +711,11 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
           (lambda ()
             (modify-syntax-entry ?_ "w")))
 
+(add-hook 'python-ts-mode-hook
+          (lambda ()
+            (modify-syntax-entry ?_ "w")))
+
+
 (add-hook 'fish-mode-hook
           (lambda ()
             (modify-syntax-entry ?_ "w")))
@@ -734,5 +744,5 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
   :config
   (setq fish-enable-auto-indent t))
 
-
+(load! "./chun-python.el")
 (load! "./sync-project.el")

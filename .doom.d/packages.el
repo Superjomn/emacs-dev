@@ -146,3 +146,7 @@
 (package! browse-at-remote)
 (package! fish-mode)
 (package! all-the-icons)
+(package! pyvenv)
+(package! lsp-pyright)
+(package! eglot-booster
+  :recipe (:host github :repo "jdtsmith/eglot-booster"))
