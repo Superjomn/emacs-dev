@@ -15,3 +15,11 @@
   :after eglot
   :config
   (eglot-booster-mode))
+
+(after! python
+  (map! :localleader ;; SPC m, reserved for major mode commands
+        :mode python-mode
+        "d" #'xref-find-definitions
+        "r" #'xref-find-references
+        "R" #'eglot-rename
+        ))

@@ -21,6 +21,10 @@ Returns:
 "
   (mapconcat 'identity strings separator))
 
+(defun chun-str--trim (string)
+  "Remove leading and trailing whitespace from STRING."
+  (string-trim string))
+
 ;; org-element related utilites
 ;;
 (defun chun-org--get-hierarchical-title (hl dilimiter &optional file-title)

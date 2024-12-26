@@ -744,5 +744,11 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
   :config
   (setq fish-enable-auto-indent t))
 
+(use-package! elisp-def
+  :config (dolist (hook '(emacs-lisp-mode-hook ielm-mode-hook))
+            (add-hook hook #'elisp-def-mode))
+  )
+
+
 (load! "./chun-python.el")
 (load! "./sync-project.el")

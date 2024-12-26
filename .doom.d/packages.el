@@ -136,17 +136,19 @@
 (package! gptel)
 
 (package! org-appear)
-(package! org-modern)
-(package! svg-tag-mode)
+(package! org-modern)    ;; for modern view for org-mode
+(package! svg-tag-mode)  ;; for beautiful tags in org-mode
 
 (package! olivetti)
-;;(package! auto-olivetti)
 (package! doom-modeline)
 
-(package! browse-at-remote)
+(package! browse-at-remote) ;; for browse github/gitlab source code
 (package! fish-mode)
-(package! all-the-icons)
+(package! all-the-icons) ;; for doom-modeline
+
 (package! pyvenv)
-(package! lsp-pyright)
-(package! eglot-booster
+(package! lsp-pyright)   ;; for pyright LSP
+(package! eglot-booster  ;; boost eglot performance by using emacs-lsp-booster
   :recipe (:host github :repo "jdtsmith/eglot-booster"))
+
+(package! elisp-def)

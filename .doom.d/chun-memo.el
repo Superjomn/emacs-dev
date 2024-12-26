@@ -36,6 +36,7 @@
                                (org-element-property :contents-end hl)))
                      ;;(titles (list file-title title))
                      (key title))
+                (setq content (chun-str--trim content))
                 (when chun-memo-key-enable-headline-hierarchy
                   (let ((parent (org-element-property :parent hl))
                         (titles (list title)))
