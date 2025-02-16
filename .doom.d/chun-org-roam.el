@@ -6,8 +6,6 @@
   :group 'chun)
 
 
-(setq org-journal-dir (concat chun-mode/org-roam-dir "/journal"))
-
 (setq org-roam-v2-ack t)
 
 (use-package! org-roam

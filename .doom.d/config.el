@@ -749,6 +749,12 @@ NOTE it use the variable defined in .dir-locals.el in the specific project.
             (add-hook hook #'elisp-def-mode))
   )
 
+(use-package! projectile
+  :config
+  (setq projectile-project-search-path '("~/project/"))
+  (setq projectile-globally-ignored-directories
+        '("*build" "*cmake-build-debug" ".idea" ".git" ".mypy_cache" ".pytest_cache" "venv" "env" "node_modules" "__pycache__" ".vscode" ".clangd" ".clangd" ".vs" ".vscode" ".vscode-server"))
+  )
 
 (load! "./chun-python.el")
 (load! "./sync-project.el")

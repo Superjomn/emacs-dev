@@ -22,12 +22,15 @@
                              :weight bold)
                             ("HOLD" :foreground "magenta"
                              :weight bold)
-                            ("CANCEL" :foreground "forest green"
-                             :weight bold)))
+                            ("CANCEL" :foreground "grey"
+                             :weight bold)
+                            ("CANCELLED" :foreground "grey"
+                             :weight bold)
+                            ))
 
 
   (setq org-todo-keywords '((sequence "TODO(t)" "IDEA(x)" "DOING(i)" "NEXT(n)" "|" "DONE(d)")
-                               (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)")))
+                               (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCEL(c@/!)")))
 
   :bind (:map org-mode-map
          ("C-c RET" . org-insert-heading)
@@ -397,3 +400,29 @@ marginparsep=7pt, marginparwidth=.6in}
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
 ;;(setq display-line-numbers-type 'relative)
 (remove-hook! '(text-mode-hook) #'display-line-numbers-mode)
+
+;; org-journal
+(use-package! org-journal
+  :ensure t
+  :defer t
+
+  :config
+  (setq
+     org-journal-dir (concat org-roam-directory "/journal/")
+     org-journal-file-type 'monthly
+     org-journal-date-format "%A, %d %B %Y"
+     org-journal-file-format "%Y-%m.org"
+     org-journal-date-prefix "* "
+     org-journal-enable-cache t
+     org-journal-file-header nil
+   ))
+
+(defun org-journal-file-header-func (time)
+  "Custom function to create journal header."
+  (concat
+    (pcase org-journal-file-type
+      (`daily "#+TITLE: Daily Journal\n#+STARTUP: showeverything")
+      (`weekly "#+TITLE: Weekly Journal\n#+STARTUP: folded")
+      (`monthly "#+TITLE: Monthly Journal\n#+STARTUP: folded")
+      (`yearly "#+TITLE: Yearly Journal\n#+STARTUP: folded"))))
+
